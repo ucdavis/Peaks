@@ -1,36 +1,3 @@
 @model TeamsAndGroupsModel
-
-
-@{
-    ViewData["Title"] = "Select Team";
-}
-
-<div class="card">
-    <div class="card-header-primary">
-        <div class="card-head">
-            <h2>Select a Team</h2>
-        </div>
-    </div>
-    <div class="card-content">
-        @foreach (var item in Model.Teams)
-        {
-            <p><a href='@string.Format("/{0}/{1}", item.Slug, ViewBag.urlRedirect)' class="team-link">@item.Name</a></p>
-        }
-    </div>
-</div>
-@if (Model.Groups != null && Model.Groups.Count > 0)
-{
-    <div class="card">
-        <div class="card-header-primary">
-            <div class="card-head">
-                <h2>Select a Group</h2>
-            </div>
-        </div>
-        <div class="card-content">
-            @foreach (var item in Model.Groups)
-            {
-                <p><a asp-controller="Group" asp-action="Index" asp-route-id="@item.Id" class="team-link">@item.Name</a></p>
-            }
-        </div>
-    </div>
-}
+@{ ViewData["Title"] = "Select Team"; }
+<partial name="_TeamSelection" model="Model" />

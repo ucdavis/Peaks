@@ -1,50 +1,31 @@
-﻿@model Keas.Mvc.Models.AdminMembersListModel
-
-@{
-    ViewData["Title"] = "Admins ";
-}
-<div class="card">
-  <div class="card-header-primary">
-    <div class="card-head">
-      <div class="row justify-content-between">
-        <h2>Users with Admin Roles</h2>
-        <a class="btn btn-link" asp-action="AddAdmin"><i class="fas fa-plus fa-xs"/></i> Add new Admin.</a>
-      </div>
+@model Keas.Mvc.Models.AdminMembersListModel
+@{ ViewData["Title"] = "System administrators"; }
+<div class="space-y-6 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">System administrators</h1>
+            <p class="m-0 text-base-content/70">Manage administrator access across PEAKS.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-action="Index" ><hero-icon name="arrow-left" class="size-4"></hero-icon>Administration</a><a class="btn btn-primary" asp-action="AddAdmin"><hero-icon name="plus" class="size-4"></hero-icon>Assign role</a></div>
     </div>
-
-  </div>
-  <div class="card-content">
-    <table class="table">
-        <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Roles
-            </th>
-            <th>
-
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in Model.UserRoles) {
-            <tr>
-                <td>
-                    @item.User.LastName, @item.User.FirstName
-                </td>
-                <td>
-                    @item.RolesList
-                </td>
-                <td>
-                    @Html.ActionLink("Remove Role(s)", "RemoveRoles", new { userId = item.User.Id})
-                </td>
-
-            </tr>
-        }
-        </tbody>
-    </table>
-  </div>
-
+    <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4">
+        <table class="table">
+            <thead><tr><th scope="col">Name</th><th scope="col">Roles</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+            <tbody>
+            @foreach (var item in Model.UserRoles)
+            {
+                <tr>
+                    <td class="font-semibold">@item.User.LastName, @item.User.FirstName</td>
+                    <td>@item.RolesList</td>
+                    <td class="text-right"><a class="btn btn-sm btn-ghost text-error" asp-action="RemoveRoles" asp-route-userId="@item.User.Id" aria-label="Remove roles for @item.User.FirstName @item.User.LastName">Remove roles</a></td>
+                </tr>
+            }
+            @if (!Model.UserRoles.Any())
+            {
+                <tr><td colspan="3" class="py-8 text-center text-base-content/60">No system administrators are listed.</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
 </div>

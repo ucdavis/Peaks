@@ -4,6 +4,7 @@ import WorkstationListItem from './WorkstationListItem';
 
 interface IProps {
   workstations: IWorkstation[];
+  detailsBasePath: string;
   onRevoke?: (workstation: IWorkstation) => void;
   onAdd?: (workstation: IWorkstation) => void;
   onCreate?: () => void;
@@ -23,6 +24,7 @@ const WorkstationList = (props: IProps) => {
         <WorkstationListItem
           key={x.id.toString()}
           workstationEntity={x}
+          detailsBasePath={props.detailsBasePath}
           onRevoke={props.onRevoke}
           onAdd={props.onAdd}
           showDetails={props.showDetails}
@@ -42,7 +44,7 @@ const WorkstationList = (props: IProps) => {
             <th>Space</th>
             <th>Assigned To</th>
             <th>Expiration</th>
-            <th className='list-actions'>Actions</th>
+            <th className='w-[10%]'>Actions</th>
           </tr>
         </thead>
         <tbody>{workstations}</tbody>

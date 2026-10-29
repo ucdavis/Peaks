@@ -1,6 +1,8 @@
-﻿import * as React from 'react';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IWorkstation } from '../../models/Workstations';
 import WorkstationEditValues from './WorkstationEditValues';
 
@@ -43,15 +45,9 @@ const DeleteWorkstation = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={props.closeModal}
-        size='lg'
         className='workstation-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Delete {props.selectedWorkstation.name}</h2>
-          <Button color='link' onClick={props.closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Delete {props.selectedWorkstation.name}</ModalHeading>
 
         <ModalBody>
           <WorkstationEditValues
@@ -62,11 +58,11 @@ const DeleteWorkstation = (props: IProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            color='primary'
+            color='error'
             onClick={deleteWorkstation}
             disabled={submitting}
           >
-            Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            Delete {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

@@ -3,6 +3,8 @@ import { NavLink } from 'react-router-dom';
 import { Context } from '../../Context';
 import { PermissionsUtil } from '../../util/permissions';
 
+const tabClassName = 'flex-1 shrink-0 whitespace-nowrap border-b-4 border-transparent px-3 py-5 text-center font-semibold text-base-content transition-colors first:rounded-tl-sm last:rounded-tr-sm hover:text-[color-mix(in_oklab,var(--asset-color)_80%,black)] [&.active]:border-[var(--asset-color)] [&.active]:bg-[color-mix(in_oklab,var(--asset-color)_10%,transparent)] [&.active]:text-[var(--asset-color)]';
+
 export default class AssetNav extends React.Component<
   React.PropsWithChildren<{}>
 > {
@@ -11,11 +13,11 @@ export default class AssetNav extends React.Component<
   public render() {
     return (
       <div>
-        <div className='react-tabs'>
+        <nav aria-label='Team assets' className='mb-4 flex overflow-x-auto rounded-sm bg-base-100 shadow-sm'>
           {PermissionsUtil.canViewPeople(this.context.permissions) && (
             <NavLink
               to={`/${this.context.team.slug}/people`}
-              className='tab-link tab-people'
+              className={`${tabClassName} tab-people`}
               activeClassName='active'
             >
               People
@@ -24,7 +26,7 @@ export default class AssetNav extends React.Component<
           {PermissionsUtil.canViewEquipment(this.context.permissions) && (
             <NavLink
               to={`/${this.context.team.slug}/equipment`}
-              className='tab-link tab-equipment'
+              className={`${tabClassName} tab-equipment`}
               activeClassName='active'
             >
               Equipment
@@ -33,7 +35,7 @@ export default class AssetNav extends React.Component<
           {PermissionsUtil.canViewAccess(this.context.permissions) && (
             <NavLink
               to={`/${this.context.team.slug}/access`}
-              className='tab-link tab-access'
+              className={`${tabClassName} tab-access`}
               activeClassName='active'
             >
               Access
@@ -42,7 +44,7 @@ export default class AssetNav extends React.Component<
           {PermissionsUtil.canViewKeys(this.context.permissions) && (
             <NavLink
               to={`/${this.context.team.slug}/keys`}
-              className='tab-link tab-keys'
+              className={`${tabClassName} tab-keys`}
               activeClassName='active'
             >
               Keys
@@ -51,13 +53,13 @@ export default class AssetNav extends React.Component<
           {PermissionsUtil.canViewSpaces(this.context.permissions) && (
             <NavLink
               to={`/${this.context.team.slug}/spaces`}
-              className='tab-link tab-spaces'
+              className={`${tabClassName} tab-spaces`}
               activeClassName='active'
             >
               Spaces
             </NavLink>
           )}
-        </div>
+        </nav>
 
         <div>{this.props.children}</div>
       </div>

@@ -1,3 +1,5 @@
+import { BriefcaseIcon } from '@heroicons/react/24/solid';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -457,20 +459,25 @@ const WorkstationContainer = (props: IProps) => {
   const selectedWorkstation = workstations.find(k => k.id === selectedId);
 
   return (
-    <div className='card spaces-color'>
+    <div className='card mb-4 border border-main-border bg-base-100 shadow-sm spaces-color'>
       <div className='card-header-spaces'>
-        <div className='card-head row justify-content-between'>
-          <h2>
-            <i className='fas fa-briefcase fa-xs' /> Workstations
+        <div className='px-5 py-4 sm:px-6 flex items-center justify-between gap-4'>
+          <h2 className="text-xl font-semibold">
+            <BriefcaseIcon data-icon="briefcase" className='hero-icon size-5' /> Workstations
           </h2>
-          <Button color='link' onClick={() => openCreateModal()}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add
+          <Button color='asset' size='sm' onClick={() => openCreateModal()}>
+            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add
             Workstation
           </Button>
         </div>
       </div>
-      <div className='card-content'>
+      <div className='card-body gap-4 p-5 sm:p-6'>
         <WorkstationList
+          detailsBasePath={
+            props.person
+              ? `people/details/${props.person.id}`
+              : `spaces/details/${props.space.id}`
+          }
           workstations={workstations}
           showDetails={openDetailsModal}
           onEdit={openEditModal}

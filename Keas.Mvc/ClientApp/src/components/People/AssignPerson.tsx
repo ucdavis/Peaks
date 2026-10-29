@@ -1,9 +1,11 @@
+import { AssetSummary } from '../Shared/AssetSummary';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
-import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
+import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button, FormGroup, Label } from 'reactstrap';
+import { FormGroup, Label } from 'reactstrap';
 import { Context } from '../../Context';
 import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
@@ -31,13 +33,10 @@ const AssignPerson = (props: IProps) => {
     // call onSelect when a user is found
     return (
       <div>
-        <FormGroup>
-          <Label for='searchPeople'>{props.label}</Label>
-          <AsyncTypeahead
+        <FormGroup className='space-y-2'>
+          <Label for='searchPeople' className='block text-sm font-semibold'>{props.label}</Label>
+          <SearchCombobox
             id='searchPeople' // for accessibility
-            inputProps={{
-              className: isInvalid ? 'form-control is-invalid' : ''
-            }}
             isInvalid={isInvalid}
             disabled={props.disabled}
             isLoading={isSearchLoading}
@@ -72,7 +71,7 @@ const AssignPerson = (props: IProps) => {
             options={people}
           />
           {props.error && props.error.path === 'person' && (
-            <div className='invalid-feedback d-block'>
+            <div className='text-sm text-error'>
               {props.error.message}
             </div>
           )}
@@ -83,11 +82,10 @@ const AssignPerson = (props: IProps) => {
               to={`/${context.team.slug}/people/create`}
               target='_blank'
               rel='noopener noreferrer'
+              className='link link-hover inline-flex items-center gap-2 text-sm'
             >
-              <Button color='link' type='button'>
-                <i className='fas fa-search fas-sm' aria-hidden='true' /> Can't
-                find who you're looking for?
-              </Button>
+              <MagnifyingGlassIcon data-icon="magnifying-glass" className='hero-icon size-4' aria-hidden='true' /> Can't
+              find who you're looking for?
             </Link>
           )}
         </div>
@@ -110,6 +108,11 @@ const AssignPerson = (props: IProps) => {
     setPeople(newPeople);
     setIsSearchLoading(false);
   };
+  if (props.disabled) {
+    return <AssetSummary fields={[[props.label, props.person
+      ? <span>{props.person.name}{props.person.email && <> (<a className='link link-hover' href={`mailto:${props.person.email}`}>{props.person.email}</a>)</>}</span>
+      : null]]} />;
+  }
   return renderFindPerson();
 };
 

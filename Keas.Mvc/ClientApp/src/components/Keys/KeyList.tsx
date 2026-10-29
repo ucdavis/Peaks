@@ -1,3 +1,4 @@
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { UncontrolledTooltip } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
@@ -46,12 +47,12 @@ const KeyList = (props: IProps) => {
           <th>Key Code</th>
           <th>
             Serials{' '}
-            <i id='serialTooltip' className='fas fa-info-circle keys-anomaly' />
+            <InformationCircleIcon data-icon="information-circle" id='serialTooltip' className='hero-icon size-5 keys-anomaly' />
             <UncontrolledTooltip placement='right' target='serialTooltip'>
               In Use / Total
             </UncontrolledTooltip>
           </th>
-          <th className='list-actions'>Actions</th>
+          <th className='w-[10%]'>Actions</th>
         </tr>
       </thead>
       <tbody>{keys}</tbody>

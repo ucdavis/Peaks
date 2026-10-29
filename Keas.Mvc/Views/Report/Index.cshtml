@@ -1,130 +1,89 @@
 @model string[]
 @using Keas.Core.Domain
-
-@{
-    ViewData["Title"] = "Reports";
-}
-<div class="card">
-    <div class="card-header-primary">
-        <div class="row justify-content-between">
-          <div class="card-head">
-            <h2><i class="fas fa-tasks fa-xs"></i> Reports</h2>
-          </div>
+@{ ViewData["Title"] = "Reports"; }
+<div class="space-y-8 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Reports</h1>
+            <p class="m-0 text-base-content/70">Browse reports for your team’s people, assets, and activity.</p>
         </div>
-      </div>
-      <div class="card-content">
-        <div class="row">
-            @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
-            {
-            <div class="report-list equipment-color col-md-3">
-                <h3><i class="fas fa-hdd fa-xs"></i> Equipment Reports</h3>
-                <ul>
-                    <li>
-                        <a asp-action="EquipmentReport">View All <span style="white-space: nowrap;">Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
-                    <li>
-                        <a asp-action="EquipmentReportV2">View All Equipment <span style="white-space: nowrap;">V2 <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
-                    <li>
-                        <a asp-action="KeyValues">Key/Value Pairs in <span style="white-space: nowrap;">Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>      
-                </ul>
-            </div>
+        <div class="flex flex-wrap items-center gap-2"></div>
+    </div>
+    <div class="grid items-start gap-x-8 gap-y-8 md:grid-cols-2 xl:grid-cols-4">
+        @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
+        {
+        <section class="min-w-0 space-y-3" aria-label="Equipment reports">
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="computer-desktop" class="size-5"></hero-icon>Equipment</h2>
+            <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="EquipmentReport">All equipment<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="EquipmentReportV2">All equipment V2<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="KeyValues">Equipment key/value pairs<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+            </ul>
+        </section>
         }
-        <div class="report-list people-color col-md-3">
-            <h3><i class="fas fa-users fa-xs"></i> People Reports</h3>
-                <ul>
-                    <li>
-                        <a asp-action="SupervisorDirectReports">Direct Reports by <span style="white-space: nowrap;">Supervisor <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
-                    <li>
-                        <a asp-action="PersonActions">Actions Taken Against People in <span style="white-space: nowrap;">Team <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
-                    <li>
-                        <a asp-action="PeopleInTeam">People in <span style="white-space: nowrap;">Team <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
-                    <li>
-                        <a asp-action="PeopleLeavingWithAssets">People Leaving With <span style="white-space: nowrap;">Assets <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
-                    @if (Model.Contains(Role.Codes.DepartmentalAdmin))
-                    {
-                        <li>
-                            <a asp-action="ActionsByAdmins">Admin Action <span style="white-space: nowrap;">History <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                        </li>
-                    }
-                </ul>
-        </div>
+        <section class="min-w-0 space-y-3" aria-label="People reports">
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="users" class="size-5"></hero-icon>People</h2>
+            <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="SupervisorDirectReports">Direct reports by supervisor<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="PersonActions">Actions taken against people<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="PeopleInTeam">People in team<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="PeopleLeavingWithAssets">People leaving with assets<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+                @if (Model.Contains(Role.Codes.DepartmentalAdmin))
+                {
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="ActionsByAdmins">Admin action history<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+                }
+            </ul>
+        </section>
         @if (Model.Contains(Role.Codes.SpaceMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
         {
-            <div class="report-list spaces-color col-md-3">
-                <h3><i class="fas fa-building fa-xs"></i> Workstations Reports</h3>
-                    <ul>
-                        <li>
-                        <a asp-action="WorkstationReport">View All <span style="white-space: nowrap;">Workstations <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                        </li>
-                    </ul> 
-            </div>
+        <section class="min-w-0 space-y-3" aria-label="Workstations reports">
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="building-office-2" class="size-5"></hero-icon>Workstations</h2>
+            <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="WorkstationReport">All workstations<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+            </ul>
+        </section>
         }
         @if (Model.Contains(Role.Codes.AccessMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
         {
-            <div class="report-list access-color col-md-3">
-                <h3><i class="fas fa-id-card fa-xs"></i> Access Reports</h3>
-                <ul>
-                    <li>
-                        <a asp-action="AccessReport">View All <span style="white-space: nowrap;">Access <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
-                </ul>
-            </div>
+        <section class="min-w-0 space-y-3" aria-label="Access reports">
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="identification" class="size-5"></hero-icon>Access</h2>
+            <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="AccessReport">All access<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+            </ul>
+        </section>
         }
-        
         @if (Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
         {
-            <div class="report-list keys-color col-md-3">
-                <h3><i class="fas fa-key fa-xs"></i> Keys Reports</h3>
-                <ul>
-                    <li>
-                        <a asp-action="KeyReport">View All <span style="white-space: nowrap;">Keys <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
-                    <li>
-                        <a asp-action="KeyWithSerialReport">Keys With <span style="white-space: nowrap;">Serials <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
-                    <li>
-                        <a asp-action="KeyWithSpaceReport">Keys With <span style="white-space: nowrap;">Spaces <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
-                </ul>
-            </div>
+        <section class="min-w-0 space-y-3" aria-label="Keys reports">
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="key" class="size-5"></hero-icon>Keys</h2>
+            <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="KeyReport">All keys<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="KeyWithSerialReport">Keys with serials<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="KeyWithSpaceReport">Keys with spaces<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+            </ul>
+        </section>
         }
         @if (Model.Contains(Role.Codes.DocumentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
         {
-                <div class="report-list documents-color col-md-3">
-                    <h3><i class="fas fa-file-alt fa-xs"></i> Documents Reports</h3>
-                    <ul>
-                        <li>
-                            <a asp-action="PeopleWithIncompleteDocuments">People with Unsigned <span style="white-space: nowrap;">Documents <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                        </li>
-                        <li>
-                            <a asp-action="CompletedDocuments">Completed <span style="white-space: nowrap;">Documents <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                        </li>
-                    </ul>
-                </div>
+        <section class="min-w-0 space-y-3" aria-label="Documents reports">
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="document-text" class="size-5"></hero-icon>Documents</h2>
+            <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="PeopleWithIncompleteDocuments">People with unsigned documents<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="CompletedDocuments">Completed documents<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
+            </ul>
+        </section>
         }
-        <div class="report-list general-color col-md-3">
-            <h3><i class="fas fa-list fa-xs"></i> General Reports</h3>
-            <ul>
-                <li>
-                    <a asp-action="ExpiringItems">Expiring <span style="white-space: nowrap;">Items <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                </li>
+        <section class="min-w-0 space-y-3" aria-label="General reports">
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="list-bullet" class="size-5"></hero-icon>General</h2>
+            <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="ExpiringItems">Expiring items<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
                 @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin) || Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.SpaceMaster))
                 {
-                    <li>
-                        <a asp-action="UnAcceptedItems">Items Pending <span style="white-space: nowrap;">Acceptance <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="UnAcceptedItems">Items pending acceptance<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
                 }
-                <li>
-                    <a asp-action="InActiveSpaces">InActive Spaces With <span style="white-space: nowrap;">Assets <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                </li>
+                <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="InActiveSpaces">Inactive spaces with assets<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
             </ul>
-            </div>
-        </div>
-      </div>
+        </section>
     </div>
+</div>

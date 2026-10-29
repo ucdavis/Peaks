@@ -1,6 +1,7 @@
+import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
-import { Highlighter } from 'react-bootstrap-typeahead';
+import { Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -35,7 +36,7 @@ const SearchEquipment = (props: IProps) => {
             labelKey='label'
             allowNew={false}
             renderMenuItemChildren={(option: any, props, index) => (
-              <div className={!!option.equipment.assignment ? 'disabled' : ''}>
+              <div className={!!option.equipment.assignment ? 'opacity-40' : ''}>
                 <div>
                   <Highlighter key='equipment.name' search={props.text}>
                     {option.equipment.name}
@@ -75,8 +76,8 @@ const SearchEquipment = (props: IProps) => {
         </div>
         <div>or</div>
         <div>
-          <Button color='link' onClick={createNew}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Create New
+          <Button color='asset' type='button' size='sm' onClick={createNew}>
+            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Create New
             Equipment
           </Button>
         </div>

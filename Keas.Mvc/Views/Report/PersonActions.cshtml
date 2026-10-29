@@ -4,45 +4,46 @@
     ViewData["Title"] = "Person Actions";
 }
 
-    <div class="card people-color">
-      <div class="card-header-people">
-        <div class="card-head">
-          <h2>Person Actions</h2>
-
+<div class="space-y-6 pb-8">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Person Actions</h1>
         </div>
-      </div>
-        <div class="card-content">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="row align-items-end">
-            <div class="col-sm-4">
-            <form asp-action="PersonActions" method="get">
-                      
-                        <h3>Filters</h3>
-                          <div class="form-group">
-                              <label asp-for="StartDate" class="control-label"></label>
-                              <input id="start" asp-for="StartDate" class="form-control" />
-                              <span asp-validation-for="StartDate" class="text-danger"></span>
-                          </div>
-                           <div class="form-group">
-                              <label asp-for="EndDate" class="control-label"></label>
-                              <input id="end" asp-for="EndDate" class="form-control" />
-                              <span asp-validation-for="EndDate" class="text-danger"></span>
-                          </div>
-                          <div class="form-group">
-                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
-                          </div>
-                          </form>
-                          </div>
-                      
+    </div>
+    <div class="space-y-4">
+        <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+                <div class="grid items-start gap-6 lg:grid-cols-2">
+                    <div class="min-w-0 space-y-3">
+                    <form class="space-y-5" asp-action="PersonActions" method="get">
 
-                </div>
-                <table id="persons-acted-on" class="table dataTable">
+                                <h2 class="m-0 text-lg font-semibold">Filters</h2>
+                                  <div class="space-y-2">
+                                      <label asp-for="StartDate" class="block text-sm font-semibold"></label>
+                                      <input id="start" asp-for="StartDate" class="input w-full" />
+                                      <span asp-validation-for="StartDate" class="text-sm text-error"></span>
+                                  </div>
+                                   <div class="space-y-2">
+                                      <label asp-for="EndDate" class="block text-sm font-semibold"></label>
+                                      <input id="end" asp-for="EndDate" class="input w-full" />
+                                      <span asp-validation-for="EndDate" class="text-sm text-error"></span>
+                                  </div>
+                                  <div class="space-y-2">
+                                    <input type="submit" value="Refresh Report" class="btn btn-primary" />
+                                  </div>
+                                  </form>
+                                  </div>
+
+                        </div>
+    </div>
+    <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4 sm:p-6">
+        <table id="persons-acted-on" class="table dataTable">
         <thead>
         <tr>
             <th>Person</th>
             <th>Person Email</th>
             <th>Actor</th>
-            <th>Date</th>           
+            <th>Date</th>
             <th>Action</th>
             <th>Notes</th>
         </tr>
@@ -54,20 +55,16 @@
                 <td>@item.PersonName</td>
                 <td>@item.PersonEmail</td>
                 <td>@item.ActorName (@item.ActorId)</td>
-                <td>@item.ActionDate.ToPacificTime()</td>               
+                <td>@item.ActionDate.ToPacificTime()</td>
                 <td>@item.Action</td>
                 <td>@item.Notes</td>
             </tr>
         }
-        
+
         </tbody>
     </table>
-
-        </div>
     </div>
-
-
-
+</div>
 
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")
@@ -75,8 +72,8 @@
 
 @section Scripts {
     @await Html.PartialAsync("_CommonReportScripts")
-    
-    
+
+
     <script type="text/javascript">
         $('#start').datepicker({
             uiLibrary: 'bootstrap4',
@@ -92,7 +89,6 @@
             ],
             "order": [[ 3, "desc" ]]
         });
-       
-    </script>                          
-}
 
+    </script>
+}

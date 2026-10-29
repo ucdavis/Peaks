@@ -1,8 +1,10 @@
+import { TrashIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { IEquipmentAttribute } from '../../models/Equipment';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
+  spacious?: boolean;
   attribute: IEquipmentAttribute;
   commonKeys: string[];
   disabledEdit: boolean;
@@ -13,10 +15,6 @@ interface IProps {
 
 const EquipmentAttribute = (props: IProps) => {
   const renderTypeahead = () => {
-    const style =
-      !!props.attribute.value && !props.attribute.key
-        ? 'form-control is-invalid'
-        : 'form-control';
     return (
       <SearchDefinedOptions
         id={`attribute-${props.index}`} // for accessibility
@@ -31,9 +29,8 @@ const EquipmentAttribute = (props: IProps) => {
             props.changeProperty(props.index, 'key', null);
           }
         }}
-        inputProps={{
-          className: style
-        }}
+        isInvalid={!!props.attribute.value && !props.attribute.key}
+        inputProps={{ 'aria-label': `Attribute key ${props.index + 1}` }}
       />
     );
   };
@@ -42,7 +39,7 @@ const EquipmentAttribute = (props: IProps) => {
     return (
       <input
         type='text'
-        className='form-control'
+        className='input w-full'
         disabled={props.disabledEdit}
         value={props.attribute.key}
       />
@@ -59,7 +56,8 @@ const EquipmentAttribute = (props: IProps) => {
         <td>
           <input
             type='text'
-            className='form-control'
+            className='input w-full'
+            aria-label={`Attribute value ${props.index + 1}`}
             disabled={props.disabledEdit}
             value={props.attribute.value}
             onChange={e =>
@@ -71,10 +69,11 @@ const EquipmentAttribute = (props: IProps) => {
           <td>
             <button
               type='button'
-              className='btn btn-outline-danger'
+              className='btn btn-ghost btn-square btn-sm text-error'
+              aria-label={`Remove attribute ${props.attribute.key || props.index + 1}`}
               onClick={() => props.onRemove(props.index)}
             >
-              <i className='fas fa-trash' />
+              <TrashIcon data-icon="trash" className='hero-icon size-5' />
             </button>
           </td>
         )}

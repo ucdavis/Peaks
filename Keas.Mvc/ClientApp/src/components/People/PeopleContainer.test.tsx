@@ -135,7 +135,7 @@ describe('People Container', () => {
     });
 
     //Data is sorted by last name
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('.asset-table tbody tr');
 
     let foundIt = false;
     matches.forEach(function (match) {
@@ -168,7 +168,7 @@ describe('People Container', () => {
         { container }
       );
     });
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('.asset-table tbody tr');
 
     expect(matches.length).toBe(4); //Should this be 3? Or is the inactive ignored and only used when queried by the api?
   });
@@ -191,10 +191,14 @@ describe('People Container', () => {
       );
     });
 
+    expect(container.querySelector('.people-color')).not.toHaveClass('card');
+
     // should show person contact info
-    const personContent = container.querySelector('.person-col').textContent;
+    const personContent = container.querySelector('[aria-label="Contact details"]').textContent;
 
     expect(personContent).toContain('chuck@testpilot.gov');
+    expect(container.querySelector('a[href="mailto:chuck@testpilot.gov"]')).toBeInTheDocument();
+    expect(container.querySelector('#person-details-heading')).toHaveTextContent('Chuck');
 
     // should show the access container
     const accessAssignmentContainerContent = container.querySelector(

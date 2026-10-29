@@ -1,6 +1,6 @@
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext } from 'react';
-import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IPerson } from '../../models/People';
 import { DateUtil } from '../../util/dates';
@@ -9,103 +9,149 @@ interface IProps {
   person: IPerson;
 }
 
-const BioContainer = (props: IProps) => {
+const Detail = ({
+  label,
+  children
+}: {
+  label: string;
+  children: React.ReactNode;
+}) => (
+  <div className='grid grid-cols-[7rem_minmax(0,1fr)] items-baseline gap-x-3 gap-y-1 text-sm'>
+    <dt className='text-base-content/60'>{label}</dt>
+    <dd className='m-0 min-w-0 break-words'>{children}</dd>
+  </div>
+);
+
+const BioContainer = ({ person }: IProps) => {
   const context = useContext(Context);
+  const hasEmployment =
+    person.title || person.category || person.startDate || person.endDate;
+  const hasContact =
+    person.email ||
+    person.userId ||
+    person.homePhone ||
+    person.teamPhone ||
+    person.supervisor ||
+    person.isSupervisor;
+  const tags = Array.from(
+    new Set(
+      (person.tags || '')
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(Boolean)
+    )
+  );
 
   return (
-    <div className='card-content person-card'>
-      <div className='row justify-content-between'>
-        {(props.person.title ||
-          props.person.category ||
-          props.person.startDate ||
-          props.person.endDate ||
-          props.person.supervisor) && (
-          <div className='person-col'>
-            <h4>Employment Details</h4>
-            <div className='row justify-content-between'>
-              <div className='person-label-list'>
-                {props.person.title && <p className='person-label'>Title</p>}
-                {props.person.category && <p>Category</p>}
-                {props.person.startDate && (
-                  <p className='person-label'>Start Date</p>
-                )}
-                {props.person.endDate && (
-                  <p className='person-label'>End Date</p>
-                )}
-              </div>
-              <div>
-                {props.person.title && <p>{props.person.title}</p>}
-                {props.person.category && <p>{props.person.category}</p>}
-                {props.person.startDate && (
-                  <p>{DateUtil.formatExpiration(props.person.startDate)}</p>
-                )}
-
-                {props.person.endDate && (
-                  <p>{DateUtil.formatExpiration(props.person.endDate)}</p>
-                )}
-              </div>
-            </div>
-          </div>
+    <div className='card-body gap-6 p-5 sm:p-6'>
+      <div className='grid items-start gap-8 md:grid-cols-2 xl:grid-cols-3'>
+        {hasEmployment && (
+          <section
+            className='flex min-w-0 flex-col gap-4'
+            aria-label='Employment details'
+          >
+            <h3 className='m-0 text-base font-semibold'>Employment details</h3>
+            <dl className='m-0 grid gap-3'>
+              {person.title && <Detail label='Title'>{person.title}</Detail>}
+              {person.category && (
+                <Detail label='Category'>{person.category}</Detail>
+              )}
+              {person.startDate && (
+                <Detail label='Start date'>
+                  {DateUtil.formatExpiration(person.startDate)}
+                </Detail>
+              )}
+              {person.endDate && (
+                <Detail label='End date'>
+                  {DateUtil.formatExpiration(person.endDate)}
+                </Detail>
+              )}
+            </dl>
+          </section>
         )}
-        {(props.person.email ||
-          props.person.homePhone ||
-          props.person.teamPhone) && (
-          <div className='person-col'>
-            <h4>Contact Details</h4>
-            <div className='row justify-content-between'>
-              <div className='person-label-list'>
-                {props.person.email && <p className='person-label'>Email</p>}
-                {props.person.userId && <p className='person-label'>User Id</p>}
-                {props.person.homePhone && <p className='person-label'>Home</p>}
-                {props.person.teamPhone && <p className='person-label'>Team</p>}
-                {props.person.supervisor && (
-                  <p className='person-label'>Supervisor</p>
-                )}
-              </div>
-              <div>
-                {props.person.email && <p>{props.person.email}</p>}
-                {props.person.userId && <p>{props.person.userId}</p>}
-                {props.person.homePhone && <p>{props.person.homePhone}</p>}
-                {props.person.teamPhone && <p>{props.person.teamPhone}</p>}
-                {props.person.supervisor && (
-                  <p>{props.person.supervisor.name}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-        {props.person.tags && (
-          <div className='person-col'>
-            <h4>Tags</h4>
-            <p>{props.person.tags}</p>
-          </div>
-        )}
-      </div>
-      {props.person.isSupervisor && (
-        <div className='person-col'>
-          <h4>Supervisor</h4>
-          <p>
-            <a
-              href={`/${context.team.slug}/Report/SupervisorDirectReports/?personId=${props.person.id}`}
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              <Button color='link'>
-                <i
-                  className='fas fa-search fa-sm fa-fw mr-2'
+        {hasContact && (
+          <section className='flex min-w-0 flex-col gap-4' aria-label='Contact details'>
+            <h3 className='m-0 text-base font-semibold'>Contact details</h3>
+            <dl className='m-0 grid gap-3'>
+              {person.email && (
+                <Detail label='Email'>
+                  <a
+                    className='link link-hover'
+                    href={`mailto:${person.email}`}
+                  >
+                    {person.email}
+                  </a>
+                </Detail>
+              )}
+              {person.userId && (
+                <Detail label='User ID'>{person.userId}</Detail>
+              )}
+              {person.homePhone && (
+                <Detail label='Home phone'>
+                  <a
+                    className='link link-hover'
+                    href={`tel:${person.homePhone}`}
+                  >
+                    {person.homePhone}
+                  </a>
+                </Detail>
+              )}
+              {person.teamPhone && (
+                <Detail label='Team phone'>
+                  <a
+                    className='link link-hover'
+                    href={`tel:${person.teamPhone}`}
+                  >
+                    {person.teamPhone}
+                  </a>
+                </Detail>
+              )}
+              {person.supervisor && (
+                <Detail label='Supervisor'>{person.supervisor.name}</Detail>
+              )}
+            </dl>
+            {person.isSupervisor && (
+              <a
+                className='link link-hover inline-flex items-center gap-2 text-sm'
+                href={`/${context.team.slug}/Report/SupervisorDirectReports/?personId=${person.id}`}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                <MagnifyingGlassIcon
+                  className='size-4 shrink-0'
                   aria-hidden='true'
                 />
-                See who this person supervises
-              </Button>
-            </a>
+                View direct reports
+              </a>
+            )}
+          </section>
+        )}
+        {tags.length > 0 && (
+          <section className='flex min-w-0 flex-col gap-4' aria-label='Person tags'>
+            <h3 className='m-0 text-base font-semibold'>Tags</h3>
+            <div className='flex flex-wrap gap-2'>
+              {tags.map(tag => (
+                <span
+                  key={tag}
+                  className='badge badge-asset badge-soft h-auto max-w-full break-words py-2'
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+      {person.notes && (
+        <section
+          className='flex flex-col gap-3 border-t border-main-border pt-5'
+          aria-label='Person notes'
+        >
+          <h3 className='m-0 text-base font-semibold'>Notes</h3>
+          <p className='m-0 whitespace-pre-wrap break-words text-sm text-base-content/80'>
+            {person.notes}
           </p>
-        </div>
-      )}
-      {props.person.notes && (
-        <div className='notes-deets'>
-          <h4>Notes</h4>
-          <p className='card-text'>{props.person.notes}</p>
-        </div>
+        </section>
       )}
     </div>
   );

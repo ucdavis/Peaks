@@ -5,127 +5,172 @@
 
 @{
     ViewData["Title"] = "Home Page";
+    var teamSlug = TempData["TeamName"] as string;
+    var isTeamAdmin = (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded;
+    var hasAssetRole = (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded;
 }
-@if (Model.PendingItems)
-{
-    var currentSlug = TempData["TeamName"] as string;
-    if (Model.TeamsWithPendingAssignments.Any(a => a.Slug != null && a.Slug == currentSlug))
+
+<div class="space-y-8 pb-8">
+    <header class="space-y-2">
+        @await Html.PartialAsync("_ActiveTeamEyebrow")
+        <h1 class="m-0 text-3xl font-semibold text-base-content">Welcome to PEAKS, @User.GetNameClaim()</h1>
+        <p class="m-0 text-lg text-base-content/70">View your assignments and manage your team's assets.</p>
+    </header>
+
+    @if (Model.PendingItems)
     {
-        <div class="alert alert-warning">
-            <div class="row justify-content-between align-middle">
-                <p>You have pending items!</p>
-                <a asp-controller="Confirm" asp-action="Confirm">Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
-            </div>
-        </div>
-    }
-    if (Model.TeamsWithPendingAssignments.Any(a => a.Slug != currentSlug))
-    {
-        <h3>You have items pending in other teams:</h3>
-        foreach (var teamWithPending in Model.TeamsWithPendingAssignments.Where(a => a.Slug != currentSlug))
-        {
-            <div class="alert alert-warning">
-                <div class="row justify-content-between align-middle">
-                    <p>You have pending items in team @teamWithPending.Name!</p>
-                    <a href='@string.Format("/{0}/Confirm/Confirm", teamWithPending.Slug)'>Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
+        <section aria-label="Pending assignments">
+            @if (Model.TeamsWithPendingAssignments.Any(team => team.Slug != null && team.Slug == teamSlug))
+            {
+                <div class="alert alert-info mb-4">
+                    <hero-icon variant="outline" name="squares-2x2" class="size-6"></hero-icon>
+                    <div class="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                        <p class="m-0 font-bold">You have pending items!</p>
+                        <a asp-controller="Confirm" asp-action="Confirm" class="link link-hover inline-flex items-center gap-2">
+                            Go to Accept page <hero-icon variant="outline" name="arrow-right" class="size-4"></hero-icon>
+                        </a>
+                    </div>
                 </div>
-            </div>
-        }
+            }
+            @if (Model.TeamsWithPendingAssignments.Any(team => team.Slug != teamSlug))
+            {
+                <h2 class="mb-3 text-lg font-semibold">You have items pending in other teams:</h2>
+                @foreach (var team in Model.TeamsWithPendingAssignments.Where(team => team.Slug != teamSlug))
+                {
+                    <div class="alert alert-info mb-4">
+                        <hero-icon variant="outline" name="squares-2x2" class="size-6"></hero-icon>
+                        <div class="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                            <p class="m-0 font-bold">You have pending items in team @team.Name!</p>
+                            <a href="/@team.Slug/Confirm/Confirm" class="link link-hover inline-flex items-center gap-2">
+                                Go to Accept page <hero-icon variant="outline" name="arrow-right" class="size-4"></hero-icon>
+                            </a>
+                        </div>
+                    </div>
+                }
+            }
+        </section>
     }
-}
-<div class="card">
-    <div class="card-header-primary">
-        <div class="row justify-content-between">
-            <div class="card-head">
-                <h2>Welcome to Peaks, @User.GetNameClaim()</h2>
-            </div>
-        </div>
-    </div>
-    <div class="card-content">
-        <div class="row justify-content-between">
-            <div class="col-md-6">
-                <p style="margin-top:0px;">You are viewing peaks with the team: <u>@TempData["TeamName"]</u></p>
-                <p><b>Quick Actions</b></p>
-                <ul class="quick-actions list-group">
 
-                    <li class="list-group-item">
-                        <a asp-controller="Confirm" asp-action="MyStuff">MyStuff</a>
-                    </li>
-                    @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
-                    {
-                        <li class="list-group-item">
-                            <a asp-controller="TeamAdmin">Administer Team</a>
-                        </li>
+    <section aria-labelledby="quick-actions-heading" class="space-y-4">
+        <h2 id="quick-actions-heading" class="mb-2 text-2xl font-semibold text-base-content">Quick Actions</h2>
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <a asp-controller="Confirm" asp-action="MyStuff"
+               class="group block rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                <div class="mb-4 flex items-start justify-between gap-3">
+                    <hero-icon variant="outline" name="briefcase" class="size-6"></hero-icon>
+                    <hero-icon name="arrow-right"
+                               class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
+                </div>
+                <h3 class="m-0 text-xl font-semibold">MyStuff</h3>
+                <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">View your assigned keys, equipment, access,
+                    workstations, and documents.</p>
+                </a>
+                @if (isTeamAdmin)
+                {
+                    <a asp-controller="TeamAdmin"
+                       class="group block rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                        <div class="mb-4 flex items-start justify-between gap-3">
+                            <hero-icon variant="outline" name="trophy" class="size-6"></hero-icon>
+                            <hero-icon name="arrow-right"
+                                       class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
+                        </div>
+                        <h3 class="m-0 text-xl font-semibold">Administer Team</h3>
+                        <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">Manage your team's settings, permissions,
+                            and imports.</p>
+                        </a>
                     }
-                    @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded)
+                    @if (hasAssetRole)
                     {
-                        <li class="list-group-item">
-                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "People")'>Team Assets</a>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="row justify-content-between">
-                                <span style="margin-left:12px;">View</span>
-                                <div style="margin-right:-12px;" class="list-peaks-buttons">
-                                    <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "people")'>
-                                        <i class="fas fa-users"></i>
-                                    </a>
-                                    @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
-                                    {
-                                        <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "equipment")'>
-                                            <i class="fas fa-hdd"></i>
-                                        </a>
-                                        <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "access")'>
-                                            <i class="fas fa-address-card"></i>
-                                        </a>
-                                        <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "keys")'>
-                                            <i class="fas fa-key"></i>
-                                        </a>
-                                        <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "spaces")'>
-                                            <i class="fas fa-building"></i>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.EquipMasterAccess)).Succeeded)
-                                        {
-                                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "equipment")'>
-                                                <i class="fas fa-hdd"></i>
-                                            </a>
-                                        }
-                                        @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AccessMasterAccess)).Succeeded)
-                                        {
-                                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "access")'>
-                                                <i class="fas fa-address-card"></i>
-                                            </a>
-                                        }
-                                        @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.KeyMasterAccess)).Succeeded)
-                                        {
-                                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "keys")'>
-                                                <i class="fas fa-key"></i>
-                                            </a>
-                                        }
-                                        @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.EquipMasterAccess)).Succeeded ||
-                                       (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AccessMasterAccess)).Succeeded ||
-                                       (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.KeyMasterAccess)).Succeeded ||
-                                       (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.SpaceMasterAccess)).Succeeded)
-                                        {
-                                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "spaces")'>
-                                                <i class="fas fa-building"></i>
-                                            </a>
-                                        }
-                                    }
-                                </div>
+                        <a href="/@teamSlug/People"
+                           class="group block rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                            <div class="mb-4 flex items-start justify-between gap-3">
+                                <hero-icon variant="outline" name="squares-2x2" class="size-6"></hero-icon>
+                                <hero-icon name="arrow-right"
+                                           class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
                             </div>
-                        </li>
-                    }
-                </ul>
+                            <h3 class="m-0 text-xl font-semibold">Team Assets</h3>
+                            <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">Browse your team's people and their asset
+                                assignments.</p>
+                            </a>
+                        }
+                    </div>
+                </section>
+
+                @if (hasAssetRole)
+                {
+                    var canViewEquipment = isTeamAdmin || (await AuthorizationService.AuthorizeAsync(User,
+                AccessCodes.Codes.EquipMasterAccess)).Succeeded;
+                    var canViewAccess = isTeamAdmin || (await AuthorizationService.AuthorizeAsync(User,
+                AccessCodes.Codes.AccessMasterAccess)).Succeeded;
+                    var canViewKeys = isTeamAdmin || (await AuthorizationService.AuthorizeAsync(User,
+                AccessCodes.Codes.KeyMasterAccess)).Succeeded;
+                    var canViewSpaces = canViewEquipment || canViewAccess || canViewKeys || (await
+                AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.SpaceMasterAccess)).Succeeded;
+
+                    <section aria-labelledby="browse-assets-heading" class="space-y-4">
+                        <h2 id="browse-assets-heading" class="m-0 text-2xl font-semibold text-base-content">Browse Assets</h2>
+                        <ul class="m-0 max-w-2xl list-none divide-y divide-main-border p-0">
+                            <li class="people-color">
+                                <a href="/@teamSlug/people"
+                                   class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                                    <hero-icon variant="outline" name="users" class="size-5 text-[var(--asset-color)]"></hero-icon>
+                                    <span class="font-semibold group-hover:underline group-hover:underline-offset-4">People</span>
+                                    <hero-icon name="arrow-right"
+                                               class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
+                                </a>
+                            </li>
+                            @if (canViewEquipment)
+                            {
+                                <li class="equipment-color">
+                                    <a href="/@teamSlug/equipment"
+                                       class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                                        <hero-icon variant="outline" name="computer-desktop"
+                                                   class="size-5 text-[var(--asset-color)]"></hero-icon>
+                                        <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Equipment</span>
+                                        <hero-icon name="arrow-right"
+                                                   class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
+                                    </a>
+                                </li>
+                            }
+                            @if (canViewAccess)
+                            {
+                                <li class="access-color">
+                                    <a href="/@teamSlug/access"
+                                       class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                                        <hero-icon variant="outline" name="identification"
+                                                   class="size-5 text-[var(--asset-color)]"></hero-icon>
+                                        <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Access</span>
+                                        <hero-icon name="arrow-right"
+                                                   class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
+                                    </a>
+                                </li>
+                            }
+                            @if (canViewKeys)
+                            {
+                                <li class="keys-color">
+                                    <a href="/@teamSlug/keys"
+                                       class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                                        <hero-icon variant="outline" name="key" class="size-5 text-[var(--asset-color)]"></hero-icon>
+                                        <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Keys</span>
+                                        <hero-icon name="arrow-right"
+                                                   class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
+                                    </a>
+                                </li>
+                            }
+                            @if (canViewSpaces)
+                            {
+                                <li class="spaces-color">
+                                    <a href="/@teamSlug/spaces"
+                                       class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                                        <hero-icon variant="outline" name="building-office-2"
+                                                   class="size-5 text-[var(--asset-color)]"></hero-icon>
+                                        <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Spaces</span>
+                                        <hero-icon name="arrow-right"
+                                                   class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </section>
+                }
             </div>
-            <div class="col-md-4">
-                <img class="img-fluid" src="/media/people-working-flat-design.png" alt="Flat design graphic of people working">
-            </div>
-        </div>
-
-
-
-
-    </div>
-</div>

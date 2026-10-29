@@ -1,7 +1,10 @@
+import { AssetActions } from '../Shared/AssetSummary';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Form, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Form } from 'reactstrap';
 import {
   equipmentSchema,
   IEquipment,
@@ -153,22 +156,14 @@ const AssignEquipment = (props: IProps) => {
     <Modal
       isOpen={props.modal}
       toggle={confirmClose}
-      size='lg'
       className='equipment-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>
-          {props.selectedEquipment || props.person
+      <ModalHeading>{props.selectedEquipment || props.person
             ? 'Assign Equipment'
-            : 'Add Equipment'}
-        </h2>
-        <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
-        </Button>
-      </div>
+            : 'Add Equipment'}</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <Form>
+        <div className='space-y-6'>
+          <Form className='space-y-6'>
             <AssignPerson
               person={person}
               label='Assign To'
@@ -190,7 +185,7 @@ const AssignEquipment = (props: IProps) => {
               />
             )}
             {!equipment && (
-              <div className='form-group'>
+              <div className='space-y-2'>
                 <SearchEquipment
                   selectedEquipment={equipment}
                   onSelect={onSelected}
@@ -203,15 +198,18 @@ const AssignEquipment = (props: IProps) => {
             {equipment &&
             !equipment.teamId && ( // if we are creating a new equipment, edit properties
                 <div>
-                  <div className='row justify-content-between'>
-                    <h3>Create New Equipment</h3>
-                    <Button color='link' onClick={onDeselected}>
-                      Clear{' '}
-                      <i className='fas fa-times fa-sm' aria-hidden='true' />
-                    </Button>
+                  <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+                    <h3 className="text-lg font-semibold">Create New Equipment</h3>
+                    <AssetActions>
+                      <Button color='link' onClick={onDeselected}>
+                        Clear{' '}
+                        <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
+                      </Button>
+                    </AssetActions>
                   </div>
 
                   <EquipmentEditValues
+            spacious
                     selectedEquipment={equipment}
                     commonAttributeKeys={props.commonAttributeKeys}
                     changeProperty={changeProperty}
@@ -226,15 +224,18 @@ const AssignEquipment = (props: IProps) => {
               )}
             {equipment && !!equipment.teamId && (
               <div>
-                <div className='row justify-content-between'>
-                  <h3>Assign Existing Equipment</h3>
-                  <Button color='link' onClick={onDeselected}>
-                    Clear{' '}
-                    <i className='fas fa-times fa-sm' aria-hidden='true' />
-                  </Button>
+                <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+                  <h3 className="text-lg font-semibold">Assign Existing Equipment</h3>
+                  <AssetActions>
+                    <Button color='link' onClick={onDeselected}>
+                      Clear{' '}
+                      <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
+                    </Button>
+                  </AssetActions>
                 </div>
 
                 <EquipmentEditValues
+            spacious
                   selectedEquipment={equipment}
                   commonAttributeKeys={props.commonAttributeKeys}
                   disableEditing={true}
@@ -249,11 +250,11 @@ const AssignEquipment = (props: IProps) => {
       </ModalBody>
       <ModalFooter>
         <Button
-          color='primary'
+          color='asset'
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          {equipment?.assignment ? 'Save changes' : 'Assign'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

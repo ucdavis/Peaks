@@ -1,3 +1,5 @@
+import { AssetActions, AssetSummary, DisplayField } from '../Shared/AssetSummary';
+import { LinkIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IKey } from '../../models/Keys';
@@ -56,47 +58,42 @@ const KeySerialEditValues = (props: IProps) => {
 
   const renderEditKeySerial = () => {
     return !props.person ? (
-      <Button color='link' onClick={() => props.openEditModal(keySerial)}>
-        <i className='fas fa-edit fa-xs' /> Edit Serial
+      <Button color='asset' size='sm' type='button' onClick={() => props.openEditModal(keySerial)}>
+        <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' /> Edit Serial
       </Button>
     ) : null;
   };
 
+  if (props.disableEditing) {
+    return <AssetSummary title='Key details' fields={[
+      ['Key name', keySerial.key.name], ['Key code', keySerial.key.code],
+      ['Key serial number', numberValue], ['Status', statusValue]
+    ]} notes={keySerial.notes} actions={<>
+      {props.openEditModal && !props.person && renderEditKeySerial()}
+      {props.goToKeyDetails && <button type='button' className='btn btn-asset btn-outline btn-sm' onClick={goToKeyDetails}><LinkIcon className='size-4' aria-hidden='true' />View Key Details</button>}
+    </>} />;
+  }
+
   return (
     <div>
-      <div className='row justify-content-between'>
-        <h3>Key Details</h3>
-        {props.disableEditing && props.openEditModal && renderEditKeySerial()}
-      </div>
-      <div className='wrapperasset'>
-        <FormGroup>
-          <Label for='key.name'>Key Name</Label>
-          <Input
-            type='text'
-            className='form-control'
-            readOnly={true}
-            value={props.keySerial.key.name ? props.keySerial.key.name : ''}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for='key.code'>Key Code</Label>
-          <Input
-            type='text'
-            className='form-control'
-            readOnly={true}
-            value={props.keySerial.key.code}
-          />
-        </FormGroup>
+      <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+        <h3 className="text-lg font-semibold">Key Details</h3>
         {props.goToKeyDetails && (
-          <Button color='link' onClick={() => goToKeyDetails()}>
-            <i className='fas fa-link fa-xs' /> View Key Details
-          </Button>
+          <AssetActions>
+            <button type='button' className='btn btn-asset btn-outline btn-sm' onClick={goToKeyDetails}>
+              <LinkIcon className='size-4' aria-hidden='true' /> View Key Details
+            </button>
+          </AssetActions>
         )}
+      </div>
+      <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
+        <dl><DisplayField label='Key Name'>{props.keySerial.key.name ? props.keySerial.key.name : ''}</DisplayField></dl>
+        <dl><DisplayField label='Key Code'>{props.keySerial.key.code}</DisplayField></dl>
         <FormGroup>
           <Label for='number'>Key Serial Number</Label>
           <Input
             type='text'
-            className='form-control'
+            className='input w-full'
             readOnly={props.disableEditing}
             value={numberValue}
             onChange={onChangeNumber}
@@ -111,7 +108,7 @@ const KeySerialEditValues = (props: IProps) => {
           <Label>Status</Label>
           <Input
             type='select'
-            className='form-control'
+            className='select w-full'
             value={statusValue}
             onChange={onChangeStatus}
             disabled={props.disableEditing}
@@ -127,7 +124,7 @@ const KeySerialEditValues = (props: IProps) => {
           <Label>Notes</Label>
           <Input
             type='textarea'
-            className='form-control'
+            className='textarea min-h-28 w-full'
             disabled={props.disableEditing}
             value={props.keySerial.notes || ''}
             onChange={e => props.changeProperty('notes', e.target.value)}
@@ -139,7 +136,7 @@ const KeySerialEditValues = (props: IProps) => {
         </FormGroup>
       </div>
       {error && error.message && !error.path && (
-        <span className='color-unitrans'>
+        <span className='text-error'>
           {
             error.message // if we have a non-specific error
           }

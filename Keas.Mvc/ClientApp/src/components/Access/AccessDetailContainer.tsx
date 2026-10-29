@@ -1,8 +1,12 @@
-﻿import * as React from 'react';
+import {
+  ArrowLeftIcon,
+  PencilSquareIcon,
+  TrashIcon
+} from '@heroicons/react/24/outline';
+import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import AccessAssignmentContainer from './AccessAssignmentContainer';
@@ -86,8 +90,17 @@ const AccessDetailContainer = (props: IProps) => {
     props.updateSelectedAccess(updatedAccess);
   };
 
+  const tags = Array.from(
+    new Set(
+      (selectedAccess.tags || '')
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(Boolean)
+    )
+  );
+
   return (
-    <div>
+    <div className='space-y-6'>
       {shouldOpenEditModal ? (
         <EditAccess
           key={`edit-access-${props.selectedAccess.id}`}
@@ -98,47 +111,57 @@ const AccessDetailContainer = (props: IProps) => {
           tags={context.tags}
         />
       ) : null}
-      <div className='mb-3'>
-        <Button color='link' onClick={props.goBack}>
-          <i className='fas fa-arrow-left fa-xs' /> Return to Table
-        </Button>
-      </div>
-      <div className='d-flex flex-row flex-wrap-reverse justify-content-between'>
-        <h2>Details for {selectedAccess.name}</h2>
-        <div>
-          <Button
-            color='link'
-            onClick={() => {
-              setShouldOpenEditModal(true);
-            }}
-          >
-            <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
-            Edit Access
-          </Button>
-          <Button
-            color='link'
-            onClick={() => {
-              props.openDeleteModal(selectedAccess);
-            }}
-          >
-            <i className='fas fa-trash fa-sm fa-fw mr-2' aria-hidden='true' />
-            Delete Access
-          </Button>
+      <button
+        type='button'
+        className='btn btn-sm btn-ghost'
+        onClick={props.goBack}
+      >
+        <ArrowLeftIcon className='size-4' aria-hidden='true' /> Return to table
+      </button>
+      <header className='space-y-4'>
+        <div className='flex flex-wrap items-start justify-between gap-4'>
+          <div className='min-w-0 space-y-1'>
+            <h1 className='m-0 break-words text-2xl font-semibold'>
+              {selectedAccess.name}
+            </h1>
+          </div>
+          <div className='flex flex-wrap items-center gap-2'>
+            <button
+              type='button'
+              className='btn btn-sm btn-asset btn-outline'
+              onClick={() => setShouldOpenEditModal(true)}
+            >
+              <PencilSquareIcon className='size-4' aria-hidden='true' />
+              Edit Access
+            </button>
+            <button
+              type='button'
+              className='btn btn-sm btn-error btn-outline'
+              onClick={() => props.openDeleteModal(selectedAccess)}
+            >
+              <TrashIcon className='size-4' aria-hidden='true' />
+              Delete Access
+            </button>
+          </div>
         </div>
-      </div>
-      {selectedAccess.tags && (
-        <p>
-          <i className='fas fa-tags mr-2' aria-hidden='true' />
-          {selectedAccess.tags}
-        </p>
-      )}
-      {selectedAccess.notes && (
-        <p>
-          <i className='fas fa-comment-alt mr-2' aria-hidden='true' />
-          {selectedAccess.notes}
-        </p>
-      )}
-      <br />
+        {tags.length > 0 && (
+          <div className='flex flex-wrap gap-2' aria-label='Access tags'>
+            {tags.map(tag => (
+              <span
+                key={tag}
+                className='badge badge-asset badge-soft h-auto max-w-full break-words py-2'
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+        {selectedAccess.notes && (
+          <p className='m-0 whitespace-pre-wrap break-words text-sm text-base-content/80'>
+            {selectedAccess.notes}
+          </p>
+        )}
+      </header>
       <AccessAssignmentContainer
         access={props.selectedAccess}
         onAssignSuccess={onAssignSuccess}

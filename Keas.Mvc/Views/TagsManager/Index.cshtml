@@ -1,74 +1,35 @@
 @model IEnumerable<Keas.Core.Domain.Tag>
-
-@{
-    ViewData["Title"] = "Tags";
+@{ ViewData["Title"] = "Team tags"; }
+<div class="space-y-6 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Team tags</h1>
+            <p class="m-0 text-base-content/70">Manage the tags used to organize people and assets.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-controller="TeamAdmin" asp-action="Index"><hero-icon name="arrow-left" class="size-4"></hero-icon>Team settings</a><a class="btn btn-primary" asp-action="Create"><hero-icon name="plus" class="size-4"></hero-icon>Create tag</a></div>
+    </div>
+    <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4">
+        <table class="table" id="tags-table">
+            <thead><tr><th scope="col">Name</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr><td class="font-semibold">@item.Name</td><td><div class="flex justify-end gap-2">
+                    <a class="btn btn-sm btn-ghost" asp-action="Edit" asp-route-id="@item.Id" aria-label="Edit @item.Name">Edit</a>
+                    <a class="btn btn-sm btn-ghost text-error" asp-action="Delete" asp-route-id="@item.Id" aria-label="Delete @item.Name">Delete</a>
+                </div></td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
 }
-
-
-<div class="card">
-  <div class="card-header-primary">
-    <div class="card-head">
-      <div class="row justify-content-between">
-        <h2>Tags</h2>
-        <a class="btn btn-link" asp-action="Create"><i class="fas fa-plus fa-sm" aria-hidden="true" /></i> Create New</a>  
-      </div>
-
-
-</div>
-
-  </div>
-<div class="card-content">
-    <table class="table">
-        <thead>
-            <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Name)
-                    </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-    @foreach (var item in Model) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            </tr>
-    }
-        </tbody>
-    </table>
-</div>
-
-</div>
-
-
-
-
-
-@section Styles
-{
-    @{ await Html.RenderPartialAsync("_ReportStylePartial");}
-}
-
-@section Scripts
-{
-    @{ await Html.RenderPartialAsync("_ReportScriptsPartial");}
-    <script type="text/javascript">
-        $(function () {
-            $(".table").dataTable({                
-                "columnDefs": [
-                    {
-                        targets: -1,
-                        className: 'dt-body-right',
-                        sortable: false,
-                    },
-
-                ]
-            });
-        });
+@section Scripts {
+    @await Html.PartialAsync("_CommonReportScripts")
+    <script>
+        $('#tags-table').DataTable({columnDefs: [{ targets: -1, orderable: false }]});
     </script>
 }

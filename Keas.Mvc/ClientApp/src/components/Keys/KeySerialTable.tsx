@@ -1,5 +1,5 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import * as React from 'react';
-import { Button } from 'reactstrap';
 import { IKeySerial } from '../../models/KeySerials';
 import { DateUtil } from '../../util/dates';
 import { ReactTableUtil } from '../../util/tableUtil';
@@ -50,12 +50,10 @@ const KeySerialTable = (props: IProps) => {
     () => [
       {
         cell: data => (
-          <Button
-            color='link'
+          <AssetDetailsLink
+            path={`keys/details/${data.row.original.key.id}/keyserials/details/${data.row.original.id}`}
             onClick={() => props.showDetails(data.row.original)}
-          >
-            Details
-          </Button>
+          />
         ),
         header: ' '
       },

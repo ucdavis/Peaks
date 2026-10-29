@@ -1,6 +1,8 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IKey, keySchema } from '../../models/Keys';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import KeyEditValues from './KeyEditValues';
@@ -83,17 +85,11 @@ const EditKey = (props: IProps) => {
     <Modal
       isOpen={props.modal}
       toggle={confirmClose}
-      size='lg'
       className='keys-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>Edit Key</h2>
-        <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
-        </Button>
-      </div>
+      <ModalHeading>Edit Key</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
+        <div className='space-y-6'>
           <form ref={formRef}>
             <KeyEditValues
               selectedKey={key}
@@ -107,11 +103,11 @@ const EditKey = (props: IProps) => {
       </ModalBody>
       <ModalFooter>
         <Button
-          color='primary'
+          color='asset'
           onClick={editSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          Save changes {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

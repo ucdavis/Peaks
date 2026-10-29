@@ -5,44 +5,43 @@
     ViewBag.Title = "Equipment";
 }
 
-<a asp-action="Index" asp-route-id="@Model.Group.Id" class="btn btn-link">Back to Group Home</a>
-
-<div class="card equipment-color">
-    <div class="card-header-equipment">
-        <div class="card-head">
-            <h2>Group: @Model.Group.Name</h2>
-            <h3>Equipment Report</h3>
+<div class="space-y-6 pb-8">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            <p class="m-0 text-sm font-semibold uppercase tracking-wide text-base-content/60">@Model.Group.Name</p>
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Equipment Report</h1>
         </div>
+        <a asp-action="Index" asp-route-id="@Model.Group.Id" class="btn btn-ghost">Back to Group Home</a>
     </div>
-    <div class="card-content">
-        <form asp-action="EquipmentReport" method="get">
-            <div class="row align-items-start">
-                <div class="col-md-6 col-lg-4">
-                    <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
-                    <ul>
-                        <li>
-                            To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).
-                        </li>
-                        <li>
-                            If you have filtered the report with the Search feature, only the filtered results will be exported.
-                        </li>
-                        <li>
-                            You can filter the table with the data that isn't displayed on the screen (such as notes).
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <h3>Filters</h3>
-                    <div class="form-group">
-                        <label asp-for="HideInactive" class="form-check-label"></label>
-                        <input asp-for="HideInactive" class="peaks-checkbox" />
+    <div class="space-y-4">
+        <form class="space-y-5" asp-action="EquipmentReport" method="get">
+                    <div class="grid items-start gap-6 lg:grid-cols-2">
+                        <div class="min-w-0 space-y-3">
+                            <h2 class="m-0 text-lg font-semibold"><hero-icon name="information-circle" class="size-4"></hero-icon> Instructions</h2>
+                            <ul class="m-0 list-disc space-y-1 ps-5 text-sm text-base-content/70">
+                                <li>
+                                    To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).
+                                </li>
+                                <li>
+                                    If you have filtered the report with the Search feature, only the filtered results will be exported.
+                                </li>
+                                <li>
+                                    You can filter the table with the data that isn't displayed on the screen (such as notes).
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="min-w-0 space-y-3">
+                            <h2 class="m-0 text-lg font-semibold">Filters</h2>
+                            <div class="space-y-2">
+                                <label asp-for="HideInactive" class="text-sm font-medium"></label>
+                                <input asp-for="HideInactive" class="checkbox checkbox-sm align-middle" />
+                            </div>
+                            <input type="submit" value="Refresh Report" class="btn btn-primary" />
+                        </div>
                     </div>
-                    <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
-                </div>
-            </div>
-        </form>
-        <br/><br/>
-
+                </form>
+    </div>
+    <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4 sm:p-6">
         <table id="equipment" class="table dataTable">
             <thead>
             <tr>
@@ -132,17 +131,16 @@
     </div>
 </div>
 
-
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")
 }
 
 @section Scripts {
-   @{await Html.RenderPartialAsync("_ImportJS");}  
-    
+   @{await Html.RenderPartialAsync("_ImportJS");}
+
     <script type="text/javascript">
         $('.dataTable').DataTable({
-                "dom": 'lBfrtip',
+                "layout": { topStart: ['pageLength', 'buttons'] },
                 "buttons": [
                     { extend: 'copyHtml5' },
                     { extend: 'excelHtml5' },
@@ -157,6 +155,3 @@
         });
     </script>
 }
-
-
-

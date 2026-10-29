@@ -1,6 +1,7 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IWorkstation } from '../../models/Workstations';
 import WorkstationEditValues from './WorkstationEditValues';
 
@@ -38,15 +39,9 @@ const RevokeWorkstation = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={props.closeModal}
-        size='lg'
         className='spaces-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Revoke {props.selectedWorkstation.name}</h2>
-          <Button color='link' onClick={props.closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Revoke {props.selectedWorkstation.name}</ModalHeading>
         <ModalBody>
           <WorkstationEditValues
             selectedWorkstation={props.selectedWorkstation}
@@ -56,7 +51,7 @@ const RevokeWorkstation = (props: IProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            color='primary'
+            color='error'
             onClick={revokeWorkstation}
             disabled={submitting}
           >

@@ -1,6 +1,8 @@
+import { DisplayField } from '../Shared/AssetSummary';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
-import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
+import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -26,7 +28,7 @@ const SearchWorkstations = (props: IProps) => {
       <div>
         <label>Pick a workstation to assign</label>
         <div>
-          <AsyncTypeahead
+          <SearchCombobox
             id='searchWorkstations' // for accessibility
             isLoading={isSearchLoading}
             minLength={3}
@@ -35,7 +37,7 @@ const SearchWorkstations = (props: IProps) => {
             filterBy={() => true} // don't filter on top of our search
             allowNew={false}
             renderMenuItemChildren={(option: any, propsData, index) => (
-              <div className={!!option.assignment ? 'disabled' : ''}>
+              <div className={!!option.assignment ? 'opacity-40' : ''}>
                 <div>
                   <Highlighter key='name' search={propsData.text}>
                     {option.name}
@@ -70,8 +72,8 @@ const SearchWorkstations = (props: IProps) => {
         </div>
         <div>or</div>
         <div>
-          <Button color='link' onClick={createNew}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Create New
+          <Button color='asset' type='button' size='sm' onClick={createNew}>
+            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Create New
             Workstation
           </Button>
         </div>
@@ -99,12 +101,7 @@ const SearchWorkstations = (props: IProps) => {
 
   const renderExistingWorkstation = () => {
     return (
-      <input
-        type='text'
-        className='form-control'
-        value={props.selectedWorkstation.name}
-        disabled={true}
-      />
+      <dl><DisplayField label='Workstation'>{props.selectedWorkstation.name}</DisplayField></dl>
     );
   };
 

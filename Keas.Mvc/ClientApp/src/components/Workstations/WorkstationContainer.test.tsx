@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, cleanup, act } from '@testing-library/react';
+import { render, cleanup, act, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router';
 import { Context } from '../../Context';
 import { ISpace } from '../../models/Spaces';
@@ -177,11 +177,12 @@ describe('Workstation Container', () => {
     });
 
     const detailButton = document.querySelectorAll('button')[1];
-    detailButton.click();
+    await act(async () => { detailButton.click(); });
 
-    const details = document.querySelectorAll('input');
-
-    expect(details[0].value).toContain('Desk'); // confirm name is displayed
-    expect(details[1].value).toContain('0038 Mrak Hall'); // confirm room is displayed
+    const dialog = screen.getByRole('dialog');
+    const values = within(dialog).getAllByRole('definition').map(value => value.textContent);
+    expect(values.some(value => value.includes('Desk'))).toBe(true);
+    expect(values.some(value => value.includes('0038 Mrak Hall'))).toBe(true);
+    expect(dialog.querySelector('input, select, textarea')).toBeNull();
   });
 });

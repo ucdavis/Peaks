@@ -1,79 +1,121 @@
 @model Keas.Core.Domain.Team
-
-@{
-    ViewData["Title"] = "Index";
-}
-        <div class="card">
-            <div class="card-header-primary">
-                <div class="card-head">
-                    <h2>@Model.Name</h2>
-                </div>
+@{ ViewData["Title"] = "Team settings"; }
+<div class="space-y-10 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Team settings</h1>
+            <p class="m-0 text-base-content/70">Manage your team’s organizations, departments, and notifications.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-outline" asp-action="RoledMembers"><hero-icon name="users" class="size-4"></hero-icon>Manage roles</a></div>
+    </div>
+    <div class="grid items-start gap-8 lg:grid-cols-2">
+        <section class="min-w-0 space-y-4" aria-labelledby="orgs-heading">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h2 id="orgs-heading" class="m-0 text-xl font-semibold">FIS organizations</h2>
+                <a class="btn btn-sm btn-outline" asp-action="AddFISOrg"><hero-icon name="plus" class="size-4"></hero-icon>Add organization</a>
             </div>
-            <div class="card-content">
-                <p><b>@Html.DisplayNameFor(model => model.Name)</b></p>
-                <p>@Html.DisplayFor(model => model.Name)</p>
-
-                <p><b>FIS Orgs</b></p>
+            <ul class="m-0 list-none divide-y divide-main-border rounded-sm border border-main-border bg-base-100 p-0">
                 @foreach (var org in Model.FISOrgs)
                 {
-                    <p>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><i class="fas fa-trash"></i></a></p>
+                    <li class="flex items-center justify-between gap-3 px-4 py-3">
+                        <span class="font-medium">@org.ChartAndOrg</span>
+                        <a class="btn btn-sm btn-ghost text-error" asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id" aria-label="Remove organization @org.ChartAndOrg"><hero-icon name="trash" class="size-4"></hero-icon><span class="sr-only">Remove</span></a>
+                    </li>
                 }
-                <p><b>PPS Departments</b></p>
-                @foreach (var ppsDept in Model.PpsDepartments)
+                @if (!Model.FISOrgs.Any()) { <li class="p-4 text-sm text-base-content/60">No organizations are linked to this team.</li> }
+            </ul>
+        </section>
+        <section class="min-w-0 space-y-4" aria-labelledby="departments-heading">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <h2 id="departments-heading" class="m-0 text-xl font-semibold">PPS departments</h2>
+                <a class="btn btn-sm btn-outline" asp-action="AddPpsDepartment"><hero-icon name="plus" class="size-4"></hero-icon>Add department</a>
+            </div>
+            <ul class="m-0 list-none divide-y divide-main-border rounded-sm border border-main-border bg-base-100 p-0">
+                @foreach (var dept in Model.PpsDepartments)
                 {
-                    <p>@ppsDept.DepartmentName (@ppsDept.PpsDepartmentCode) <a asp-action="RemovePpsDepartment" asp-route-id="@ppsDept.Id"><i class="fas fa-trash"></i></a></p>
+                    <li class="flex items-center justify-between gap-3 px-4 py-3">
+                        <div class="min-w-0"><p class="m-0 font-medium">@dept.DepartmentName</p><p class="m-0 text-sm text-base-content/60">@dept.PpsDepartmentCode</p></div>
+                        <a class="btn btn-sm btn-ghost text-error" asp-action="RemovePpsDepartment" asp-route-id="@dept.Id" aria-label="Remove department @dept.DepartmentName"><hero-icon name="trash" class="size-4"></hero-icon><span class="sr-only">Remove</span></a>
+                    </li>
+                }
+                @if (!Model.PpsDepartments.Any()) { <li class="p-4 text-sm text-base-content/60">No PPS departments are linked to this team.</li> }
+            </ul>
+        </section>
+    </div>
+    <section class="space-y-4 border-t border-main-border pt-8" aria-labelledby="notifications-heading">
+        <div class="space-y-2">
+            <h2 id="notifications-heading" class="m-0 text-xl font-semibold">Onboarding and offboarding emails</h2>
+            <p class="m-0 text-base-content/70">Get notified when people are added, removed, or reactivated for this team.</p>
+        </div>
+        <form asp-action="UpdateEmail" class="max-w-xl space-y-4">
+            @Html.HiddenFor(a => a.Id)
+            <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+            <div class="space-y-2">
+                <label asp-for="BoardingNotificationEmail" class="block text-sm font-semibold"></label>
+                <input asp-for="BoardingNotificationEmail" class="input w-full" aria-describedby="email-help" />
+                <p id="email-help" class="m-0 text-sm text-base-content/60">Leave blank to turn off these notifications.</p>
+                <span asp-validation-for="BoardingNotificationEmail" class="block text-sm text-error"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Save email</button>
+        </form>
+    </section>
+    @if (Model.Groups.Any())
+    {
+        <section class="space-y-4 border-t border-main-border pt-8" aria-labelledby="groups-heading">
+            <div class="space-y-2">
+                <h2 id="groups-heading" class="m-0 text-xl font-semibold">Reporting groups</h2>
+                <p class="m-0 text-base-content/70">Groups allow reporting across multiple teams. Group access does not grant team administration permissions.</p>
+            </div>
+            <div class="grid items-start gap-x-8 gap-y-8 md:grid-cols-2 xl:grid-cols-3">
+                @foreach (var membership in Model.Groups)
+                {
+                    <section class="min-w-0 space-y-3" aria-label="@membership.Group.Name">
+                        <h3 class="m-0 flex items-center gap-2 text-lg font-semibold text-base-content">
+                            <hero-icon name="users" class="size-5 text-base-content" aria-hidden="true"></hero-icon>
+                            @membership.Group.Name
+                        </h3>
+                        <table class="w-full table-fixed text-left text-sm">
+                            <caption class="sr-only">@membership.Group.Name contacts</caption>
+                            <colgroup>
+                                <col class="w-2/5" />
+                                <col class="w-3/5" />
+                            </colgroup>
+                            <thead>
+                                <tr class="border-b border-main-border">
+                                    <th scope="col" class="py-2 pe-4 font-semibold text-base-content/70">Name</th>
+                                    <th scope="col" class="py-2 font-semibold text-base-content/70">Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var contact in membership.Group.GroupPermissions.OrderBy(permission => permission.User.Name))
+                                {
+                                    <tr class="border-b border-main-border/60 last:border-0">
+                                        <td class="py-3 pe-4 align-top text-base-content [overflow-wrap:anywhere]">@contact.User.Name</td>
+                                        <td class="py-3 align-top [overflow-wrap:anywhere]">
+                                            @if (!string.IsNullOrWhiteSpace(contact.User.Email))
+                                            {
+                                                <a class="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary" href="mailto:@contact.User.Email">@contact.User.Email</a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-base-content/70">—</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!membership.Group.GroupPermissions.Any())
+                                {
+                                    <tr><td colspan="2" class="py-3 text-base-content/70">No contacts listed.</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
                 }
             </div>
-        </div>
-        <div class="card">
-            <div class="card-header-primary">
-                <div class="card-head">
-                    <h2>On/Off Boarding Emails</h2>
-                    <small class="form-text text-muted">This is to notify when people are added, removed, or reactivated for the team.</small>
-                </div>
-            </div>
-            <div class="card-content">
-                <div class="col-lg-4">
-                    <form asp-action="UpdateEmail">
-                        @Html.HiddenFor(a => a.Id)
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        <div class="form-group">
-                            <b><label asp-for="BoardingNotificationEmail" class="control-label"></label></b>
-                            <input asp-for="BoardingNotificationEmail" class="form-control" />
-                            <small id="emailHelp" class="form-text text-muted">Leave this blank if you don't want these emails.</small>
-                            <span asp-validation-for="BoardingNotificationEmail" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" value="Update Email" class="btn btn-primary" />
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        @if (Model.Groups.Any())
-        {
-            <div class="card">
-                <div class="card-header-primary">
-                    <div class="card-head">
-                        <h2>Groups your team belongs to</h2>
-                        <small class="form-text text-muted">What is a Group?</small>
-                        <small class="form-text text-muted">It is a way to report across multiple teams. Access is limited to reporting unless they have permissions in the team.</small>
-                    </div>
-                </div>
-                <div class="card-content">
-                    @foreach (var grp in Model.Groups)
-                    {
-                        var groupUsers = string.Join("; ", grp.Group.GroupPermissions.Select(a => $"{a.User.FirstName} {a.User.LastName}<{a.User.Email}>"));
-                        <h4>Group Name:</h4>
-                        <p>@grp.Group.Name</p>
-                        <h4>Contact(s):</h4>
-                        <p><a href="mailto: @groupUsers">@groupUsers</a></p>
-                        <hr/>
-                    }
-                </div>
-            </div>
-        }
-
+        </section>
+    }
+</div>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

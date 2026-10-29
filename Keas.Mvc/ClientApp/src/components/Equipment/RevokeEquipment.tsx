@@ -1,6 +1,8 @@
-﻿import * as React from 'react';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IEquipment } from '../../models/Equipment';
 import EquipmentAssignmentValues from './EquipmentAssignmentValues';
 import EquipmentEditValues from './EquipmentEditValues';
@@ -43,23 +45,19 @@ const RevokeEquipment = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={props.closeModal}
-        size='lg'
         className='equipment-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Revoke {props.selectedEquipment.name}</h2>
-          <Button color='link' onClick={props.closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Revoke {props.selectedEquipment.name}</ModalHeading>
 
         <ModalBody>
           <EquipmentEditValues
+            spacious
             selectedEquipment={props.selectedEquipment}
             disableEditing={true}
             openEditModal={props.openEditModal}
           />
           <EquipmentAssignmentValues
+            spacious
             selectedEquipment={props.selectedEquipment}
             openUpdateModal={props.openUpdateModal}
           />
@@ -69,11 +67,11 @@ const RevokeEquipment = (props: IProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            color='primary'
+            color='error'
             onClick={() => revokeEquipment()}
             disabled={!isValidToRevoke() || submitting}
           >
-            Revoke {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            Revoke {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

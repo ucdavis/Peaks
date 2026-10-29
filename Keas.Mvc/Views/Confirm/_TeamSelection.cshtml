@@ -1,0 +1,39 @@
+@model TeamsAndGroupsModel
+<div class="space-y-8 pb-8">
+    <header class="space-y-2">
+        <h1 class="m-0 text-3xl font-semibold text-base-content">Select a Team</h1>
+        <p class="m-0 text-base-content/70">Choose a team to view your stuff and available tools.</p>
+    </header>
+    <ul class="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 xl:grid-cols-3">
+        @foreach (var team in Model.Teams)
+        {
+            <li>
+                <a href="@string.Format("/{0}/{1}", team.Slug, ViewBag.urlRedirect)"
+                   class="flex h-full items-center gap-3 rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    <hero-icon name="users" class="size-6 shrink-0"></hero-icon>
+                    <span class="min-w-0 flex-1 break-words font-semibold">@team.Name</span>
+                    <hero-icon name="arrow-right" class="size-5 shrink-0 text-base-content/40"></hero-icon>
+                </a>
+            </li>
+        }
+    </ul>
+    @if (Model.Groups != null && Model.Groups.Count > 0)
+    {
+        <section class="space-y-4" aria-labelledby="select-group-heading">
+            <h2 id="select-group-heading" class="mt-4 text-2xl font-semibold">Select a Group</h2>
+            <ul class="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 xl:grid-cols-3">
+                @foreach (var group in Model.Groups)
+                {
+                    <li>
+                        <a asp-controller="Group" asp-action="Index" asp-route-id="@group.Id"
+                           class="flex h-full items-center gap-3 rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                            <hero-icon name="clipboard-document-list" class="size-6 shrink-0"></hero-icon>
+                            <span class="min-w-0 flex-1 break-words font-semibold">@group.Name</span>
+                            <hero-icon name="arrow-right" class="size-5 shrink-0 text-base-content/40"></hero-icon>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </section>
+    }
+</div>

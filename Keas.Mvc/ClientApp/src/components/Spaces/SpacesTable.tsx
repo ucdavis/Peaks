@@ -1,5 +1,7 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
-import { Button, UncontrolledTooltip } from 'reactstrap';
+import { UncontrolledTooltip } from 'reactstrap';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { ReactTable } from '../Shared/ReactTable';
@@ -21,9 +23,8 @@ const SpaceWorkstationColumnFilter = ({ column }) => {
   const setFilter = value => column.setFilterValue(value);
   return (
     <select
-      className='form-control'
+      className='select select-sm w-full'
       value={filterValue}
-      style={{ width: '100%' }}
       onChange={e => {
         setFilter(e.target.value || undefined);
       }}
@@ -64,12 +65,10 @@ const SpacesTable = (props: IProps) => {
     () => [
       {
         cell: data => (
-          <Button
-            color='link'
+          <AssetDetailsLink
+            path={`spaces/details/${data.row.original.space.id}`}
             onClick={() => props.showDetails(data.row.original.space)}
-          >
-            Details
-          </Button>
+          />
         ),
         header: ' '
       },
@@ -79,7 +78,7 @@ const SpacesTable = (props: IProps) => {
             {data.row.original.space.roomNumber}{' '}
             {data.row.original.space.bldgName}{' '}
             {!data.row.original.space.active && (
-              <span className='text-danger'> (Inactive)</span>
+              <span className='text-error'> (Inactive)</span>
             )}
           </span>
         ),
@@ -116,7 +115,11 @@ const SpacesTable = (props: IProps) => {
         header: header => (
           <div>
             Workstations{' '}
-            <i id='workstationsTooltip' className='fas fa-info-circle' />
+            <InformationCircleIcon
+              data-icon='information-circle'
+              id='workstationsTooltip'
+              className='hero-icon size-5'
+            />
             <UncontrolledTooltip placement='right' target='workstationsTooltip'>
               In Use / Total
             </UncontrolledTooltip>

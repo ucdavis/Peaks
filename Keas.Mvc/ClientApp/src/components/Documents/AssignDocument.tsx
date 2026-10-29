@@ -1,6 +1,6 @@
+import { ModalBody, Modal, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import * as React from 'react';
-import { ModalBody, Modal, Button } from 'reactstrap';
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState, useId } from 'react';
 import { AppContext } from '../../models/Shared';
 import { Context } from '../../Context';
 import { IDocumentTemplate } from '../../models/Document';
@@ -14,6 +14,7 @@ interface IProps {
 }
 
 export const AssignDocument = (props: IProps): JSX.Element => {
+  const formId = useId();
   const ctx = useContext<AppContext>(Context);
 
   const [templates, setTemplates] = useState<IDocumentTemplate[]>([]);
@@ -57,6 +58,8 @@ export const AssignDocument = (props: IProps): JSX.Element => {
           Send a document to {props.person.name} ({props.person.email})
         </p>
         <form
+          id={formId}
+          className='space-y-5'
           onSubmit={async e => {
             e.preventDefault();
             setLoading(true);
@@ -71,10 +74,12 @@ export const AssignDocument = (props: IProps): JSX.Element => {
             }
           }}
         >
-          <div className='form-group'>
-            <label>Select Template To Send</label>
+          <div className='space-y-2'>
+            <label htmlFor={`${formId}-template`} className='block text-sm font-semibold'>Template to send</label>
             <select
-              className='form-control'
+              id={`${formId}-template`}
+              className='select w-full'
+              value={selectedTemplate}
               onChange={e => setSelectedTemplate(e.target.value)}
             >
               {templates.map(template => (
@@ -84,9 +89,6 @@ export const AssignDocument = (props: IProps): JSX.Element => {
               ))}
             </select>
           </div>
-          <button type='submit' className='btn btn-primary'>
-            Submit
-          </button>
         </form>
       </div>
     );
@@ -97,22 +99,19 @@ export const AssignDocument = (props: IProps): JSX.Element => {
       <Modal
         isOpen={show}
         toggle={() => setShow(false)}
-        size='lg'
         className='documents-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Assign Document for Signature</h2>
-          <Button color='link' onClick={() => setShow(false)}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Assign Document for Signature</ModalHeading>
 
         <ModalBody>
-          <div className='container-fluid'>
-            {loading && <div>Processing...</div>}
+          <div className='space-y-6'>
+            {loading && <p role='status' className='text-base-content/70'>Processing...</p>}
             {!loading && renderTemplates()}
           </div>
         </ModalBody>
+        <ModalFooter>
+          {templates.length > 0 && <button type='submit' form={formId} className='btn btn-asset' disabled={loading}>Send document</button>}
+        </ModalFooter>
       </Modal>
     </div>
   );

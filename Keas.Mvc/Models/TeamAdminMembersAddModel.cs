@@ -17,6 +17,7 @@ namespace Keas.Mvc.Models
         [Display(Name = "Role to Add")]
         public int RoleId { get; set; }
 
+        [Required(ErrorMessage = "Enter a UC Davis email address or Kerberos ID.")]
         public string UserEmail { get; set; }
 
         public List<Role> Roles { get; set; }

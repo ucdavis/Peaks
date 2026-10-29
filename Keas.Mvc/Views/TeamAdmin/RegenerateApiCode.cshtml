@@ -1,83 +1,93 @@
 @model Keas.Core.Domain.Team
 @{
-    ViewData["Title"] = "Regenerate Api Code";
+    ViewData["Title"] = "API settings";
 }
-
-        <form asp-action="RegenerateApiCode">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="card">
-                <div class="card-header-primary">
-                    <div class="card-head">
-                        @if (Model.TeamApiCode != null)
-                        {
-                            <h2>Regenerate API Code</h2>
-                            <small class="form-text text-muted">Note, if you change the API code, make sure you update any of your external processes that may be using the old one.</small>
-                            <small class="form-text text-muted">Click Regenerate to change the API code</small>
-                        }
-                        else
-                        {
-                            <h2>Generate</h2>
-                            <small class="form-text text-muted">Click Generate to create a new API code</small>
-                        }
-                    </div>
-                </div>
-                @if (Model.TeamApiCode != null)
-                {
-                    <div class="card-content">
-                        <div><b>Current API Code:</b> @Html.DisplayFor(model => model.TeamApiCode.ApiCode)</div>
-                        <div><b>Team Slug:</b> @Model.Slug</div>
-                        <div><b>Team Id:</b> @Model.Id</div>
-                    </div>
-                }
-                <div style="padding: 19px 20px 20px;">
-                    @if (Model.TeamApiCode != null)
-                    {
-                        <button type="submit" class="btn btn-primary">
-                            <i class="icon-save button-icon"></i>
-                            Regenerate
-                        </button>
-                    }
-                    else
-                    {
-                        <button type="submit" class="btn btn-primary">
-                            <i class="icon-save button-icon"></i>
-                            Generate
-                        </button>
-                    }
-                    <a class="btn btn-link" asp-action="Index">Cancel</a>
-                </div>
-            </div>
-        </form>
-        <div class="card">
-            <div class="card-header-primary">
-                <div class="card-head">
-                    <h2>API Links</h2>
-                </div>
-            </div>
+<div class="space-y-8 pb-8">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">API settings</h1>
+            <p class="m-0 text-base-content/70">Manage the API code used by integrations with this team.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-controller="TeamAdmin"
+                                                              asp-action="Index"><hero-icon name="arrow-left" class="size-4"></hero-icon>Team settings</a></div>
+        </div>
+        <section class="max-w-3xl space-y-5 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6"
+                 aria-labelledby="api-code-heading">
+            <h2 id="api-code-heading" class="m-0 text-xl font-semibold">Team API code</h2>
             @if (Model.TeamApiCode != null)
             {
-                <div class="card-content">
-                    <div class="card-head">
-                        <h2><a href="/swagger" target="_blank" class="btn-lg btn-info">API documentation</a></h2>
-                    </div>
-                    
-                </div>
-                <div class="card-content">
-                    <div class="card-head">
-                        <h2>(Obsolete)</h2>
-                    </div>
-                    <p>People Feed:<br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.TeamApiCode.ApiCode</p>
-                    <p>People with Workstations: <br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.TeamApiCode.ApiCode?includeSpace=yes</p>
-                    <p>Workstations: <br/>@Context.Request.Host/@Model.Slug/Feed/WorkstationFeed/@Model.TeamApiCode.ApiCode</p>
-                    <p>Equipment: <br/>@Context.Request.Host/@Model.Slug/Feed/EquipmentFeed/@Model.TeamApiCode.ApiCode</p>
-                    <p>Access: <br/>@Context.Request.Host/@Model.Slug/Feed/AccessFeed/@Model.TeamApiCode.ApiCode</p>
-                    <p>Keys: <br/>@Context.Request.Host/@Model.Slug/Feed/KeyFeed/@Model.TeamApiCode.ApiCode</p>
-                </div>
-            }
-            else
-            {
-                <div class="card-content">
-                    <p><a href="/swagger" target="_blank" class="btn btn-info">API documentation</a></p>
-                </div>
-            }
-        </div>
+                <div role="alert" class="alert alert-warning"><hero-icon name="exclamation-triangle"
+                                                                             class="size-5"></hero-icon><span>Regenerating this code invalidates the current code. Update any
+                    external processes that use it.</span></div>
+                    <dl class="m-0 space-y-4">
+                        <div>
+                            <dt class="text-sm text-base-content/60">Current API code</dt>
+                            <dd class="m-0 mt-1 break-all rounded-sm bg-base-200 p-3 font-mono text-sm">@Model.TeamApiCode.ApiCode
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm text-base-content/60">Team slug</dt>
+                            <dd class="m-0 mt-1">@Model.Slug</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm text-base-content/60">Team ID</dt>
+                            <dd class="m-0 mt-1">@Model.Id</dd>
+                        </div>
+                    </dl>
+                }
+        else
+                {
+                    <p class="m-0 text-base-content/70">Generate a code to connect external processes to this team.</p>
+                }
+                <form asp-action="RegenerateApiCode" class="space-y-3 pt-5">
+                    <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+                    <button type="submit" class="btn btn-primary"><hero-icon name="arrow-path"
+                                                                                 class="size-4"></hero-icon>@(Model.TeamApiCode != null ? "Regenerate code" : "Generate code")</button>
+                    </form>
+                </section>
+                <section class="space-y-4" aria-labelledby="api-docs-heading">
+                    <h2 id="api-docs-heading" class="m-0 text-xl font-semibold">API documentation</h2>
+                    <a href="/swagger" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><hero-icon name="book-open"
+                                                                                                                        class="size-4"></hero-icon>View API documentation<hero-icon name="arrow-top-right-on-square"
+                                                                                    class="size-4"></hero-icon></a>
+                    </section>
+                    @if (Model.TeamApiCode != null)
+                    {
+                        <details class="max-w-3xl rounded-sm border border-main-border bg-base-100 p-5">
+                            <summary class="cursor-pointer font-semibold">Legacy feeds (obsolete)</summary>
+                            <dl class="m-0 mt-5 space-y-4 text-sm">
+                                <div>
+                                    <dt class="font-semibold">People</dt>
+                                    <dd class="m-0 mt-1 break-all font-mono text-base-content/70">
+                                        @Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.TeamApiCode.ApiCode</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="font-semibold">People with workstations</dt>
+                                        <dd class="m-0 mt-1 break-all font-mono text-base-content/70">
+                                            @Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.TeamApiCode.ApiCode?includeSpace=yes</dd>
+                                        </div>
+                                        <div>
+                                            <dt class="font-semibold">Workstations</dt>
+                                            <dd class="m-0 mt-1 break-all font-mono text-base-content/70">
+                                                @Context.Request.Host/@Model.Slug/Feed/WorkstationFeed/@Model.TeamApiCode.ApiCode</dd>
+                                            </div>
+                                            <div>
+                                                <dt class="font-semibold">Equipment</dt>
+                                                <dd class="m-0 mt-1 break-all font-mono text-base-content/70">
+                                                    @Context.Request.Host/@Model.Slug/Feed/EquipmentFeed/@Model.TeamApiCode.ApiCode</dd>
+                                                </div>
+                                                <div>
+                                                    <dt class="font-semibold">Access</dt>
+                                                    <dd class="m-0 mt-1 break-all font-mono text-base-content/70">
+                                                        @Context.Request.Host/@Model.Slug/Feed/AccessFeed/@Model.TeamApiCode.ApiCode</dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt class="font-semibold">Keys</dt>
+                                                        <dd class="m-0 mt-1 break-all font-mono text-base-content/70">
+                                                            @Context.Request.Host/@Model.Slug/Feed/KeyFeed/@Model.TeamApiCode.ApiCode</dd>
+                                                        </div>
+                                                    </dl>
+                                                </details>
+                                            }
+                                        </div>

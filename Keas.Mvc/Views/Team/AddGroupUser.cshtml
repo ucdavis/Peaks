@@ -1,35 +1,30 @@
 @model Keas.Mvc.Models.GroupModels.GroupUserPostModel
-
-@{
-    ViewBag.Title = $"Add User to {Model.Group.Name}";
-}
-
-<div class="card">
-    <div class="card-header-primary">
-        <div class="card-head">
-            <h2>@ViewBag.Title</h2>
+@{ ViewData["Title"] = "Add group user"; }
+<div class="space-y-6 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Add group user</h1>
+            <p class="m-0 text-base-content/70">Give a person reporting access to @Model.Group.Name.</p>
         </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-action="GroupDetails" asp-controller="Team" asp-route-id="@Model.Group.Id"><hero-icon name="arrow-left" class="size-4"></hero-icon>Group details</a></div>
     </div>
-    <div class="card-content col-lg-4">
-        <form asp-action="AddGroupUser">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @Html.HiddenFor(a => a.Group.Id)
-            <div class="form-group">
-                <label asp-for="UserEmail" class="control-label"></label>
-                <input asp-for="UserEmail" class="form-control"/>
-                <span asp-validation-for="UserEmail" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Assign User to Group" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+    <form asp-action="AddGroupUser" class="max-w-xl space-y-5 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6">
+        <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+        @Html.HiddenFor(a => a.Group.Id)
+        <div class="space-y-2">
+            <label asp-for="UserEmail" class="block text-sm font-semibold"></label>
+            <input asp-for="UserEmail" class="input w-full" />
+            <span asp-validation-for="UserEmail" class="block text-sm text-error"></span>
+
+        </div>
+
+        <div class="flex flex-wrap gap-2 border-t border-main-border pt-5">
+            <button type="submit" class="btn btn-primary">Add user</button>
+            <a class="btn btn-ghost" asp-action="GroupDetails" asp-controller="Team" asp-route-id="@Model.Group.Id">Cancel</a>
+        </div>
+    </form>
 </div>
-
-
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-
-

@@ -1,17 +1,9 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
-import {
-  Button,
-  Form,
-  FormFeedback,
-  FormGroup,
-  Input,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  Table
-} from 'reactstrap';
+import { Button, Form, FormFeedback, FormGroup, Input, Table } from 'reactstrap';
 import { Context } from '../../Context';
 import { IManagedSystemSearchedName } from '../../models/Equipment';
 
@@ -39,7 +31,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
           modalToggle();
         }}
       >
-        <i className='fas fa-search fa-xs mr-2' />
+        <MagnifyingGlassIcon data-icon="magnifying-glass" className='hero-icon size-4 mr-2' />
         Look Up
       </Button>
     );
@@ -50,17 +42,11 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
       <Modal
         isOpen={searchModal}
         toggle={modalToggle}
-        size='lg'
         className='equipment-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Search by Computer Property</h2>
-          <Button color='link' onClick={modalToggle}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Search by Computer Property</ModalHeading>
 
-        <ModalBody className='d-flex justify-content-center'>
+        <ModalBody>
           {renderModalBody()}
         </ModalBody>
         <ModalFooter>{renderSearchButton()}</ModalFooter>
@@ -70,9 +56,9 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
 
   const renderModalBody = () => {
     return (
-      <Form className='w-75'>
+      <Form className='w-full space-y-5'>
         <FormGroup className='mb-5'>
-          <h3>Searchable Properties:</h3>
+          <h3 className="text-lg font-semibold">Searchable Properties:</h3>
           <p>
             Computer Name, LoginID, IP Address, Mac Address, or Serial Number
           </p>
@@ -125,20 +111,22 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
                   return (
                     <tr
                       key={computer.hardware_u_bigfix_id}
-                      className='bigfix-info border-bottom'
+                      className='border-b border-main-border'
                     >
-                      <Button
-                        color='link'
-                        onClick={() =>
-                          props.addManagedSystemId(
-                            'systemManagementId',
-                            computer.hardware_u_bigfix_id
-                          )
-                        }
-                      >
-                        {computer.hardware_display_name} (
-                        {computer.hardware_u_device_name})
-                      </Button>
+                      <td>
+                        <Button
+                          color='link'
+                          onClick={() =>
+                            props.addManagedSystemId(
+                              'systemManagementId',
+                              computer.hardware_u_bigfix_id
+                            )
+                          }
+                        >
+                          {computer.hardware_display_name} (
+                          {computer.hardware_u_device_name})
+                        </Button>
+                      </td>
                     </tr>
                   );
                 })}
@@ -159,14 +147,14 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
   const renderSearchButton = () => {
     if (isSearching) {
       return (
-        <Button color='primary' disabled={false}>
+        <Button color='asset' disabled={false}>
           {' '}
-          <i className='fas fa-lg fa-spinner fa-pulse' />
+          <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-6 animate-spin' />
         </Button>
       );
     } else {
       return (
-        <Button color='primary' disabled={false} onClick={onSearch}>
+        <Button color='asset' disabled={false} onClick={onSearch}>
           Search!
         </Button>
       );

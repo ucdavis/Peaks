@@ -1,5 +1,6 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
+import { KeyIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
-import { Button } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 
@@ -33,19 +34,17 @@ const KeyListItem = (props: IProps) => {
   return (
     <tr>
       <td>
-        <Button
-          className='keys-anomaly'
-          color='link'
+        <AssetDetailsLink
+          path={`keys/details/${props.keyInfo.key.id}`}
           onClick={() => props.showDetails(props.keyInfo.key)}
-        >
-          Details
-        </Button>
+          className='keys-anomaly'
+        />
       </td>
       <td>{keyInfo.key.name}</td>
       <td>{keyInfo.key.code}</td>
       <td className=''>
-        <i className='fas fa-key' /> {keyInfo.serialsInUseCount} /{' '}
-        {keyInfo.serialsTotalCount}
+        <KeyIcon data-icon='key' className='hero-icon size-5' />{' '}
+        {keyInfo.serialsInUseCount} / {keyInfo.serialsTotalCount}
       </td>
       <td>
         <ListActionsDropdown actions={actions} className='keys-anomaly' />

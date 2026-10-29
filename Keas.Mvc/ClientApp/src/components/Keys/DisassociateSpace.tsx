@@ -1,6 +1,9 @@
+import { DisplayField } from '../Shared/AssetSummary';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IKeyInfo } from '../../models/Keys';
 import { ISpace } from '../../models/Spaces';
 import KeyEditValues from './KeyEditValues';
@@ -43,57 +46,33 @@ const DisassociateSpace = (props: IProps) => {
       <Modal
         isOpen={props.isModalOpen}
         toggle={closeModal}
-        size='lg'
         className='keys-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Disassociate Key and Space</h2>
-          <Button color='link' onClick={closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Disassociate Key and Space</ModalHeading>
         <ModalBody>
-          <h2>Key</h2>
+          <h2 className="text-xl font-semibold">Key</h2>
           <KeyEditValues
             selectedKey={props.selectedKeyInfo.key}
             disableEditing={true}
           />
-          <h2>Space</h2>
+          <h2 className="text-xl font-semibold">Space</h2>
           <div>
-            <div className='form-group'>
-              <label>Room Number and Building</label>
-              <input
-                className='form-control'
-                disabled={true}
-                value={
-                  props.selectedSpace.roomNumber +
+            <dl><DisplayField label='Room Number and Building'>{props.selectedSpace.roomNumber +
                   ' ' +
-                  props.selectedSpace.bldgName
-                }
-              />
-            </div>
-            <div className='form-group'>
-              <label>Room Name</label>
-              <input
-                className='form-control'
-                disabled={true}
-                value={
-                  props.selectedSpace.roomName
+                  props.selectedSpace.bldgName}</DisplayField></dl>
+            <dl><DisplayField label='Room Name'>{props.selectedSpace.roomName
                     ? props.selectedSpace.roomName
-                    : ''
-                }
-              />
-            </div>
+                    : ''}</DisplayField></dl>
           </div>
         </ModalBody>
         <ModalFooter>
           <Button
-            color='primary'
+            color='error'
             onClick={disassociateKeyAndSpace}
             disabled={submitting}
           >
-            Go!
-            {submitting && <i className='fas fa-circle-notch fa-spin ml-2' />}
+            Remove association
+            {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin ml-2' />}
           </Button>
         </ModalFooter>
       </Modal>

@@ -1,6 +1,8 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IKey } from '../../models/Keys';
 import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
@@ -91,21 +93,13 @@ const EditKeySerial = (props: IProps) => {
     <Modal
       isOpen={props.isModalOpen}
       toggle={confirmClose}
-      size='lg'
       className='keys-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>
-          Edit Serial {props.selectedKeySerial.key.code}{' '}
-          {props.selectedKeySerial.number}
-        </h2>
-        <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
-        </Button>
-      </div>
+      <ModalHeading>Edit Serial {props.selectedKeySerial.key.code}{' '}
+          {props.selectedKeySerial.number}</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <form>
+        <div className='space-y-6'>
+          <form className='space-y-6'>
             <KeySerialEditValues
               keySerial={keySerial}
               changeProperty={changeProperty}
@@ -124,11 +118,11 @@ const EditKeySerial = (props: IProps) => {
       </ModalBody>
       <ModalFooter>
         <Button
-          color='primary'
+          color='asset'
           onClick={editSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          Save changes {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

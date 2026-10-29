@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useContext, useState } from 'react';
-import { Highlighter } from 'react-bootstrap-typeahead';
+import { Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
 import { IKeyInfo } from '../../models/Keys';
@@ -63,6 +63,7 @@ const SearchKeys = (props: IProps) => {
     // check for empty
     if (!selected || selected.length <= 0) {
       props.onDeselect();
+      return;
     }
 
     // check for new selection

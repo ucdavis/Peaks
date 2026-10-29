@@ -1,47 +1,36 @@
 @model Keas.Core.Domain.Team
-
-@{
-    ViewData["Title"] = "Edit";
-}
-
-<div class="card">
-  <div class="card-header-primary">
-    <div class="card-head">
-      <div class="row justify-content-between">
-          <h2>Edit Team</h2>
-          <a class="btn btn-link" asp-action="Index" asp-controller="Admin"><i class="fas fa-arrow-left fa-xs"></i> Back to List</a>
-      </div>
-    </div>
-
-  </div>
-  <div class="card-content">
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-                <div class="form-group">
-                    <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Slug" class="control-label"></label>
-                    <input asp-for="Slug" class="form-control" />
-                    <span asp-validation-for="Slug" class="text-danger"></span>
-                    <span id="slugUrl"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-primary" />
-                </div>
-            </form>
+@{ ViewData["Title"] = "Edit team"; }
+<div class="space-y-6 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Edit team</h1>
+            <p class="m-0 text-base-content/70">Update the team name and PEAKS URL.</p>
         </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-action="Index" asp-controller="Admin" ><hero-icon name="arrow-left" class="size-4"></hero-icon>Administration</a></div>
     </div>
+    <form asp-action="Edit" class="max-w-xl space-y-5 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6">
+        <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+        <input type="hidden" asp-for="Id" />
+        <div class="space-y-2">
+            <label asp-for="Name" class="block text-sm font-semibold"></label>
+            <input asp-for="Name" class="input w-full" />
+            <span asp-validation-for="Name" class="block text-sm text-error"></span>
 
-  </div>
+        </div>
+<div class="space-y-2">
+            <label asp-for="Slug" class="block text-sm font-semibold"></label>
+            <input asp-for="Slug" class="input w-full" />
+            <span asp-validation-for="Slug" class="block text-sm text-error"></span>
+            <span id="slugUrl" class="block break-all text-sm text-base-content/60"></span>
+        </div>
+
+        <div class="flex flex-wrap gap-2 border-t border-main-border pt-5">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <a class="btn btn-ghost" asp-action="Index" asp-controller="Admin">Cancel</a>
+        </div>
+    </form>
 </div>
-
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>

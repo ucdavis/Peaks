@@ -1,7 +1,9 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Form, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Form } from 'reactstrap';
 import {
   equipmentSchema,
   IEquipment,
@@ -154,18 +156,12 @@ const DuplicateEquipment = (props: IProps) => {
     <Modal
       isOpen={props.modal}
       toggle={confirmClose}
-      size='lg'
       className='equipment-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>Duplicate Equipment</h2>
-        <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
-        </Button>
-      </div>
+      <ModalHeading>Duplicate Equipment</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <Form>
+        <div className='space-y-6'>
+          <Form className='space-y-6'>
             <AssignPerson
               person={person}
               label='Assign To'
@@ -188,6 +184,7 @@ const DuplicateEquipment = (props: IProps) => {
             {!!equipment && !equipment.teamId && (
               <div>
                 <EquipmentEditValues
+            spacious
                   selectedEquipment={equipment}
                   commonAttributeKeys={props.commonAttributeKeys}
                   changeProperty={changeProperty}
@@ -202,8 +199,9 @@ const DuplicateEquipment = (props: IProps) => {
               </div>
             )}
             {!!equipment && !!equipment.teamId && (
-              // this is just for once user hits "Go!"
+              // this is just for once user hits "Duplicate"
               <EquipmentEditValues
+            spacious
                 selectedEquipment={equipment}
                 commonAttributeKeys={props.commonAttributeKeys}
                 disableEditing={true}
@@ -216,11 +214,11 @@ const DuplicateEquipment = (props: IProps) => {
       </ModalBody>
       <ModalFooter>
         <Button
-          color='primary'
+          color='asset'
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          Duplicate {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

@@ -3,35 +3,38 @@
 @{
     ViewData["Title"] = "Confirm Assignments";
 }
-<div class="card">
-    <div class="card-header-primary">
-        <div class="row justify-content-between">
-            <div class="card-head">
-                <h2>Confirm Assignments</h2>
-
-            </div>
-            <div class="card-head">
-                <form asp-action="AcceptAll" method="POST">
-                    <div class="form-group">
-                        <input type="submit" value="Confirm all pending" class="btn btn-success" />
-                    </div>
-                </form>
-            </div>
+<div class="space-y-6 pb-8">
+    <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div class="space-y-2">
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Confirm Assignments</h1>
+            <p class="m-0 text-base-content/70">Review your pending assignments and confirm each item, or confirm them all at once.</p>
         </div>
-    </div>
+        <div class="flex shrink-0 flex-wrap items-center gap-3">
+            <a asp-action="MyStuff" class="link link-hover inline-flex items-center gap-2">
+                <hero-icon name="arrow-left" class="size-4"></hero-icon>
+                MyStuff
+            </a>
+            <form asp-action="AcceptAll" method="POST">
+                <button type="submit" class="btn btn-success">
+                    <hero-icon variant="solid" name="check" class="size-5"></hero-icon>
+                    Confirm all pending
+                </button>
+            </form>
+        </div>
+    </header>
 
-    <div class="card-content">
-        @if (Model.KeySerials.Any())
-        {
-            <div class="card keys-color">
-                <div class="card-header-keys">
-                    <div class="card-head">
-                        <h2>
-                            <i class="fas fa-key fa-xs"></i> Keys
-                        </h2>
-                    </div>
+    @if (Model.KeySerials.Any())
+    {
+        <div class="card border border-main-border bg-base-100 shadow-sm keys-color">
+            <div class="card-header-keys">
+                <div class="px-5 py-4 sm:px-6">
+                    <h2 class="m-0 flex items-center gap-2 text-xl font-semibold">
+                        <hero-icon variant="solid" name="key" class="size-5"></hero-icon> Keys
+                    </h2>
                 </div>
-                <div class="card-content">
+            </div>
+            <div class="card-body gap-4 p-5 sm:p-6">
+                <div class="overflow-x-auto">
                     <table class="table">
                         <thead>
                             <tr>
@@ -39,7 +42,7 @@
                                 <th>Serial Number</th>
                                 <th>Key Name</th>
                                 <th>Expiration</th>
-                                <th></th>
+                                <th><span class="sr-only">Actions</span></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -50,11 +53,9 @@
                                     <td>@item.Number</td>
                                     <td>@item.Key.Name</td>
                                     <td>@item.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>
-                                    <td align="right">
+                                    <td class="text-right">
                                         <form asp-action="AcceptKey" asp-route-serialId="@item.Id" method="POST">
-                                            <div class="form-group">
-                                                <input type="submit" value="Confirm" class="btn btn-primary" />
-                                            </div>
+                                            <button type="submit" class="btn btn-asset btn-sm">Confirm</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -63,18 +64,20 @@
                     </table>
                 </div>
             </div>
-        }
-        @if (Model.Equipment.Any())
-        {
-            <div class="card equipment-color">
-                <div class="card-header-equipment">
-                    <div class="card-head">
-                        <h2>
-                            <i class="fas fa-hdd fa-xs"></i> Equipment
-                        </h2>
-                    </div>
+        </div>
+    }
+    @if (Model.Equipment.Any())
+    {
+        <div class="card border border-main-border bg-base-100 shadow-sm equipment-color">
+            <div class="card-header-equipment">
+                <div class="px-5 py-4 sm:px-6">
+                    <h2 class="m-0 flex items-center gap-2 text-xl font-semibold">
+                        <hero-icon variant="solid" name="computer-desktop" class="size-5"></hero-icon> Equipment
+                    </h2>
                 </div>
-                <div class="card-content">
+            </div>
+            <div class="card-body gap-4 p-5 sm:p-6">
+                <div class="overflow-x-auto">
                     <table class="table">
                         <thead>
                             <tr>
@@ -83,7 +86,7 @@
                                 <th>Make</th>
                                 <th>Model</th>
                                 <th>Room</th>
-                                <th></th>
+                                <th><span class="sr-only">Actions</span></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,13 +103,11 @@
                                     }
                                     else
                                     {
-                                        <td>&nbsp;</td>
+                                        <td><span class="text-base-content/60">—</span></td>
                                     }
-                                    <td align="right">
+                                    <td class="text-right">
                                         <form asp-action="AcceptEquipment" asp-route-equipmentId="@item.Id" method="POST">
-                                            <div class="form-group">
-                                                <input type="submit" value="Confirm" class="btn btn-primary" />
-                                            </div>
+                                            <button type="submit" class="btn btn-asset btn-sm">Confirm</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -115,24 +116,26 @@
                     </table>
                 </div>
             </div>
-        }
-        @if (Model.Workstations.Any())
-        {
-            <div class="card spaces-color">
-                <div class="card-header-spaces">
-                    <div class="card-head">
-                        <h2>
-                            <i class="fas fa-briefcase fa-xs"></i> Workstation
-                        </h2>
-                    </div>
+        </div>
+    }
+    @if (Model.Workstations.Any())
+    {
+        <div class="card border border-main-border bg-base-100 shadow-sm spaces-color">
+            <div class="card-header-spaces">
+                <div class="px-5 py-4 sm:px-6">
+                    <h2 class="m-0 flex items-center gap-2 text-xl font-semibold">
+                        <hero-icon variant="solid" name="building-office-2" class="size-5"></hero-icon> Workstations
+                    </h2>
                 </div>
-                <div class="card-content">
+            </div>
+            <div class="card-body gap-4 p-5 sm:p-6">
+                <div class="overflow-x-auto">
                     <table class="table">
                         <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Room</th>
-                                <th></th>
+                                <th><span class="sr-only">Actions</span></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -146,13 +149,11 @@
                                     }
                                     else
                                     {
-                                        <td>&nbsp;</td>
+                                        <td><span class="text-base-content/60">—</span></td>
                                     }
-                                    <td align="right">
+                                    <td class="text-right">
                                         <form asp-action="AcceptWorkstation" asp-route-workstationId="@item.Id" method="POST">
-                                            <div class="form-group">
-                                                <input type="submit" value="Confirm" class="btn btn-primary" />
-                                            </div>
+                                            <button type="submit" class="btn btn-asset btn-sm">Confirm</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -160,8 +161,8 @@
                         </tbody>
                     </table>
                 </div>
-
             </div>
-        }
-    </div>
+
+        </div>
+    }
 </div>

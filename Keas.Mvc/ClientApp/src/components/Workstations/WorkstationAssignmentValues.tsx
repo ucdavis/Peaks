@@ -1,4 +1,6 @@
-﻿import * as React from 'react';
+import { AssetActions, AssetSummary } from '../Shared/AssetSummary';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IWorkstation } from '../../models/Workstations';
 import { DateUtil } from '../../util/dates';
@@ -15,49 +17,25 @@ const WorkstationAssignmentValues = (props: IProps) => {
 
   return (
     <div>
-      <div className='row justify-content-between mt-5'>
-        <h3>Assignment Details</h3>
-        <Button
-          color='link'
-          onClick={() => props.openUpdateModal(props.selectedWorkstation)}
-        >
-          <i className='fas fa-edit fa-xs' />{' '}
-          {!!props.selectedWorkstation.assignment
-            ? 'Update Assignment'
-            : 'Assign Workstation'}
-        </Button>
+      <div className='mb-5 mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-main-border pt-6'>
+        <h3 className="text-lg font-semibold">Assignment Details</h3>
+        <AssetActions>
+          <Button
+            color='link'
+            onClick={() => props.openUpdateModal(props.selectedWorkstation)}
+          >
+            <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' />{' '}
+            {!!props.selectedWorkstation.assignment
+              ? 'Update Assignment'
+              : 'Assign Workstation'}
+          </Button>
+        </AssetActions>
       </div>
 
-      <div className='wrapperasset'>
-        <div className='form-group'>
-          <label>Assigned To</label>
-          <input
-            type='text'
-            className='form-control'
-            disabled={true}
-            value={
-              !!props.selectedWorkstation.assignment
-                ? props.selectedWorkstation.assignment.person.name
-                : ''
-            }
-          />
-        </div>
-        <div className='form-group'>
-          <label>Expires at</label>
-          <input
-            type='text'
-            className='form-control'
-            disabled={true}
-            value={
-              !!props.selectedWorkstation.assignment
-                ? DateUtil.formatExpiration(
-                    props.selectedWorkstation.assignment.expiresAt
-                  )
-                : ''
-            }
-          />
-        </div>
-      </div>
+      <AssetSummary fields={[
+        ['Assigned to', props.selectedWorkstation.assignment?.person.name || 'Unassigned'],
+        ['Expires at', props.selectedWorkstation.assignment?.expiresAt ? DateUtil.formatExpiration(props.selectedWorkstation.assignment.expiresAt) : null]
+      ]} />
     </div>
   );
 };

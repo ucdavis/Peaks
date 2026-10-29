@@ -1,22 +1,19 @@
-﻿@model ErrorViewModel
-@{
-    ViewData["Title"] = "Error";
-}
-
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
-
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
-}
-
-<h3>Development Mode</h3>
-<p>
-    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-</p>
-<p>
-    <strong>Development environment should not be enabled in deployed applications</strong>, as it can result in sensitive information from exceptions being displayed to end users. For local debugging, development environment can be enabled by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>, and restarting the application.
-</p>
+@model ErrorViewModel
+@{ ViewData["Title"] = "Something went wrong"; }
+<div class="max-w-3xl space-y-6 py-6">
+    <hero-icon name="exclamation-triangle" class="size-10 text-error"></hero-icon>
+    <h1 class="m-0 text-3xl font-semibold text-base-content">Something went wrong</h1>
+    <p class="m-0 text-lg leading-7 text-base-content/70">We could not complete your request. Try again, or contact support if the problem continues.</p>
+    @if (Model.ShowRequestId)
+    {
+        <dl class="space-y-2">
+            <dt class="text-sm font-semibold">Request ID</dt>
+            <dd class="m-0 break-all rounded-sm bg-base-300 p-3 font-mono text-sm">@Model.RequestId</dd>
+        </dl>
+        <p class="m-0 text-sm text-base-content/70">Include this request ID when contacting support.</p>
+    }
+    <div class="flex flex-wrap items-center gap-3">
+        <a href="@Url.Content("~/Confirm/SelectTeam")" class="btn btn-primary">Select a team</a>
+        <a href="https://caeshelp.ucdavis.edu/?appname=Peaks" class="link link-hover inline-flex items-center gap-2 text-primary" target="_blank" rel="noopener noreferrer">Contact support <hero-icon name="arrow-top-right-on-square" class="size-4"></hero-icon></a>
+    </div>
+</div>

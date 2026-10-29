@@ -1,3 +1,4 @@
+import { ArrowPathIcon, CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { Button } from 'reactstrap';
@@ -48,23 +49,23 @@ const HistoryContainer = (props: IProps) => {
   }
 
   return (
-    <div className='card history-color'>
+    <div className='card mb-4 border border-main-border bg-base-100 shadow-sm history-color'>
       <div>
-        <div className='card-head'>
-          <h2>
-            <i className='fas fa-history fa-xs' /> History
+        <div className='px-5 py-4 sm:px-6'>
+          <h2 className="text-xl font-semibold">
+            <ClockIcon data-icon="clock" className='hero-icon size-4' /> History
           </h2>
         </div>
       </div>
-      <div className='card-content'>
+      <div className='card-body gap-4 p-5 sm:p-6'>
         {histories.length > 0 && (
           <HistoryList showLink={props.showLink} histories={histories} />
         )}
         {histories.length < 1 && <p>No histories were found</p>}
         {props.controller === 'people' && (
           <Button color='link' onClick={reloadHistories} disabled={reloading}>
-            Refresh {reloaded ? <i className='fas fa-check' /> : null}
-            {reloading ? <i className='fas fa-spin fa-spinner' /> : null}
+            Refresh {reloaded ? <CheckIcon data-icon="check" className='hero-icon size-5' /> : null}
+            {reloading ? <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' /> : null}
           </Button>
         )}
         {props.controller === 'equipment' && histories.length > 0 && (

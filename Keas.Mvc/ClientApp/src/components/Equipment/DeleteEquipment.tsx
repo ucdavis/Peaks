@@ -1,6 +1,8 @@
-﻿import * as React from 'react';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IEquipment } from '../../models/Equipment';
 import EquipmentAssignmentValues from './EquipmentAssignmentValues';
 import EquipmentEditValues from './EquipmentEditValues';
@@ -46,24 +48,20 @@ const DeleteEquipment = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={props.closeModal}
-        size='lg'
         className='equipment-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Delete {props.selectedEquipment.name}</h2>
-          <Button color='link' onClick={props.closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Delete {props.selectedEquipment.name}</ModalHeading>
 
         <ModalBody>
           <EquipmentEditValues
+            spacious
             selectedEquipment={props.selectedEquipment}
             disableEditing={true}
             openEditModal={props.openEditModal}
           />
           {props.selectedEquipment.assignment && (
             <EquipmentAssignmentValues
+            spacious
               selectedEquipment={props.selectedEquipment}
               openUpdateModal={props.openUpdateModal}
             />
@@ -71,11 +69,11 @@ const DeleteEquipment = (props: IProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            color='primary'
+            color='error'
             onClick={deleteEquipment}
             disabled={submitting}
           >
-            Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            Delete {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

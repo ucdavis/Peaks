@@ -1,6 +1,8 @@
-﻿import * as React from 'react';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import KeyEditValues from './KeyEditValues';
 
@@ -43,15 +45,9 @@ const DeleteKey = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={props.closeModal}
-        size='lg'
         className='keys-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Delete {props.selectedKeyInfo.key.name}</h2>
-          <Button color='link' onClick={props.closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Delete {props.selectedKeyInfo.key.name}</ModalHeading>
 
         <ModalBody>
           <KeyEditValues
@@ -60,8 +56,8 @@ const DeleteKey = (props: IProps) => {
           />
         </ModalBody>
         <ModalFooter>
-          <Button color='primary' onClick={deleteKey} disabled={submitting}>
-            Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          <Button color='error' onClick={deleteKey} disabled={submitting}>
+            Delete {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

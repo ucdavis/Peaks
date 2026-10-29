@@ -5,53 +5,39 @@
 @{
     ViewData["Title"] = "Upload CSV Equipment File";
 }
-        <div class="card">
-            <div class="card-header-equipment">
-                <div class="card-head">
-                    <h2>Upload a CSV File for Equipment import</h2>
-                </div>
-            </div>
-            <div class="card-content col-lg-6">
-                <form asp-action="UploadEquipment" method="post" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <fieldset>
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-md-10">Select CSV file to upload:</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <input type="hidden" id="filename" name="filename" value="">
-                                            <input type="file" id="file" name="file" class="form-control" accept=".csv">
-                                            <div class="input-group-btn">
-                                                <input type="submit" value="Upload CSV" class="btn btn-primary" style="margin-left: 5px;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
-            </div>
+<div class="space-y-8 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Import equipment</h1>
+            <p class="m-0 text-base-content/70">Upload a CSV file using the format shown below.</p>
         </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-controller="TeamAdmin" asp-action="Upload"><hero-icon name="arrow-left" class="size-4"></hero-icon>CSV imports</a></div>
+    </div>
+    <form asp-action="UploadEquipment" method="post" enctype="multipart/form-data" class="max-w-xl space-y-5 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6">
+        <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+        <div class="space-y-2">
+            <label for="file" class="block text-sm font-semibold">CSV file</label>
+            <input type="hidden" id="filename" name="filename" value="" />
+            <input type="file" id="file" name="file" class="file-input w-full" accept=".csv" required />
+        </div>
+        <div class="flex flex-wrap gap-2 border-t border-main-border pt-5"><button type="submit" class="btn btn-primary"><hero-icon name="arrow-up-tray" class="size-4"></hero-icon>Upload CSV</button><a class="btn btn-ghost" asp-controller="TeamAdmin" asp-action="Upload">Cancel</a></div>
+    </form>
         @if (Model == null || Model.Count <= 0)
         {
-            <div class="card">
-                <div class="card-header-equipment">
-                    <div class="card-head">
-                        <h2>Instructions/Example</h2>
+            <div class="min-w-0 space-y-4">
+                <div class="space-y-2">
+                    <div class="space-y-2">
+                        <h2 class="m-0 text-xl font-semibold">Instructions and example</h2>
                     </div>
                 </div>
-                <div class="card-content">
+                <div class="space-y-4 overflow-x-auto rounded-sm border border-main-border bg-base-100 p-5 [overflow-wrap:anywhere]">
                     <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
                     <p><b>EquipmentName<span class="space">,</span>SerialNumber<span class="space">,</span>Make<span class="space">,</span>Model<span class="space">,</span>KerbUser<span class="space">,</span>DateIssued<span class="space">,</span>DateDue<span class="space">,</span>Tag<span class="space">,</span>Type<span class="space">,</span>ProtectionLevel<span class="space">,</span>AvailabilityLevel<span class="space">,</span>BigfixId<span class="space">,</span>Notes<span class="space">,</span>Key1<span class="space">,</span>Value1<span class="space">,</span>Key2<span class="space">,</span>Value2<span class="space">,</span>Key3<span class="space">,</span>Value3<span class="space">,</span>Key4<span class="space">,</span>Value4<span class="space">,</span>Key5<span class="space">,</span>Value5<span class="space">,</span>Key6<span class="space">,</span>Value6<span class="space">,</span>Key7<span class="space">,</span>Value7<span class="space">,</span>Key8<span class="space">,</span>Value8<span class="space">,</span>Key9<span class="space">,</span>Value9<span class="space">,</span>Key10<span class="space">,</span>Value10<span class="space">,</span>Key11<span class="space">,</span>Value11<span class="space">,</span>Key12<span class="space">,</span>Value12<span class="space">,</span>GenericKeyValues</b></p>
-                    <p>Text above copies properly. If you type the list out, omit the space after the commas.</p> 
-                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_equipment_exampleV2.csv")" class="btn btn-outline-info btn-lg" role="button"><i class="fa fa-download"></i> CSV file.</a></p>
-                    <p><i class="fa fa-star" style="color: red"></i> Indicates new fields, Aug 2019</p>
-                    <dl>
+                    <p>Text above copies properly. If you type the list out, omit the space after the commas.</p>
+                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_equipment_exampleV2.csv")" class="btn btn-outline" role="button"><hero-icon name="arrow-down-tray" class="size-5"></hero-icon> CSV file.</a></p>
+                    <p><hero-icon name="star" class="size-5" style="color: red"></hero-icon> Indicates new fields, Aug 2019</p>
+                    <dl class="space-y-3 [&_dt]:font-semibold [&_dd]:ms-0 [&_dd]:text-sm [&_dd]:leading-6">
                         <dt>EquipmentName</dt>
                         <dd>Required - Description of Equipment item. Because name is not required to be unique, a new item will be created for each line. Maximum 64 characters long.</dd>
                         <dt>SerialNumber</dt>
@@ -74,31 +60,31 @@
                         <dd>Conditionally Optional Equipment Protection Level. If not supplied and Required, "P1" will be used. Possible Values: P1, P2, P3, P4</dd>
                         <dt>AvailabilityLevel</dt>
                         <dd>Conditionally Optional Equipment Availability Level. If not supplied and Required, "A1" will be used. Possible Values: A1, A2, A3, A4</dd>
-                        <dt>BigfixId <i class="fa fa-star" style="color: red"></i></dt>
+                        <dt>BigfixId <hero-icon name="star" class="size-5" style="color: red"></hero-icon></dt>
                         <dd>Optional for "computer" types which may have a BigfixId. Max 16 characters.</dd>
                         <dt>Notes</dt>
                         <dd>Optional.</dd>
-                        <dt>Key(1-12) <i class="fa fa-star" style="color: red"></i></dt>
+                        <dt>Key(1-12) <hero-icon name="star" class="size-5" style="color: red"></hero-icon></dt>
                         <dd>Attribute key to be added to this item. You may add up to 12 attributes.</dd>
-                        <dt>Value(1-12) <i class="fa fa-star" style="color: red"></i></dt>
+                        <dt>Value(1-12) <hero-icon name="star" class="size-5" style="color: red"></hero-icon></dt>
                         <dd>Attribute value to be added to this item.</dd>
-                        <dt>GenericKeyValues <i class="fa fa-star" style="color: red"></i></dt>
+                        <dt>GenericKeyValues <hero-icon name="star" class="size-5" style="color: red"></hero-icon></dt>
                         <dd>Generic Key Value pairs should be in the format key=value,key=value, etc.  See example.</dd>
                     </dl>
                 </div>
             </div>
         }
-  
+
     @if (Model != null && Model.Count > 0)
     {
-        <div style="padding-top: 15px">
-            <div class="card">
-                <div class="card-header-equipment">
-                    <div class="card-head">
-                        <h2>Import Results</h2>
+        <div class="space-y-4">
+            <div class="min-w-0 space-y-4">
+                <div class="space-y-2">
+                    <div class="space-y-2">
+                        <h2 class="m-0 text-xl font-semibold">Import results</h2>
                     </div>
                 </div>
-                <div class="card-content">
+                <div class="space-y-4 overflow-x-auto rounded-sm border border-main-border bg-base-100 p-5 [overflow-wrap:anywhere]">
                     <table id="results" class="table dataTable">
                         <thead>
                             <tr>
@@ -154,7 +140,7 @@
                             {
                                 var style = string.Empty;
                                 if (!item.Success)
-                                { style = "background-color: lightcoral"; }
+                                { style = "background-color: color-mix(in oklab, var(--color-error) 10%, transparent)"; }
                                 <tr style="@style">
                                     <td>@item.LineNumber</td>
                                     <td>
@@ -196,73 +182,73 @@
                                     <td>@Html.DisplayFor(a => item.Import.BigfixId)</td>
                                     <td>@Html.DisplayFor(a => item.Import.Notes)</td>
                                     <td>
-                                        @item.Import.Key1 
+                                        @item.Import.Key1
                                     </td>
                                     <td>
                                         @item.Import.Value1
                                     </td>
                                      <td>
-                                        @item.Import.Key2 
+                                        @item.Import.Key2
                                     </td>
                                     <td>
                                          @item.Import.Value2
                                     </td>
                                     <td>
-                                        @item.Import.Key3 
+                                        @item.Import.Key3
                                     </td>
                                     <td>
                                         @item.Import.Value3
                                     </td>
                                     <td>
-                                        @item.Import.Key4 
+                                        @item.Import.Key4
                                     </td>
                                     <td>
                                         @item.Import.Value4
                                     </td>
                                     <td>
-                                        @item.Import.Key5 
+                                        @item.Import.Key5
                                     </td>
                                     <td>
                                         @item.Import.Value5
                                     </td>
                                     <td>
-                                        @item.Import.Key6 
+                                        @item.Import.Key6
                                     </td>
                                     <td>
                                         @item.Import.Value6
                                     </td>
                                     <td>
-                                        @item.Import.Key7 
+                                        @item.Import.Key7
                                     </td>
                                     <td>
                                         @item.Import.Value7
                                     </td>
                                     <td>
-                                        @item.Import.Key8 
+                                        @item.Import.Key8
                                     </td>
                                     <td>
                                         @item.Import.Value8
                                     </td>
                                     <td>
-                                        @item.Import.Key9 
+                                        @item.Import.Key9
                                     </td>
                                     <td>
                                         @item.Import.Value9
                                     </td>
                                     <td>
-                                        @item.Import.Key10 
+                                        @item.Import.Key10
                                     </td>
                                     <td>
                                         @item.Import.Value10
                                     </td>
                                     <td>
-                                        @item.Import.Key11 
+                                        @item.Import.Key11
                                     </td>
                                     <td>
                                         @item.Import.Value11
                                     </td>
                                     <td>
-                                        @item.Import.Key12 
+                                        @item.Import.Key12
                                     </td>
                                     <td>
                                         @item.Import.Value12
@@ -278,13 +264,15 @@
     }
 
 
+
+</div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
      @{await Html.RenderPartialAsync("_ImportJS");}
      <script type="text/javascript">
         $(function () {
-            $("#results").dataTable({
-                "dom": 'lBfrtip',
+            $("#results").DataTable({
+                "layout": { topStart: ['pageLength', 'buttons'] },
                 "buttons": [
                     { extend: 'copyHtml5' },
                     { extend: 'excelHtml5' },
@@ -304,4 +292,3 @@
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")
 }
-

@@ -1,3 +1,5 @@
+import { AssetActions, AssetSummary, DisplayField } from '../Shared/AssetSummary';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
@@ -23,72 +25,53 @@ const WorkstationEditValues = (props: IProps) => {
   }
   const error = props.error;
 
+  if (props.disableEditing) {
+    const workstation = props.selectedWorkstation;
+    return <AssetSummary title='Workstation details' fields={[
+      ['Name', workstation.name], ['Room', workstation.space ? `${workstation.space.roomNumber} ${workstation.space.bldgName}` : null]
+    ]} tags={workstation.tags} notes={workstation.notes}
+      actions={props.openEditModal && <button type='button' className='btn btn-asset btn-sm' onClick={() => props.openEditModal(workstation)}>Edit Workstation</button>} />;
+  }
+
   return (
     <div>
-      <div className='row justify-content-between'>
-        <h3>Workstation Details</h3>
-        {props.disableEditing && props.openEditModal && (
-          <Button
-            color='link'
-            onClick={() => props.openEditModal(props.selectedWorkstation)}
-          >
-            <i className='fas fa-edit fa-xs' /> Edit Workstation
-          </Button>
-        )}
+      <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+        <h3 className="text-lg font-semibold">Workstation Details</h3>
+        <AssetActions>
+          {props.disableEditing && props.openEditModal && (
+            <Button
+              color='link'
+              onClick={() => props.openEditModal(props.selectedWorkstation)}
+            >
+              <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' /> Edit Workstation
+            </Button>
+          )}
+        </AssetActions>
       </div>
-      <div className='wrapperasset'>
+      <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
         <FormGroup>
           <Label for='name'>Name</Label>
-          <Input
-            type='text'
-            className='form-control'
-            readOnly={props.disableEditing}
-            value={
-              props.selectedWorkstation.name
-                ? props.selectedWorkstation.name
-                : ''
-            }
+          <Input id='name' type='text' className='input w-full'
+            value={props.selectedWorkstation.name || ''}
             onChange={e => props.changeProperty('name', e.target.value)}
-            invalid={error && error.path === 'name'}
-          />
-          <FormFeedback>
-            {error && error.path === 'name' && error.message}
-          </FormFeedback>
+            invalid={error && error.path === 'name'} />
+          <FormFeedback>{error && error.path === 'name' && error.message}</FormFeedback>
         </FormGroup>
-
-        {props.disableSpaceEditing && (
-          <div className='form-group'>
-            <label>Room</label>
-            <input
-              type='text'
-              className='form-control'
-              disabled={true}
-              value={
-                props.selectedWorkstation.space
-                  ? `${props.selectedWorkstation.space.roomNumber} ${props.selectedWorkstation.space.bldgName}`
-                  : ''
-              }
-            />
-          </div>
-        )}
-        {!props.disableSpaceEditing && (
+        {props.disableSpaceEditing ? (
+          <dl><DisplayField label='Room'>{props.selectedWorkstation.space
+            ? `${props.selectedWorkstation.space.roomNumber} ${props.selectedWorkstation.space.bldgName}` : null}</DisplayField></dl>
+        ) : (
           <FormGroup>
-            <Label for='room'>Room</Label>
-            <SearchSpaces
-              onSelect={space => props.changeProperty('space', space)}
-              defaultSpace={
-                props.space ? props.space : props.selectedWorkstation.space
-              }
-              isRequired={true}
-            />
+            <Label for='searchSpaces'>Room</Label>
+            <SearchSpaces onSelect={space => props.changeProperty('space', space)}
+              defaultSpace={props.space || props.selectedWorkstation.space} isRequired />
           </FormGroup>
         )}
-
         <FormGroup>
           <Label for='notes'>Notes</Label>
           <Input
             type='textarea'
-            className='form-control'
+            className='textarea min-h-28 w-full'
             readOnly={props.disableEditing}
             value={props.selectedWorkstation.notes || ''}
             onChange={e => props.changeProperty('notes', e.target.value)}

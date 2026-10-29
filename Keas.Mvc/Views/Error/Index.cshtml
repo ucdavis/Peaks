@@ -1,46 +1,27 @@
-
 @model int
 @{
-    ViewData["Title"] = "An Error has occurred";
-}
-
-<h2>Error</h2>
-
-@{
-    var statusCode = Model;
-    var statusmessage = "";
-
-    switch (statusCode)
+    var title = Model switch
     {
-        case 400:
-            statusmessage = "Bad request";
-            break;
-        case 403:
-            statusmessage = "Access Denied";
-            break;
-        case 404:
-            statusmessage = "Page not found";
-            break;
-        default:
-            statusmessage = "Something went wrong";
-            break;
-    }
-
-    <div class="err-container">
-        <h1>@statusmessage</h1>
-    </div>
+        400 => "Bad request",
+        403 => "Access denied",
+        404 => "Page not found",
+        _ => "Something went wrong"
+    };
+    var description = Model switch
+    {
+        400 => "This request could not be processed. Check the link or return to your team.",
+        403 => "Your account does not have permission to view this page. Contact your team admin if you need access.",
+        404 => "The page may have moved or the link may be incorrect. Return to your team to continue.",
+        _ => "Try again, or contact support if the problem continues."
+    };
+    ViewData["Title"] = title;
 }
-
-   <style type="text/css">
-        .err-container 
-        {
-            background-image: url('@Url.Content("~/images/error-cat.jpg")');
-            height:960px;
-            background-repeat: no-repeat;
-            background-size: contain;
-            -webkit-text-fill-color: white; /* Will override color (regardless of order) */
-            -webkit-text-stroke-width: 1px;
-            -webkit-text-stroke-color: black;
-        }
-    </style>
-
+<div class="max-w-3xl space-y-6 py-6">
+    <p class="m-0 text-xs font-semibold uppercase tracking-widest text-base-content/60">Error @Model</p>
+    <h1 class="m-0 text-3xl font-semibold text-base-content">@title</h1>
+    <p class="m-0 text-lg leading-7 text-base-content/70">@description</p>
+    <div class="flex flex-wrap items-center gap-3">
+        <a href="@Url.Content("~/Confirm/SelectTeam")" class="btn btn-primary">Select a team</a>
+        <a href="https://caeshelp.ucdavis.edu/?appname=Peaks" class="link link-hover inline-flex items-center gap-2 text-primary" target="_blank" rel="noopener noreferrer">Contact support <hero-icon name="arrow-top-right-on-square" class="size-4"></hero-icon></a>
+    </div>
+</div>

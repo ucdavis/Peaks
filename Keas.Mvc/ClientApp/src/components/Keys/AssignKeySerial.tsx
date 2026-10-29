@@ -1,7 +1,10 @@
+import { AssetActions } from '../Shared/AssetSummary';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Form, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Form } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
 import { IPerson } from '../../models/People';
@@ -151,22 +154,14 @@ const AssignKeySerial = (props: IProps) => {
     <Modal
       isOpen={isModalOpen}
       toggle={confirmClose}
-      size='lg'
       className='keys-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>
-          {props.selectedKeySerial || props.person
+      <ModalHeading>{props.selectedKeySerial || props.person
             ? 'Assign Key Serial'
-            : 'Add Key Serial'}
-        </h2>
-        <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
-        </Button>
-      </div>
+            : 'Add Key Serial'}</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <Form>
+        <div className='space-y-6'>
+          <Form className='space-y-6'>
             <AssignPerson
               disabled={
                 !!props.person ||
@@ -190,7 +185,7 @@ const AssignKeySerial = (props: IProps) => {
               />
             )}
             {!keySerial && (
-              <div className='form-group'>
+              <div className='space-y-2'>
                 <SearchKeySerial
                   selectedKey={selectedKey}
                   selectedKeySerial={keySerial}
@@ -203,12 +198,14 @@ const AssignKeySerial = (props: IProps) => {
             {keySerial &&
             !keySerial.id && ( // if we are creating a new serial, edit properties
                 <div>
-                  <div className='row justify-content-between'>
-                    <h3>Create New Serial</h3>
-                    <Button color='link' onClick={onDeselected}>
-                      Clear{' '}
-                      <i className='fas fa-times fa-sm' aria-hidden='true' />
-                    </Button>
+                  <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+                    <h3 className="text-lg font-semibold">Create New Serial</h3>
+                    <AssetActions>
+                      <Button color='link' onClick={onDeselected}>
+                        Clear{' '}
+                        <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
+                      </Button>
+                    </AssetActions>
                   </div>
                   {!keySerial.key && (
                     <div>
@@ -235,12 +232,14 @@ const AssignKeySerial = (props: IProps) => {
               )}
             {keySerial && !!keySerial.id && (
               <div>
-                <div className='row justify-content-between'>
-                  <h3>Assign Existing Serial</h3>
-                  <Button color='link' onClick={onDeselected}>
-                    Clear{' '}
-                    <i className='fas fa-times fa-sm' aria-hidden='true' />
-                  </Button>
+                <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+                  <h3 className="text-lg font-semibold">Assign Existing Serial</h3>
+                  <AssetActions>
+                    <Button color='link' onClick={onDeselected}>
+                      Clear{' '}
+                      <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
+                    </Button>
+                  </AssetActions>
                 </div>
 
                 <KeySerialEditValues
@@ -258,11 +257,11 @@ const AssignKeySerial = (props: IProps) => {
       </ModalBody>
       <ModalFooter>
         <Button
-          color='primary'
+          color='asset'
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          {keySerial?.keySerialAssignment ? 'Save changes' : 'Assign'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

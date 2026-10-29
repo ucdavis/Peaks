@@ -1,3 +1,5 @@
+import { KeyIcon } from '@heroicons/react/24/solid';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import {
@@ -21,7 +23,7 @@ import DisassociateSpace from './DisassociateSpace';
 import KeyDetailContainer from './KeyDetailContainer';
 import KeyList from './KeyList';
 import KeyTable from './KeyTable';
-import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import { AssetFilterBar } from '../Shared/AssetFilterBar';
 import PeaksLoader from '../Shared/PeaksLoader';
 
 interface IProps {
@@ -116,13 +118,16 @@ const KeyContainer = (props: IProps) => {
 
     return (
       <div>
-        <SearchDefinedOptions
-          definedOptions={context.tags}
-          disabled={false}
-          selected={tagFilters}
-          onSelect={onTagsFiltered}
-          placeholder='Search for Tags'
-          id='searchTagsKeys'
+        <AssetFilterBar
+          categories={[
+            {
+              id: 'tags',
+              label: 'Tags',
+              options: context.tags,
+              selected: tagFilters,
+              onChange: onTagsFiltered
+            }
+          ]}
         />
         <KeyTable
           keysInfo={filteredKeys}
@@ -556,12 +561,16 @@ const KeyContainer = (props: IProps) => {
   const shouldRenderDetailsView = !onSpaceTab && containerAction === 'details';
   const shouldRenderTableView = !shouldRenderDetailsView;
 
+  if (shouldRenderDetailsView) {
+    return <div className='keys-color space-y-6'>{renderDetailsView()}</div>;
+  }
+
   return (
-    <div className='card keys-color'>
+    <div className='card mb-4 border border-main-border bg-base-100 shadow-sm keys-color'>
       <div className='card-header-keys'>
-        <div className='card-head row justify-content-between'>
-          <h2>
-            <i className='fas fa-key fa-xs' /> Keys
+        <div className='px-5 py-4 sm:px-6 flex items-center justify-between gap-4'>
+          <h2 className='text-xl font-semibold'>
+            <KeyIcon data-icon='key' className='hero-icon size-5' /> Keys
           </h2>
           {!onSpaceTab && (
             <CreateKey
@@ -575,12 +584,12 @@ const KeyContainer = (props: IProps) => {
           )}
           {onSpaceTab && shouldRenderTableView && (
             <div>
-              <Button
-                color='link'
-                onClick={openAssociate}
-                className='keys-anomaly'
-              >
-                <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
+              <Button color='asset' size='sm' onClick={openAssociate}>
+                <PlusIcon
+                  data-icon='plus'
+                  className='hero-icon size-4 mr-2'
+                  aria-hidden='true'
+                />
                 Associate
               </Button>
               {action === 'associate' &&
@@ -589,9 +598,8 @@ const KeyContainer = (props: IProps) => {
           )}
         </div>
       </div>
-      <div className='card-content'>
+      <div className='card-body gap-4 p-5 sm:p-6'>
         {shouldRenderTableView && renderTableOrListView(selectedKeyId)}
-        {shouldRenderDetailsView && renderDetailsView()}
         {(containerAction === 'delete' || action === 'delete') &&
           renderDeleteModal(selectedKeyId, selectedKeyInfo)}
       </div>

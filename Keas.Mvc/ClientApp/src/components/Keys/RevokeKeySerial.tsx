@@ -1,6 +1,8 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IKey } from '../../models/Keys';
 import { IKeySerial } from '../../models/KeySerials';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
@@ -52,17 +54,9 @@ const RevokeKeySerial = (props: IProps) => {
       <Modal
         isOpen={props.isModalOpen}
         toggle={props.closeModal}
-        size='lg'
         className='keys-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>
-            Revoke for {selectedKeySerial.key.code} {selectedKeySerial.number}
-          </h2>
-          <Button color='link' onClick={props.closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Revoke for {selectedKeySerial.key.code} {selectedKeySerial.number}</ModalHeading>
         <ModalBody>
           <KeySerialEditValues
             keySerial={selectedKeySerial}
@@ -77,11 +71,11 @@ const RevokeKeySerial = (props: IProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            color='primary'
+            color='error'
             onClick={() => revokeKeySerial()}
             disabled={!isValidToRevoke() || submitting}
           >
-            Revoke {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            Revoke {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

@@ -1,3 +1,4 @@
+import { TagIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { ISpace } from '../../models/Spaces';
 
@@ -22,7 +23,7 @@ const SpacesDetailContainer = (props: IProps) => {
           {props.space.sqFt && <div>{props.space.sqFt} Sq Feet</div>}
           {props.tags && (
             <p className='card-text'>
-              <i className='fas fa-tags' aria-hidden='true' /> {props.tags}
+              <TagIcon data-icon="tag" className='hero-icon size-5' aria-hidden='true' /> {props.tags}
             </p>
           )}
         </div>

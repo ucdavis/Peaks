@@ -68,7 +68,9 @@ namespace Test.Integration
 
             var content = await response.Content.ReadAsStringAsync();
 
-            Assert.Contains("<a href='/teamname/People'>Team Assets</a>", content);
+            var document = new AngleSharp.Html.Parser.HtmlParser().ParseDocument(content);
+            Assert.Contains(document.QuerySelectorAll("a[href='/teamname/People']"),
+                link => link.TextContent.Contains("Team Assets"));
         }
 
         [Theory]

@@ -1,7 +1,9 @@
+import { Modal, ModalBody, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Button, Modal, ModalBody, Table } from 'reactstrap';
+import { Table } from 'reactstrap';
 import { Context } from '../../Context';
 
 interface IProps {
@@ -19,15 +21,17 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
 
   const renderInfoIcon = () => {
     return (
-      <a
-        className='bigfix-info'
+      <button
+        type='button'
+        aria-label='View managed system details'
+        className='link link-hover inline-flex cursor-pointer text-primary/80 hover:text-primary'
         onClick={() => {
           modalToggle();
           getManagedSystemComputerInfo(props.managedSystemId || '');
         }}
       >
-        <i className='fas fa-info-circle ml-2' />
-      </a>
+        <InformationCircleIcon data-icon="information-circle" className='hero-icon ml-2 size-5 text-inherit' />
+      </button>
     );
   };
 
@@ -36,17 +40,11 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
       <Modal
         isOpen={managedSystemModal}
         toggle={modalToggle}
-        size='lg'
         className='equipment-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Computer Details</h2>
-          <Button color='link' onClick={modalToggle}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Computer Details</ModalHeading>
 
-        <ModalBody className='d-flex justify-content-center'>
+        <ModalBody>
           {renderModalBody()}
         </ModalBody>
       </Modal>
@@ -57,7 +55,7 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
     if (isFetched) {
       return renderComputerInfo();
     } else {
-      return <i className='fas fa-3x fa-spinner fa-pulse' />;
+      return <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-12 animate-spin' />;
     }
   };
 

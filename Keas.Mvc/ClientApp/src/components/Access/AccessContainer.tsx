@@ -1,3 +1,5 @@
+import { IdentificationIcon } from '@heroicons/react/24/solid';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -13,7 +15,7 @@ import AccessDetailContainer from './AccessDetailContainer';
 import AccessTable from './AccessTable';
 import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
-import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import { AssetFilterBar } from '../Shared/AssetFilterBar';
 import PeaksLoader from '../Shared/PeaksLoader';
 
 const AccessContainer = () => {
@@ -121,16 +123,17 @@ const AccessContainer = () => {
     }
     return (
       <div>
-        <div className='row'>
-          <SearchDefinedOptions
-            definedOptions={context.tags}
-            selected={tagFilters}
-            onSelect={filterTags}
-            disabled={false}
-            placeholder='Search for Tags'
-            id='searchTagsAccess'
-          />
-        </div>
+        <AssetFilterBar
+          categories={[
+            {
+              id: 'tags',
+              label: 'Tags',
+              options: context.tags,
+              selected: tagFilters,
+              onChange: filterTags
+            }
+          ]}
+        />
         <AccessTable
           accesses={filteredAccess}
           onDelete={openDeleteModal}
@@ -301,21 +304,37 @@ const AccessContainer = () => {
   const detailAccess = accesses.find(a => a.id === selectedId);
   const shouldRenderDetails = containerAction === 'details';
 
+  if (shouldRenderDetails) {
+    return (
+      <div className='access-color space-y-6'>
+        {renderDetails(selectedId, detailAccess)}
+      </div>
+    );
+  }
+
   return (
-    <div className='card access-color'>
+    <div className='card mb-4 border border-main-border bg-base-100 shadow-sm access-color'>
       <div className='card-header-access'>
-        <div className='card-head row justify-content-between'>
-          <h2>
-            <i className='fas fa-address-card fa-xs' /> Access
+        <div className='px-5 py-4 sm:px-6 flex items-center justify-between gap-4'>
+          <h2 className='text-xl font-semibold'>
+            <IdentificationIcon
+              data-icon='identification'
+              className='hero-icon size-5'
+            />{' '}
+            Access
           </h2>
-          <Button color='link' onClick={openCreateModal}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Access
+          <Button color='asset' size='sm' onClick={openCreateModal}>
+            <PlusIcon
+              data-icon='plus'
+              className='hero-icon size-4'
+              aria-hidden='true'
+            />{' '}
+            Add Access
           </Button>
         </div>
       </div>
-      <div className='card-content'>
-        {!shouldRenderDetails && renderTable()}
-        {shouldRenderDetails && renderDetails(selectedId, detailAccess)}
+      <div className='card-body gap-4 p-5 sm:p-6'>
+        {renderTable()}
         {activeAsset &&
           (containerAction === 'assign' || containerAction === 'create') &&
           renderAssignModal(selectedId, detailAccess)}

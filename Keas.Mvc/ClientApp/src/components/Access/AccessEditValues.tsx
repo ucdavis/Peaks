@@ -1,3 +1,5 @@
+import { AssetSummary } from '../Shared/AssetSummary';
+import { LinkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IAccess } from '../../models/Access';
@@ -30,17 +32,24 @@ const AccessEditValues = (props: IProps) => {
   const access = props.selectedAccess;
   const error = props.error;
 
+  if (props.disableEditing) {
+    return <AssetSummary title='Access details' fields={[
+      ['Name', access.name]
+    ]} tags={access.tags} notes={access.notes}
+      actions={props.goToAccessDetails && <button type='button' className='link link-hover' onClick={goToAccessDetails}>View Access Details</button>} />;
+  }
+
   return (
     <div>
-      <div className='row justify-content-between'>
-        <h3>Access Details</h3>
+      <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+        <h3 className="text-lg font-semibold">Access Details</h3>
       </div>
-      <div className='wrapperasset'>
+      <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
         <FormGroup>
           <Label for='name'>Name</Label>
           <Input
             type='text'
-            className='form-control'
+            className='input w-full'
             readOnly={props.disableEditing}
             value={
               !!props.selectedAccess && props.selectedAccess.name
@@ -60,7 +69,7 @@ const AccessEditValues = (props: IProps) => {
           <Label>Notes</Label>
           <Input
             type='textarea'
-            className='form-control'
+            className='textarea min-h-28 w-full'
             readOnly={props.disableEditing}
             value={
               !!props.selectedAccess?.notes ? props.selectedAccess.notes : ''
@@ -96,7 +105,7 @@ const AccessEditValues = (props: IProps) => {
         </FormGroup>
         {props.goToAccessDetails && (
           <Button color='link' onClick={() => goToAccessDetails()}>
-            <i className='fas fa-link fa-xs' /> View Access Details
+            <LinkIcon data-icon="link" className='hero-icon size-4' /> View Access Details
           </Button>
         )}
       </div>

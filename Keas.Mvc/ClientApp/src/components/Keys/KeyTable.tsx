@@ -1,5 +1,7 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
-import { Button, UncontrolledTooltip } from 'reactstrap';
+import { UncontrolledTooltip } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
@@ -25,12 +27,10 @@ export default class KeyTable extends React.Component<IProps, {}> {
     const columns: Column<IKeyInfo>[] = [
       {
         cell: data => (
-          <Button
-            color='link'
+          <AssetDetailsLink
+            path={`keys/details/${data.row.original.key.id}`}
             onClick={() => this.props.showDetails(data.row.original.key)}
-          >
-            Details
-          </Button>
+          />
         ),
         header: ' '
       },
@@ -53,7 +53,12 @@ export default class KeyTable extends React.Component<IProps, {}> {
         filterFn: ReactTableKeySerialUtil.filterFunction,
         header: _ => (
           <div>
-            Serials <i id='serialTooltip' className='fas fa-info-circle' />
+            Serials{' '}
+            <InformationCircleIcon
+              data-icon='information-circle'
+              id='serialTooltip'
+              className='hero-icon size-5'
+            />
             <UncontrolledTooltip placement='right' target='serialTooltip'>
               In Use / Total
             </UncontrolledTooltip>

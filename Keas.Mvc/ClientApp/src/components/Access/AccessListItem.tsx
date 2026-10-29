@@ -1,5 +1,5 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import * as React from 'react';
-import { Button } from 'reactstrap';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
@@ -36,12 +36,10 @@ const AccessAssignmentListItem = (props: IProps) => {
   return (
     <tr>
       <td>
-        <Button
-          color='link'
+        <AssetDetailsLink
+          path={`access/details/${props.assignment.accessId}/accessAssignment/details/${props.assignment.id}`}
           onClick={() => props.showDetails(props.assignment)}
-        >
-          Details
-        </Button>
+        />
       </td>
       <td>{props.assignment.access.name}</td>
       <td>{hasAssignment ? 'Assigned' : 'Unassigned'}</td>

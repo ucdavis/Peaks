@@ -1,11 +1,12 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import * as React from 'react';
-import { Button } from 'reactstrap';
 import { IWorkstation } from '../../models/Workstations';
 import { DateUtil } from '../../util/dates';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 
 interface IProps {
   workstationEntity: IWorkstation;
+  detailsBasePath: string;
   onRevoke?: (workstation: IWorkstation) => void;
   onAdd?: (workstation: IWorkstation) => void;
   showDetails?: (workstation: IWorkstation) => void;
@@ -43,12 +44,10 @@ const WorkstationListItem = (props: IProps) => {
   return (
     <tr>
       <td>
-        <Button
-          color='link'
+        <AssetDetailsLink
+          path={`${props.detailsBasePath}/workstations/details/${props.workstationEntity.id}`}
           onClick={() => props.showDetails(props.workstationEntity)}
-        >
-          Details
-        </Button>
+        />
       </td>
       <td>{props.workstationEntity.name}</td>
       <td>

@@ -1,6 +1,8 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { IWorkstation, workstationSchema } from '../../models/Workstations';
 import WorkstationAssignmentValues from './WorkstationAssignmentValues';
@@ -85,18 +87,12 @@ const EditWorkstation = (props: IProps) => {
     <Modal
       isOpen={props.modal}
       toggle={confirmClose}
-      size='lg'
       className='spaces-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>Edit Workstation</h2>
-        <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
-        </Button>
-      </div>
+      <ModalHeading>Edit Workstation</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <form>
+        <div className='space-y-6'>
+          <form className='space-y-6'>
             <WorkstationEditValues
               selectedWorkstation={workstation}
               changeProperty={changeProperty}
@@ -114,11 +110,11 @@ const EditWorkstation = (props: IProps) => {
       </ModalBody>
       <ModalFooter>
         <Button
-          color='primary'
+          color='asset'
           onClick={editSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          Save changes {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

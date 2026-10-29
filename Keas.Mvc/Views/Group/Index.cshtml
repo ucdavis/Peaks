@@ -1,152 +1,104 @@
 @model Keas.Mvc.Models.GroupModels.GroupIndexViewModel
+@{ ViewData["Title"] = $"Reports for {Model.Group.Name}"; }
+<div class="space-y-8 pb-8">
+    <header class="space-y-2">
+        <p class="m-0 text-xs font-semibold uppercase tracking-widest text-base-content/60">Reporting group</p>
+        <h1 class="m-0 text-3xl font-semibold text-base-content">@Model.Group.Name</h1>
+        <p class="m-0 text-base-content/70">Browse reports and team contacts across this group.</p>
+    </header>
+    <section class="space-y-4" aria-labelledby="group-reports-heading">
+        <h2 id="group-reports-heading" class="m-0 text-2xl font-semibold">Reports</h2>
+    <div class="grid items-start gap-8 md:grid-cols-2 xl:grid-cols-3">
 
-@{
-    ViewBag.Title = "title";
-}
+        <div class="min-w-0 space-y-3 equipment-color">
+            <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="computer-desktop" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> Equipment Reports</h3>
+            <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
+                <li>
+                    <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="EquipmentReport" asp-route-id="@Model.Group.Id">View All Equipment <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
+                </li>
 
-<div class="card">
-    <div class="card-header-primary">
-        <div class="row justify-content-between">
-            <div class="card-head">
-                <h2><i class="fas fa-tasks fa-xs"></i> Reports for group: @Model.Group.Name</h2>
-            </div>
+            </ul>
+        </div>
+
+
+        <div class="min-w-0 space-y-3 spaces-color">
+            <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="building-office-2" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> Workstations Reports</h3>
+            <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
+                <li>
+                    <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="WorkstationReport" asp-route-id="@Model.Group.Id">View All Workstations <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="min-w-0 space-y-3 keys-color">
+            <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="key" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> Key Reports</h3>
+            <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
+                <li>
+                    <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="KeySerialsWithSpacesReport" asp-route-id="@Model.Group.Id">View Key Serials with Spaces <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
+                </li>
+                <li>
+                    <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="KeySerialsReport" asp-route-id="@Model.Group.Id">View Key Serials <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="min-w-0 space-y-3 documents-color">
+            <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="document-text" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> Documents Reports</h3>
+            <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
+                <li>
+                    <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="IncompleteDocumentsReport" asp-route-id="@Model.Group.Id">View All Incomplete Docs <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
+                </li>
+                <li>
+                    <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="CompletedDocumentsReport" asp-route-id="@Model.Group.Id">Completed Documents <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="min-w-0 space-y-3 people-color">
+            <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="users" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> People Reports</h3>
+            <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
+                <li>
+                    <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="PeopleLeavingWithAssets" asp-route-id="@Model.Group.Id">People with Assets who are Leaving <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
+                </li>
+
+            </ul>
+        </div>
+        <div class="min-w-0 space-y-3 general-color">
+            <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="list-bullet" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> General Reports</h3>
+            <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
+                <li>
+                    <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="ExpiringItems" asp-route-id="@Model.Group.Id">Expiring Items <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
+                </li>
+            </ul>
         </div>
     </div>
-    <div class="card-content">
-        <div class="row">
-
-            <div class="report-list equipment-color col-md-3">
-                <h3><i class="fas fa-hdd fa-xs"></i> Equipment Reports</h3>
-                <ul>
-                    <li>
-                        <a asp-action="EquipmentReport" asp-route-id="@Model.Group.Id">View All Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                    </li>
-   
-                </ul>
+    </section>
+    @foreach (var groupSection in new[] { (Title: "Teams in group", InGroup: true, Id: "teams-in-group"), (Title: "Teams outside group", InGroup: false, Id: "teams-outside-group") })
+    {
+        <section class="space-y-4" aria-labelledby="@(groupSection.Id)-heading">
+            <h2 id="@(groupSection.Id)-heading" class="m-0 text-2xl font-semibold">@groupSection.Title</h2>
+            <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4 sm:p-6">
+                <table id="@groupSection.Id" class="table dataTable">
+                    <caption class="sr-only">@groupSection.Title: @Model.Group.Name</caption>
+                    <thead><tr><th scope="col">Team name</th><th scope="col">Team slug</th><th scope="col">Department admins</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model.TeamContact.Where(team => team.InGroup == groupSection.InGroup))
+                        {
+                            <tr>
+                                <td>@item.TeamName</td>
+                                <td>@item.TeamSlug</td>
+                                <td><a class="link link-hover [overflow-wrap:anywhere]" href="mailto:@item.AllDeptAdmins">@item.AllDeptAdmins</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
-
-
-            <div class="report-list spaces-color col-md-3">
-                <h3><i class="fas fa-building fa-xs"></i> Workstations Reports</h3>
-                <ul>
-                    <li>
-                        <a asp-action="WorkstationReport" asp-route-id="@Model.Group.Id">View All Workstations <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                    </li>
-                </ul> 
-            </div>
-
-            <div class="report-list keys-color col-md-3">
-                <h3><i class="fas fa-building fa-xs"></i> Key Reports</h3>
-                <ul>
-                    <li>
-                        <a asp-action="KeySerialsWithSpacesReport" asp-route-id="@Model.Group.Id">View Key Serials with Spaces <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                    </li>
-                    <li>
-                        <a asp-action="KeySerialsReport" asp-route-id="@Model.Group.Id">View Key Serials <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                    </li>
-                </ul> 
-            </div>
-
-            <div class="report-list documents-color col-md-3">
-                <h3><i class="fas fa-file-alt fa-xs"></i> Documents Reports</h3>
-                <ul>
-                    <li>
-                        <a asp-action="IncompleteDocumentsReport" asp-route-id="@Model.Group.Id">View All Incomplete Docs <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                    </li>
-                    <li>
-                        <a asp-action="CompletedDocumentsReport" asp-route-id="@Model.Group.Id">Completed Documents <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                    </li>
-                </ul> 
-            </div>
-            
-            <div class="report-list people-color col-md-3">
-                <h3><i class="fas fa-users fa-xs"></i> People Reports</h3>
-                <ul>
-                    <li>
-                        <a asp-action="PeopleLeavingWithAssets" asp-route-id="@Model.Group.Id">People with Assets who are Leaving <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                    </li>
-   
-                </ul>
-            </div>
-            <div class="report-list general-color col-md-3">
-                <h3><i class="fas fa-list fa-xs"></i> General Reports</h3>
-                <ul>
-                    <li>
-                        <a asp-action="ExpiringItems" asp-route-id="@Model.Group.Id">Expiring <span style="white-space: nowrap;">Items <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+        </section>
+    }
 </div>
-<div class="card">
-    <div class="card-header-primary">
-        <div class="row justify-content-between">
-            <div class="card-head">
-                <h2><i class="fas fa-tasks fa-xs"></i> Teams in group: @Model.Group.Name</h2>
-            </div>
-        </div>
-    </div>
-    <div class="card-content">
-        <table id="teams-in-group" class="table dataTable">
-            <thead>
-            <tr>
-                <th>Team Name</th>
-                <th>Team Slug</th>
-                <th>All Dept Admins</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.TeamContact.Where(a => a.InGroup))
-            {
-                <tr>
-                    <td>@item.TeamName</td>
-                    <td>@item.TeamSlug</td>
-                    <td><a href="mailto: @item.AllDeptAdmins">@item.AllDeptAdmins</a></td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-</div>
-<div class="card">
-    <div class="card-header-primary">
-        <div class="row justify-content-between">
-            <div class="card-head">
-                <h2><i class="fas fa-tasks fa-xs"></i> Teams NOT in group: @Model.Group.Name</h2>
-            </div>
-        </div>
-    </div>
-    <div class="card-content">
-        <table id="teams-in-group" class="table dataTable">
-            <thead>
-            <tr>
-                <th>Team Name</th>
-                <th>Team Slug</th>
-                <th>All Dept Admins</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.TeamContact.Where(a => !a.InGroup))
-            {
-                <tr>
-                    <td>@item.TeamName</td>
-                    <td>@item.TeamSlug</td>
-                    <td><a href="mailto: @item.AllDeptAdmins">@item.AllDeptAdmins</a></td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-</div>
-
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")
 }
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ReportScriptsPartial");}
 }
-
-
-

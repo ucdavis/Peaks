@@ -1,36 +1,23 @@
 @model Keas.Core.Domain.EquipmentAttributeKey
-
-@{
-    ViewData["Title"] = "Create Team Equipment Attribute Key";
-}
-
-
-<div class="card">
-    <div class="card-header-equipment">
-        <div class="card-head">
-            <div class="row justify-content-between">
-                <h2>Create Equipment Attribute Key</h2>
-                <a class="btn btn-link" asp-action="Index"><i class="fas fa-arrow-left fa-xs"></i> Back to List</a>
-            </div>
+@{ ViewData["Title"] = "Create equipment attribute key"; }
+<div class="space-y-6 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Create equipment attribute key</h1>
+            <p class="m-0 text-base-content/70">Define an attribute key for equipment in your team.</p>
         </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-controller="EquipmentAttributeKey" asp-action="Index"><hero-icon name="arrow-left" class="size-4"></hero-icon>Attribute keys</a></div>
     </div>
-    <div class="card-content">
-        <div class="row">
-            <div class="col-md-4">
-                <form asp-action="Create">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                     @await Html.PartialAsync("_EquipmentAttributeKeyForm")
-                    <div class="form-group">
-                        <input type="submit" value="Create" class="btn btn-primary" />
-                    </div>
-                </form>
-            </div>
+    <form asp-action="Create" class="max-w-xl space-y-5 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6">
+        <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+        @await Html.PartialAsync("_EquipmentAttributeKeyForm")
+        <div class="flex flex-wrap gap-2 border-t border-main-border pt-5">
+            <button type="submit" class="btn btn-primary">Create equipment attribute key</button>
+            <a class="btn btn-ghost" asp-action="Index">Cancel</a>
         </div>
-    </div>
+    </form>
 </div>
-
-
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

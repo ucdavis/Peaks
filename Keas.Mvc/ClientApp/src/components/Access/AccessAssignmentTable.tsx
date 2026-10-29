@@ -1,3 +1,4 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import * as React from 'react';
 import { IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
@@ -8,7 +9,6 @@ import {
   PeaksInitialState
 } from '../Shared/tableFeatures';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
-import { Button } from 'reactstrap';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
 
 interface IProps {
@@ -40,12 +40,10 @@ const AccessAssignmentTable = (props: IProps) => {
     () => [
       {
         cell: data => (
-          <Button
-            color='link'
+          <AssetDetailsLink
+            path={`access/details/${data.row.original.accessId}/accessAssignment/details/${data.row.original.id}`}
             onClick={() => props.showDetails(data.row.original)}
-          >
-            Details
-          </Button>
+          />
         ),
         header: ' '
       },

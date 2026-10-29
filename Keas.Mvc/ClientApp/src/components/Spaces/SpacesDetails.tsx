@@ -1,3 +1,4 @@
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { Button, Alert } from 'reactstrap';
@@ -44,7 +45,7 @@ const SpacesDetails = (props: IProps) => {
 
       <div>
         <Button color='link' onClick={props.goBack}>
-          <i className='fas fa-arrow-left fa-xs' /> Return to Table
+          <ArrowLeftIcon data-icon="arrow-left" className='hero-icon size-4' /> Return to Table
         </Button>
       </div>
       <br />

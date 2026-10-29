@@ -1,5 +1,6 @@
+import { Modal, ModalBody, ModalHeading } from '../Shared/AppModal';
 import * as React from 'react';
-import { Button, Modal, ModalBody } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import AccessEditValues from './AccessEditValues';
 import AccessAssignmentValues from './AccessAssignmentValues';
@@ -28,15 +29,9 @@ const AccessAssignmentDetails = (props: IProps) => {
       <Modal
         isOpen={props.isModalOpen}
         toggle={props.closeModal}
-        size='lg'
         className='access-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Details for {selectedAccess.name} Assignment</h2>
-          <Button color='link' onClick={props.closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Details for {selectedAccess.name} Assignment</ModalHeading>
         <ModalBody>
           <AccessEditValues
             selectedAccess={selectedAccess}

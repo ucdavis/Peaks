@@ -1,0 +1,55 @@
+using System;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+
+namespace Keas.Mvc.TagHelpers
+{
+    [HtmlTargetElement("hero-icon", Attributes = "name")]
+    public class HeroIconTagHelper : TagHelper
+    {
+        public string Name { get; set; }
+        public string Label { get; set; }
+        public string Variant { get; set; } = "outline";
+
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            if (Variant != "outline" && Variant != "solid")
+                throw new ArgumentException($"Unknown Heroicon variant: {Variant}", nameof(Variant));
+
+            var icons = Variant == "solid" ? HeroIconPaths.Solid : HeroIconPaths.All;
+            if (!icons.TryGetValue(Name, out var paths))
+                throw new ArgumentException($"Unknown Heroicon: {Name}", nameof(Name));
+
+            output.TagName = "svg";
+            output.TagMode = TagMode.StartTagAndEndTag;
+            output.Attributes.RemoveAll("name");
+            output.Attributes.RemoveAll("label");
+            output.Attributes.RemoveAll("variant");
+            var classes = output.Attributes["class"]?.Value?.ToString();
+            output.Attributes.SetAttribute("class", $"hero-icon {classes}".Trim());
+            output.Attributes.SetAttribute("data-icon", Name);
+            output.Attributes.SetAttribute("xmlns", "http://www.w3.org/2000/svg");
+            output.Attributes.SetAttribute("viewBox", "0 0 24 24");
+            // Presentation attributes bound the icon before CSS loads; size utilities still override them.
+            if (!output.Attributes.ContainsName("width")) output.Attributes.SetAttribute("width", "1.25em");
+            if (!output.Attributes.ContainsName("height")) output.Attributes.SetAttribute("height", "1.25em");
+            output.Attributes.SetAttribute("fill", Variant == "solid" ? "currentColor" : "none");
+            if (Variant == "outline")
+            {
+                output.Attributes.SetAttribute("stroke", "currentColor");
+                output.Attributes.SetAttribute("stroke-width", "1.5");
+            }
+            output.Attributes.SetAttribute("focusable", "false");
+            if (string.IsNullOrWhiteSpace(Label))
+            {
+                output.Attributes.SetAttribute("aria-hidden", "true");
+            }
+            else
+            {
+                output.Attributes.RemoveAll("aria-hidden");
+                output.Attributes.SetAttribute("role", "img");
+                output.Attributes.SetAttribute("aria-label", Label);
+            }
+            output.Content.SetHtmlContent(paths);
+        }
+    }
+}

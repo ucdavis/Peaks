@@ -1,6 +1,9 @@
+import { DisplayField } from '../Shared/AssetSummary';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IKeyInfo } from '../../models/Keys';
 import { ISpace } from '../../models/Spaces';
 import SearchSpaces from '../Spaces/SearchSpaces';
@@ -62,54 +65,23 @@ const AssociateSpace = (props: IProps) => {
 
   const renderSearchSpace = () => {
     const { selectedSpace } = props;
-
-    // we're being given a specific key to readonly
     if (selectedSpace) {
-      return (
-        <div className='form-group'>
-          <label>Space to associate with:</label>
-          <input
-            className='form-control'
-            value={`${selectedSpace.roomNumber} ${selectedSpace.bldgName}`}
-            readOnly={true}
-          />
-        </div>
-      );
+      return <dl><DisplayField label='Space to associate with'>{`${selectedSpace.roomNumber} ${selectedSpace.bldgName}`}</DisplayField></dl>;
     }
-
-    return (
-      <div className='form-group'>
-        <label>Space to associate with:</label>
-        <SearchSpaces onSelect={onSelectSpace} />
-      </div>
-    );
+    return <div className='space-y-2'>
+      <label className='block text-sm font-semibold'>Space to associate with:</label>
+      <SearchSpaces onSelect={onSelectSpace} />
+    </div>;
   };
 
   const renderSearchKey = () => {
-    // we're being given a specific key to readonly
     if (selectedKeyInfo) {
-      return (
-        <div className='form-group'>
-          <label>Key to associate with:</label>
-          <input
-            className='form-control'
-            value={`${selectedKeyInfo.key.name} - ${selectedKeyInfo.key.code}`}
-            readOnly={true}
-          />
-        </div>
-      );
+      return <dl><DisplayField label='Key to associate with'>{`${selectedKeyInfo.key.name} - ${selectedKeyInfo.key.code}`}</DisplayField></dl>;
     }
-
-    return (
-      <div className='form-group'>
-        <label>Pick an key to associate</label>
-        <SearchKeys
-          onSelect={onSelectedKeyInfo}
-          onDeselect={onDeselected}
-          allowNew={false}
-        />
-      </div>
-    );
+    return <div className='space-y-2'>
+      <label className='block text-sm font-semibold'>Pick a key to associate</label>
+      <SearchKeys onSelect={onSelectedKeyInfo} onDeselect={onDeselected} allowNew={false} />
+    </div>;
   };
 
   const renderCreateKey = () => {
@@ -185,15 +157,9 @@ const AssociateSpace = (props: IProps) => {
     <Modal
       isOpen={props.isModalOpen}
       toggle={closeModal}
-      size='lg'
       className='keys-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>Assign Key</h2>
-        <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
-        </Button>
-      </div>
+      <ModalHeading>Assign Key</ModalHeading>
       <ModalBody>
         {renderSearchSpace()}
 
@@ -201,15 +167,15 @@ const AssociateSpace = (props: IProps) => {
 
         {renderCreateKey()}
       </ModalBody>
-      <ModalFooter className='justify-content-between'>
+      <ModalFooter>
         <span className='text-danger'>{error}</span>
         <Button
-          color='primary'
+          color='asset'
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Go!
-          {submitting && <i className='fas fa-circle-notch fa-spin ml-2' />}
+          Assign
+          {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin ml-2' />}
         </Button>
       </ModalFooter>
     </Modal>

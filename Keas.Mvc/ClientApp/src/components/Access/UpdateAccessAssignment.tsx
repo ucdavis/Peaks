@@ -1,6 +1,9 @@
+import { AssetSummary } from '../Shared/AssetSummary';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IAccess, IAccessAssignment, accessSchema } from '../../models/Access';
 import { IPerson } from '../../models/People';
 import { addYears, format, startOfDay } from 'date-fns';
@@ -97,31 +100,15 @@ const UpdateAccessAssignment = (props: IProps) => {
     <Modal
       isOpen={props.isModalOpen}
       toggle={confirmClose}
-      size='lg'
       className='access-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>Update Access</h2>
-        <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
-        </Button>
-      </div>
+      <ModalHeading>Update Access</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <form>
-            <div className='form-group'>
-              <label>Assigned To</label>
-              <input
-                type='text'
-                className='form-control'
-                disabled={true}
-                value={
-                  !!props.accessAssignment?.person
-                    ? props.accessAssignment.person.name
-                    : ''
-                }
-              />
-            </div>
+        <div className='space-y-6'>
+          <form className='space-y-6'>
+            <AssetSummary fields={[[
+              'Assigned to', props.accessAssignment?.person?.name
+            ]]} />
             <AssignDate
               date={date}
               isRequired={true}
@@ -129,8 +116,8 @@ const UpdateAccessAssignment = (props: IProps) => {
               onChangeDate={changeDate}
             />
             <div>
-              <div className='row justify-content-between'>
-                <h3>Assign Exisiting Access</h3>
+              <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+                <h3 className="text-lg font-semibold">Assign Existing Access</h3>
               </div>
               <AccessEditValues
                 selectedAccess={props.selectedAccess}
@@ -143,11 +130,11 @@ const UpdateAccessAssignment = (props: IProps) => {
       </ModalBody>
       <ModalFooter>
         <Button
-          color='primary'
+          color='asset'
           onClick={updateSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          Save changes {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

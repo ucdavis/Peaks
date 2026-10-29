@@ -1,11 +1,11 @@
-﻿import * as React from 'react';
+import { ArrowPathIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import * as React from 'react';
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import {
   Button,
   FormGroup,
   Input,
-  InputGroup,
   Label
 } from 'reactstrap';
 import { Context } from '../../Context';
@@ -23,6 +23,7 @@ const SearchUsers = (props: IProps) => {
 
   const handleKeyPress = e => {
     if (e.which === 13) {
+      e.preventDefault();
       loadUser();
     }
   };
@@ -54,28 +55,31 @@ const SearchUsers = (props: IProps) => {
   };
 
   return (
-    <FormGroup>
-      <Label for='search'>Search For User Using Kerberos or Email</Label>
-      <InputGroup>
+    <FormGroup className='space-y-2'>
+      <Label for='userSearch' className='block text-sm font-semibold'>Search For User Using Kerberos or Email</Label>
+      <div className='flex items-start gap-2'>
         <Input
           type='search'
           name='search'
           id='userSearch'
           placeholder='Search . . .'
-          className='form-control'
+          className={`input w-full ${isInvalid ? 'input-error' : ''}`}
           value={search}
           invalid={isInvalid}
+          aria-invalid={isInvalid}
+          aria-describedby={isInvalid ? 'user-search-error' : undefined}
           onChange={e => setSearch(e.target.value)}
           onKeyPress={e => handleKeyPress(e)}
         />
-        <Button color='link' onClick={loadUser}>
+        <Button color='outline' type='button' onClick={loadUser} disabled={loading || search.trim() === ''} aria-label='Search users'>
           {loading ? (
-            <i className='fas fa-spin fa-spinner' />
+            <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />
           ) : (
-            <i className='fas fa-search fa-sm' />
+            <MagnifyingGlassIcon data-icon="magnifying-glass" className='hero-icon size-4' />
           )}
         </Button>
-      </InputGroup>
+      </div>
+      {isInvalid && <p id='user-search-error' className='m-0 text-sm text-error' role='status'>No user found. Check the Kerberos ID or email and try again.</p>}
     </FormGroup>
   );
 };

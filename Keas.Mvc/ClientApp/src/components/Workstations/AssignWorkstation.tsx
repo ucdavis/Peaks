@@ -1,7 +1,10 @@
+import { AssetActions } from '../Shared/AssetSummary';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';
@@ -130,23 +133,15 @@ const AssignWorkstation = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={confirmClose}
-        size='lg'
         className='spaces-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>
-            {props.selectedWorkstation || props.person
+        <ModalHeading>{props.selectedWorkstation || props.person
               ? 'Assign Workstation'
-              : 'Add Workstation'}
-          </h2>
-          <Button color='link' onClick={closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+              : 'Add Workstation'}</ModalHeading>
 
         <ModalBody>
-          <div className='container-fluid'>
-            <form>
+          <div className='space-y-6'>
+            <form className='space-y-6'>
               <AssignPerson
                 disabled={
                   !!props.person ||
@@ -168,7 +163,7 @@ const AssignWorkstation = (props: IProps) => {
                 />
               )}
               {!workstation && (
-                <div className='form-group'>
+                <div className='space-y-2'>
                   <SearchWorkstations
                     selectedWorkstation={workstation}
                     onSelect={onSelected}
@@ -181,12 +176,14 @@ const AssignWorkstation = (props: IProps) => {
               {workstation &&
               !workstation.teamId && ( // if we are creating a new workstation, edit properties
                   <div>
-                    <div className='row justify-content-between'>
-                      <h3>Create New Workstation</h3>
-                      <Button color='link' onClick={onDeselected}>
-                        Clear{' '}
-                        <i className='fas fa-times fa-sm' aria-hidden='true' />
-                      </Button>
+                    <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+                      <h3 className="text-lg font-semibold">Create New Workstation</h3>
+                      <AssetActions>
+                        <Button color='link' onClick={onDeselected}>
+                          Clear{' '}
+                          <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
+                        </Button>
+                      </AssetActions>
                     </div>
                     <WorkstationEditValues
                       tags={props.tags}
@@ -200,12 +197,14 @@ const AssignWorkstation = (props: IProps) => {
                 )}
               {!!workstation && !!workstation.teamId && (
                 <div>
-                  <div className='row justify-content-between'>
-                    <h3>Assign Existing Workstation</h3>
-                    <Button color='link' onClick={onDeselected}>
-                      Clear{' '}
-                      <i className='fas fa-times fa-sm' aria-hidden='true' />
-                    </Button>
+                  <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+                    <h3 className="text-lg font-semibold">Assign Existing Workstation</h3>
+                    <AssetActions>
+                      <Button color='link' onClick={onDeselected}>
+                        Clear{' '}
+                        <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
+                      </Button>
+                    </AssetActions>
                   </div>
                   <WorkstationEditValues
                     selectedWorkstation={workstation}
@@ -220,11 +219,11 @@ const AssignWorkstation = (props: IProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            color='primary'
+            color='asset'
             onClick={assignSelected}
             disabled={!validState || submitting}
           >
-            Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            {workstation?.assignment ? 'Save changes' : 'Assign'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>
         </ModalFooter>
       </Modal>

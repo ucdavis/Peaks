@@ -1,7 +1,8 @@
+import { Modal, ModalBody, ModalHeading } from '../Shared/AppModal';
 import * as React from 'react';
 import { useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Button, Modal, ModalBody } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey } from '../../models/Keys';
 import { IKeySerial } from '../../models/KeySerials';
@@ -63,17 +64,9 @@ const KeySerialDetails = (props: IProps) => {
       <Modal
         isOpen={props.isModalOpen}
         toggle={props.closeModal}
-        size='lg'
         className='keys-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>
-            Details for {selectedKeySerial.key.code} {selectedKeySerial.number}
-          </h2>
-          <Button color='link' onClick={props.closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Details for {selectedKeySerial.key.code} {selectedKeySerial.number}</ModalHeading>
         <ModalBody>
           <KeySerialEditValues
             keySerial={selectedKeySerial}

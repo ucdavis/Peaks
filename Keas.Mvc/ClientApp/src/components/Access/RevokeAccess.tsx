@@ -1,6 +1,8 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import AccessEditValues from './AccessEditValues';
 import AccessAssignmentValues from './AccessAssignmentValues';
@@ -44,18 +46,10 @@ const RevokeAccess = (props: IProps) => {
       <Modal
         isOpen={props.isModalOpen}
         toggle={props.closeModal}
-        size='lg'
         className='access-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>
-            Revoke {selectedAccess.name} from{' '}
-            {selectedAccessAssignment.person.name}
-          </h2>
-          <Button color='link' onClick={props.closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Revoke {selectedAccess.name} from{' '}
+            {selectedAccessAssignment.person.name}</ModalHeading>
 
         <ModalBody>
           <AccessEditValues
@@ -72,11 +66,11 @@ const RevokeAccess = (props: IProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            color='primary'
+            color='error'
             onClick={() => revokeAccess()}
             disabled={!isValidToRevoke() || submitting}
           >
-            Revoke {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            Revoke {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

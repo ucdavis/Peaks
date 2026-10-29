@@ -1,9 +1,11 @@
+import { InformationCircleIcon, PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IEquipmentAttribute } from '../../models/Equipment';
 import EquipmentAttribute from './EquipmentAttribute';
 
 interface IProps {
+  spacious?: boolean;
   commonKeys: string[];
   disableEdit: boolean;
   attributes: IEquipmentAttribute[];
@@ -42,6 +44,7 @@ const EquipmentAttributes = (props: IProps) => {
   const attributeList = props.attributes.map((attr, i) => (
     <EquipmentAttribute
       key={`attr-${i}`}
+      spacious={props.spacious}
       disabledEdit={props.disableEdit}
       commonKeys={props.commonKeys}
       attribute={attr}
@@ -59,7 +62,7 @@ const EquipmentAttributes = (props: IProps) => {
         target='blank'
         rel='noopener noreferrer'
       >
-        <i className='fas fa-info-circle' />
+        <InformationCircleIcon data-icon="information-circle" className='hero-icon size-5' />
       </a>
       <table className='table'>
         <thead>
@@ -75,7 +78,7 @@ const EquipmentAttributes = (props: IProps) => {
             <tr>
               <td colSpan={3}>
                 <Button color='link' id='add-new' onClick={onAddAttribute}>
-                  <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add New
+                  <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add New
                   Attribute
                 </Button>
               </td>

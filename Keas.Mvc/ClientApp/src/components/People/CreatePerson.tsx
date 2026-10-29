@@ -1,7 +1,9 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon, PlusIcon, UserIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IPerson, personSchema } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
@@ -134,28 +136,22 @@ const CreatePerson = (props: IProps) => {
 
   return (
     <div>
-      <Button color='link' onClick={props.onAddNew}>
-        <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Person
+      <Button color='asset' size='sm' onClick={props.onAddNew}>
+        <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Person
       </Button>
       <Modal
         isOpen={props.modal}
         toggle={confirmClose}
-        size='lg'
         className='people-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Add Person</h2>
-          <Button color='link' onClick={closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Add Person</ModalHeading>
         <ModalBody>
-          <div className='container-fluid'>
-            <div className='form-group'>
+          <div className='space-y-6'>
+            <div className='space-y-2'>
               <SearchUsers updatePerson={onSelectPerson} />
             </div>
 
-            <div className='form-group'>
+            <div className='space-y-2'>
               <PersonEditValues
                 selectedPerson={person}
                 changeProperty={changeProperty}
@@ -167,10 +163,10 @@ const CreatePerson = (props: IProps) => {
               />
             </div>
 
-            {moreInfoString}
+            {moreInfoString && <p role='status' className='m-0 text-sm text-base-content/70'>{moreInfoString}</p>}
             {existingPerson && (
               <Button color='link' type='button' onClick={viewExistingPerson}>
-                <i className='fas fa-user fas-xs' aria-hidden='true' /> View
+                <UserIcon data-icon="user" className='hero-icon size-4' aria-hidden='true' /> View
                 Existing Person
               </Button>
             )}
@@ -178,11 +174,11 @@ const CreatePerson = (props: IProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            color='primary'
+            color='asset'
             onClick={createSelected}
             disabled={!validState || submitting}
           >
-            Add {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            Add {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

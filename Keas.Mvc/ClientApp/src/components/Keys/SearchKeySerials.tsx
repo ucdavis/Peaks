@@ -1,6 +1,8 @@
+import { DisplayField } from '../Shared/AssetSummary';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
-import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
+import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -23,12 +25,7 @@ const SearchKeySerials = (props: IProps) => {
 
   const renderExistingKey = () => {
     return (
-      <input
-        type='text'
-        className='form-control'
-        value={props.selectedKeySerial.number}
-        disabled={true}
-      />
+      <dl><DisplayField label='Key serial number'>{props.selectedKeySerial.number}</DisplayField></dl>
     );
   };
 
@@ -37,7 +34,7 @@ const SearchKeySerials = (props: IProps) => {
       <div>
         <label>Pick a key serial to assign</label>
         <div>
-          <AsyncTypeahead
+          <SearchCombobox
             id='searchKeySerials' // for accessibility
             isInvalid={!props.selectedKey || !props.selectedKeySerial}
             isLoading={isSearchLoading}
@@ -54,8 +51,8 @@ const SearchKeySerials = (props: IProps) => {
         </div>
         <div>or</div>
         <div>
-          <Button color='link' onClick={createNew}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Create New
+          <Button color='asset' type='button' size='sm' onClick={createNew}>
+            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Create New
             Serial
           </Button>
         </div>
@@ -65,7 +62,7 @@ const SearchKeySerials = (props: IProps) => {
 
   const renderItem = (option: IKeySerial, props, index) => {
     return (
-      <div className={!!option.keySerialAssignment ? 'disabled' : ''}>
+      <div className={!!option.keySerialAssignment ? 'opacity-40' : ''}>
         <div>
           <div>
             <Highlighter search={props.text}>{option.key.name}</Highlighter>
@@ -112,6 +109,7 @@ const SearchKeySerials = (props: IProps) => {
     // check for empty
     if (!selected || selected.length <= 0) {
       props.onDeselect();
+      return;
     }
 
     // check for new selection

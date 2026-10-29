@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { SearchCombobox } from './SearchCombobox';
 
 interface IProps {
   id: string;
@@ -22,9 +21,8 @@ interface IProps {
 
 // async typeahead with defined options pulled from the server
 const SearchAsyncOptions = (props: IProps) => {
-  let ref;
   return (
-    <AsyncTypeahead
+    <SearchCombobox
       id={props.id} // for accessibility
       isLoading={props.isLoading}
       minLength={props.minLength}
@@ -39,10 +37,6 @@ const SearchAsyncOptions = (props: IProps) => {
       }}
       options={props.options}
       defaultSelected={props.defaultSelected ? props.defaultSelected : []}
-      onBlur={() => {
-        ref.hideMenu();
-      }}
-      ref={el => (ref = el)}
     />
   );
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cleanup, fireEvent, render, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, within, screen } from '@testing-library/react';
 import KeyTable from '../Keys/KeyTable';
 import KeySerialTable from '../Keys/KeySerialTable';
 import SpacesTable from '../Spaces/SpacesTable';
@@ -93,12 +93,14 @@ it.each([
       const original = rows[(expected as number[])[index]];
       expect(details).toHaveBeenLastCalledWith(original);
       expect(details.mock.calls.at(-1)[0]).toBe(original);
-      fireEvent.click(controls.getByRole('button', { name: '' }));
+      fireEvent.click(controls.getByRole('button', { name: 'Row actions' }));
       const action = original.keySerialAssignment ? 'Revoke' : 'Assign';
       expect(
-        controls.queryByText(action === 'Assign' ? 'Revoke' : 'Assign')
+        screen.queryByRole('menuitem', {
+          name: action === 'Assign' ? 'Revoke' : 'Assign'
+        })
       ).toBeNull();
-      fireEvent.click(controls.getByText(action));
+      fireEvent.click(screen.getByRole('menuitem', { name: action }));
       expect((action === 'Assign' ? assign : revoke).mock.calls.at(-1)[0]).toBe(
         original
       );

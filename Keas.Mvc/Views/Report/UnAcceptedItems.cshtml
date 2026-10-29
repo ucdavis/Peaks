@@ -4,36 +4,36 @@
     ViewData["Title"] = "Items Pending Acceptance";
 }
 
-
-<form asp-action="UnAcceptedItems" method="get">
-    <div class="card history-color">
-      <div class="card-header-history">
-        <div class="card-head">
-          <h2>Items Pending Acceptance</h2>
-
+<div class="space-y-6 pb-8">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Items Pending Acceptance</h1>
         </div>
-      </div>
-        <div class="card-content">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </div>
+    <div class="space-y-4">
+        <form class="space-y-5" asp-action="UnAcceptedItems" method="get">
 
-              
+                    <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
 
+                          <div class="grid items-start gap-6 lg:grid-cols-2">
+                              <div class="min-w-0 space-y-3">
+                                  <h2 class="m-0 text-lg font-semibold">Filters</h2>
+                                  <div class="space-y-2">
+                                      <label asp-for="ShowType" class="block text-sm font-semibold"></label>
 
-                  <div class="row align-items-end">                     
-                      <div class="col-sm-4">
-                          <h3>Filters</h3>
-                          <div class="form-group">
-                              <label asp-for="ShowType" class="control-label"></label>
-                              <br>
-                              <select class="form-control" asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
+                                      <select class="select w-full" asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
+                                  </div>
+                                   <div class="space-y-2">
+                                    <input type="submit" value="Refresh Report" class="btn btn-primary" />
+                                  </div>
+                              </div>
                           </div>
-                           <div class="form-group">
-                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
-                          </div>
-                      </div>
-                  </div>
 
-<table id="dtExpiringItems" class="table dataTable">
+        </form>
+    </div>
+    <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4 sm:p-6">
+        <table id="dtExpiringItems" class="table dataTable">
         <thead>
         <tr>
             <th>
@@ -44,7 +44,7 @@
             </th>
             <th>
                 Assigned To
-            </th> 
+            </th>
             <th>
                 Email
             </th>
@@ -56,7 +56,7 @@
             </th>
         </tr>
         </thead>
-        <tbody>        
+        <tbody>
         @foreach (var item in Model.Keys)
         {
             <tr>
@@ -65,13 +65,13 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.KeySerialAssignment.Person.LastName), @Html.DisplayFor(a => item.KeySerialAssignment.Person.FirstName)
-                </td> 
+                </td>
                 <td>
                     @Html.DisplayFor(a => item.KeySerialAssignment.Person.Email)
                 </td>
                 <td>
-                   @Html.DisplayFor(a => item.KeySerialAssignment.RequestedByName) 
-                   @Html.DisplayFor(a => item.KeySerialAssignment.RequestedAt) 
+                   @Html.DisplayFor(a => item.KeySerialAssignment.RequestedByName)
+                   @Html.DisplayFor(a => item.KeySerialAssignment.RequestedAt)
                 </td>
                  <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}/{3}/details/{4}", TempData["TeamName"], "keys", item.Key.Id, "keyserials", item.KeySerialAssignment.KeySerialId)' >Details</a>
@@ -87,14 +87,14 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.Assignment.Person.LastName), @Html.DisplayFor(a => item.Assignment.Person.FirstName)
-                </td> 
+                </td>
                 <td>
                     @Html.DisplayFor(a => item.Assignment.Person.Email)
                 </td>
                 <td>
-                   @Html.DisplayFor(a => item.Assignment.RequestedByName) 
-                   @Html.DisplayFor(a => item.Assignment.RequestedAt) 
-                </td>  
+                   @Html.DisplayFor(a => item.Assignment.RequestedByName)
+                   @Html.DisplayFor(a => item.Assignment.RequestedAt)
+                </td>
                  <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "equipment", item.Id)' >Details</a>
                 </td>
@@ -109,14 +109,14 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.Assignment.Person.LastName), @Html.DisplayFor(a => item.Assignment.Person.FirstName)
-                </td> 
+                </td>
                 <td>
                     @Html.DisplayFor(a => item.Assignment.Person.Email)
                 </td>
                 <td>
-                   @Html.DisplayFor(a => item.Assignment.RequestedByName) 
-                   @Html.DisplayFor(a => item.Assignment.RequestedAt) 
-                </td> 
+                   @Html.DisplayFor(a => item.Assignment.RequestedByName)
+                   @Html.DisplayFor(a => item.Assignment.RequestedAt)
+                </td>
                 <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "spaces", item.SpaceId)' >Details</a>
                 </td>
@@ -124,11 +124,8 @@
         }
         </tbody>
     </table>
-
-        </div>
     </div>
-</form>
-
+</div>
 
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")
@@ -139,7 +136,7 @@
 
     <script type="text/javascript">
         $('.dataTable').DataTable({
-            "dom": 'lBfrtip',
+            "layout": { topStart: ['pageLength', 'buttons'] },
             "buttons": [
                 {
                     extend: 'copyHtml5',

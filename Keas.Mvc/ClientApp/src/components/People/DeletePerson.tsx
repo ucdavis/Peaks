@@ -1,6 +1,11 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import {
+  ArrowPathIcon,
+  TrashIcon,
+  } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IPerson, IPersonInfo } from '../../models/People';
 import PersonEditValues from './PersonEditValues';
 
@@ -48,22 +53,20 @@ const DeletePerson = (props: IProps) => {
 
   return (
     <div>
-      <Button color='link' onClick={toggleModal}>
-        <i className='fas fa-trash fa-sm fa-fw mr-2' aria-hidden='true' />
+      <button type='button' className='btn btn-sm' onClick={toggleModal}>
+        <TrashIcon
+          data-icon='trash'
+          className='hero-icon size-4 mr-2'
+          aria-hidden='true'
+        />
         Delete Person
-      </Button>
+      </button>
       <Modal
         isOpen={modal}
         toggle={toggleModal}
-        size='lg'
         className='people-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Delete {props.selectedPersonInfo.person.name}</h2>
-          <Button color='link' onClick={toggleModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
+        <ModalHeading>Delete {props.selectedPersonInfo.person.name}</ModalHeading>
 
         <ModalBody>
           <PersonEditValues
@@ -80,11 +83,17 @@ const DeletePerson = (props: IProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            color='primary'
+            color='error'
             onClick={deletePerson}
             disabled={submitting || !checkValidToDelete()}
           >
-            Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            Delete{' '}
+            {submitting && (
+              <ArrowPathIcon
+                data-icon='arrow-path'
+                className='hero-icon size-5 animate-spin'
+              />
+            )}
           </Button>{' '}
         </ModalFooter>
       </Modal>

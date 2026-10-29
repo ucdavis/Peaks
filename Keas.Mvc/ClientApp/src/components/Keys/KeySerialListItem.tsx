@@ -1,5 +1,5 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import * as React from 'react';
-import { Button } from 'reactstrap';
 import { IKeySerial } from '../../models/KeySerials';
 import { DateUtil } from '../../util/dates';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
@@ -34,9 +34,10 @@ const KeySerialListItem = (props: IProps) => {
   return (
     <tr>
       <td>
-        <Button color='link' onClick={() => props.showDetails(props.keySerial)}>
-          Details
-        </Button>
+        <AssetDetailsLink
+          path={`keys/details/${props.keySerial.key.id}/keyserials/details/${props.keySerial.id}`}
+          onClick={() => props.showDetails(props.keySerial)}
+        />
       </td>
       <td>{keySerial.key.code}</td>
       <td>{keySerial.number}</td>

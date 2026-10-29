@@ -1,0 +1,16 @@
+@using Keas.Core.Data
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext DbContext
+@{
+    var teamSlug = ViewContext.RouteData.Values["teamName"] as string;
+    var teamName = string.IsNullOrWhiteSpace(teamSlug)
+        ? null
+        : await DbContext.Teams.AsNoTracking()
+            .Where(team => team.Slug == teamSlug)
+            .Select(team => team.Name)
+            .FirstOrDefaultAsync();
+}
+@if (!string.IsNullOrWhiteSpace(teamSlug))
+{
+    <p class="m-0 mb-2 text-xs font-semibold uppercase tracking-widest text-base-content/60">@(teamName ?? teamSlug)</p>
+}

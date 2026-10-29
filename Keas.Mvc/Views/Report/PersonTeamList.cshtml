@@ -1,11 +1,11 @@
 @model System.Collections.Generic.List<Keas.Core.Domain.Team>
 
-<h1>@ViewBag.PersonName</h1>
+<h1 class="text-3xl font-semibold">@ViewBag.PersonName</h1>
 
 @foreach (var team in Model)
 {
-    <h3>Team: @team.Name</h3>
-    <h4>Admins:</h4>
+    <h3 class="text-lg font-semibold">Team: @team.Name</h3>
+    <h4 class="text-base font-semibold">Admins:</h4>
     <table id="@team.Slug" class="table dataTable">
         <thead>
         <tr>

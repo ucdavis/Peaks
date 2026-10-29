@@ -1,0 +1,396 @@
+@layer theme, base, components, utilities;
+@layer utilities.daisyui.component, utilities.daisyui.modifier;
+
+@import 'tailwindcss';
+@import '@ucdavis/gunrock-tailwind/imports.css';
+@import 'react-date-picker/dist/DatePicker.css' layer(components);
+@import 'react-calendar/dist/Calendar.css' layer(components);
+@import './asset-colors.css';
+@import './asset-tables.css';
+
+/* Override Gunrock's unlayered white root background. */
+html,
+body {
+  background-color: var(--color-base-200);
+}
+
+/* Include server-rendered pages as well as React. Paths are relative to this file. */
+@source '../';
+@source '../../../Views';
+
+/* Reactstrap generates this class from color='link' at runtime. */
+@source inline('btn-link');
+
+/* Resolve asset color utilities at the element's nearest asset context. */
+@theme inline {
+  --color-asset-color: var(--asset-color, var(--color-primary));
+}
+
+/* Shared shell width and gutters for every Razor/React page. */
+@utility content-wrapper {
+  @apply mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8;
+}
+
+@layer components {
+  .hero-icon {
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+}
+
+@plugin 'daisyui' {
+  themes: false;
+  logs: false;
+}
+
+/* Keep daisyUI's alert variants and layout, with PEAKS' shared alert treatment.
+ * Match in the utilities layer where daisyUI defines its alert borders. */
+@layer utilities {
+  .alert.alert {
+    border-width: 0;
+    border-inline-start: 6px solid var(--alert-color, var(--color-neutral));
+    border-radius: var(--radius-sm);
+    background-color: color-mix(in oklab, var(--alert-color, var(--color-neutral)) 10%, transparent);
+    background-image: none;
+    color: var(--color-base-content);
+    box-shadow: none;
+  }
+
+  .alert svg {
+    color: var(--alert-color, var(--color-neutral));
+  }
+}
+
+/* Shared PEAKS design tokens. Gunrock supplies the UC Davis palette and fonts. */
+@theme static {
+  --color-dark-font: #1f1f1f;
+  --color-light-bg-100: #ffffff;
+  --color-light-bg-200: #fafafa;
+  --color-light-bg-300: #e9e9e9;
+  --color-main-border: #dfdfdf;
+
+  --color-primary-color: var(--color-ucd-gunrock);
+  --color-secondary-color: var(--color-ucd-gold);
+  --color-accent-color: var(--color-ucd-poppy);
+  --color-error-color: var(--color-ucd-doubledecker);
+  /* Darken Putah Creek so base-100 text clears 4.5:1 contrast. */
+  --color-info-color: color-mix(in oklab, var(--color-ucd-putahcreek) 92%, black);
+  --color-success-color: var(--color-ucd-quad);
+  --color-warning-color: #cd9400;
+  --color-neutral-color: #d1d5db;
+
+  --color-people: var(--color-ucd-doubledecker);
+  --color-equipment: #daaa00;
+  --color-access: var(--color-ucd-quad);
+  --color-keys: var(--color-ucd-tahoe);
+  --color-spaces: var(--color-ucd-pinot);
+  --color-documents: var(--color-ucd-poppy);
+}
+
+@plugin 'daisyui/theme' {
+  name: 'peaks';
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+
+  --color-base-100: var(--color-light-bg-100);
+  --color-base-200: var(--color-light-bg-200);
+  --color-base-300: var(--color-light-bg-300);
+  --color-base-content: var(--color-dark-font);
+  /* Success uses base-100 content; other variants follow their fill contrast. */
+  --color-primary: var(--color-primary-color);
+  --color-primary-content: var(--color-base-100);
+  --color-secondary: var(--color-secondary-color);
+  --color-secondary-content: var(--color-base-content);
+  --color-accent: var(--color-accent-color);
+  --color-accent-content: var(--color-base-content);
+  --color-error: var(--color-error-color);
+  --color-error-content: var(--color-base-100);
+  --color-info: var(--color-info-color);
+  --color-info-content: var(--color-base-100);
+  --color-success: var(--color-success-color);
+  --color-success-content: var(--color-base-100);
+  --color-warning: var(--color-warning-color);
+  --color-warning-content: var(--color-base-content);
+  --color-neutral: var(--color-neutral-color);
+  --color-neutral-content: var(--color-base-content);
+
+  --radius-selector: 0.375rem;
+  --radius-field: 0.375rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* Reactstrap is still used by existing screens. Keep its open dialogs usable
+ * until those screens move to native dialogs and daisyUI modal-box markup.
+ * DaisyUI defines .modal in utilities, so this bridge must use that layer too. */
+@layer utilities {
+  body.modal-open {
+    overflow: hidden;
+  }
+
+  .modal.show {
+    display: block;
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+    overflow-y: auto;
+    z-index: 1050;
+  }
+
+  .modal.show .modal-dialog {
+    width: calc(100% - 2rem);
+    max-width: 72rem;
+    margin: 2rem auto;
+  }
+
+
+  .modal.show .modal-content {
+    background: var(--color-base-100);
+    color: var(--color-base-content);
+    border: var(--border) solid var(--color-main-border);
+    border-radius: var(--radius-box);
+    box-shadow: 0 1rem 3rem #0003;
+  }
+
+  .modal-backdrop.show {
+    position: fixed;
+    inset: 0;
+    z-index: 1040;
+    background: #0006;
+  }
+}
+
+/* Use the same color layer as daisyUI's own variants so outline, soft,
+ * hover, and disabled styles can override the foreground as usual. */
+@layer utilities {
+  @layer daisyui.modifier.color {
+    .btn-asset {
+      --btn-color: var(--asset-color, var(--color-primary));
+      --btn-fg: var(--asset-button-content, var(--color-primary-content));
+    }
+
+    .badge-asset {
+      --badge-color: var(--asset-color, var(--color-primary));
+      --badge-fg: var(--asset-button-content, var(--color-primary-content));
+    }
+  }
+
+  .btn-asset.btn-link:not(:disabled, [disabled], .btn-disabled) {
+    --btn-fg: var(--asset-color, var(--color-primary));
+  }
+
+  .btn-asset [data-icon] {
+    color: inherit;
+  }
+}
+
+@layer components {
+  /* Toast colors. */
+  .Toastify__toast--success {
+    background-color: #3DAE2B !important;
+  }
+
+  .Toastify__toast--error {
+    background-color: #C10230 !important;
+  }
+
+  .Toastify__toast {
+    color: #fff !important;
+  }
+
+  /* Date-picker positioning. */
+  .gj-datepicker-bootstrap [role=right-icon] button .gj-icon,
+  .gj-datepicker-bootstrap [role=right-icon] button .material-icons {
+    top: 8px !important;
+  }
+
+
+  /* Each asset takes a turn bouncing and pulsing in its own color. */
+  .peaks-loader-icon {
+    display: inline-flex;
+    color: var(--color-base-content);
+    animation: peaks-loader-bounce 3s infinite;
+  }
+
+  @keyframes peaks-loader-bounce {
+    0%,
+    20%,
+    100% {
+      transform: translateY(0);
+      color: var(--color-base-content);
+    }
+
+    15% {
+      transform: translateY(-10px);
+      color: var(--asset-color);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .peaks-loader-icon {
+      animation: none;
+      color: var(--asset-color);
+    }
+  }
+}
+
+/* Shared date fields and their calendar popovers. Keep vendor structure in the
+ * components layer so these styles and Tailwind utilities can refine it. */
+@layer components {
+  .peaks-date-picker {
+    width: 100%;
+    max-width: 20rem;
+    font-size: 0.875rem;
+    color: var(--color-base-content);
+  }
+
+  .peaks-date-picker .react-date-picker__wrapper {
+    min-height: 2.5rem;
+    gap: 0.5rem;
+    padding-inline: 0.75rem 0.375rem;
+    border: 1px solid color-mix(in oklab, var(--color-base-content) 18%, transparent);
+    border-radius: var(--radius-box);
+    background: var(--color-base-100);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .peaks-date-picker:focus-within .react-date-picker__wrapper {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 12%, transparent);
+  }
+
+  .peaks-date-picker--error .react-date-picker__wrapper {
+    border-color: var(--color-error);
+  }
+
+  .peaks-date-picker .react-date-picker__inputGroup {
+    padding-block: 0.5rem;
+  }
+
+  .peaks-date-picker .react-date-picker__inputGroup__divider {
+    color: color-mix(in oklab, var(--color-base-content) 40%, transparent);
+  }
+
+  .peaks-date-picker .react-date-picker__inputGroup__input:invalid {
+    background: transparent;
+  }
+
+  .peaks-date-picker .react-date-picker__inputGroup__input:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+    border-radius: 0.125rem;
+  }
+
+  .peaks-date-picker .react-date-picker__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    padding: 0.375rem;
+    margin-block: 0.25rem;
+    border-radius: var(--radius-field);
+    color: color-mix(in oklab, var(--color-base-content) 65%, transparent);
+  }
+
+  .peaks-date-picker .react-date-picker__button:enabled:hover,
+  .peaks-date-picker .react-date-picker__button:focus-visible {
+    background: var(--color-base-200);
+    color: var(--color-primary);
+  }
+
+  .peaks-date-picker .react-date-picker__calendar {
+    width: 20rem;
+    max-width: calc(100vw - 2.5rem);
+    margin-block: 0.5rem;
+    z-index: 30;
+  }
+
+  .peaks-date-picker .react-calendar {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-main-border);
+    border-radius: 1rem;
+    background: var(--color-base-100);
+    color: var(--color-base-content);
+    font-family: inherit;
+    line-height: 1.5;
+    box-shadow: 0 0.75rem 2rem #00000014;
+  }
+
+  .peaks-date-picker .react-calendar__navigation {
+    height: 2.25rem;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .peaks-date-picker .react-calendar__navigation button {
+    min-width: 2.25rem;
+    border-radius: var(--radius-box);
+    font-weight: 600;
+  }
+
+  .peaks-date-picker .react-calendar__month-view__weekdays {
+    color: color-mix(in oklab, var(--color-base-content) 55%, transparent);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+  }
+
+  .peaks-date-picker .react-calendar__month-view__weekdays abbr {
+    text-decoration: none;
+  }
+
+  .peaks-date-picker .react-calendar__tile {
+    padding: 0.625rem 0.25rem;
+    border-radius: 0.625rem;
+    font-size: 0.8125rem;
+  }
+
+  .peaks-date-picker .react-calendar__month-view__days__day--weekend {
+    color: inherit;
+  }
+
+  .peaks-date-picker .react-calendar__month-view__days__day--neighboringMonth,
+  .peaks-date-picker .react-calendar__decade-view__years__year--neighboringDecade,
+  .peaks-date-picker .react-calendar__century-view__decades__decade--neighboringCentury {
+    color: color-mix(in oklab, var(--color-base-content) 40%, transparent);
+  }
+
+  .peaks-date-picker .react-calendar__tile--now {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-primary) 40%, transparent);
+    font-weight: 600;
+  }
+
+  .peaks-date-picker .react-calendar__navigation button:enabled:hover,
+  .peaks-date-picker .react-calendar__navigation button:enabled:focus,
+  .peaks-date-picker .react-calendar__tile:enabled:hover,
+  .peaks-date-picker .react-calendar__tile:enabled:focus {
+    background: var(--color-base-200);
+  }
+
+  .peaks-date-picker .react-calendar__tile--hasActive {
+    background: color-mix(in oklab, var(--color-primary) 10%, var(--color-base-100));
+    color: var(--color-primary);
+  }
+
+  .peaks-date-picker .react-calendar__tile--active,
+  .peaks-date-picker .react-calendar__tile--active:enabled:hover,
+  .peaks-date-picker .react-calendar__tile--active:enabled:focus {
+    background: var(--color-primary);
+    color: var(--color-primary-content);
+    box-shadow: none;
+  }
+
+  .peaks-date-picker .react-calendar button:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+}

@@ -1,7 +1,10 @@
+import { AssetActions } from '../Shared/AssetSummary';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { accessSchema, IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
@@ -136,23 +139,15 @@ const AssignAccess = (props: IProps) => {
     <Modal
       isOpen={props.modal}
       toggle={confirmClose}
-      size='lg'
       className='access-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>
-          {props.selectedAccess || props.person
+      <ModalHeading>{props.selectedAccess || props.person
             ? 'Assign Access'
-            : 'Add Access'}
-        </h2>
-        <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
-        </Button>
-      </div>
+            : 'Add Access'}</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <form>
-            <div className='form-group'>
+        <div className='space-y-6'>
+          <form className='space-y-6'>
+            <div className='space-y-2'>
               <AssignPerson
                 disabled={!!props.person}
                 person={props.person || person}
@@ -171,19 +166,21 @@ const AssignAccess = (props: IProps) => {
               />
             )}
             {!access && (
-              <div className='form-group'>
+              <div className='space-y-2'>
                 <SearchAccess onSelect={onSelected} onDeselect={onDeselected} />
               </div>
             )}
             {!!access &&
             !access.teamId && ( // if we are creating a new access, edit properties
                 <div>
-                  <div className='row justify-content-between'>
-                    <h3>Create New Access</h3>
-                    <Button color='link' onClick={onDeselected}>
-                      Clear{' '}
-                      <i className='fas fa-times fa-sm' aria-hidden='true' />
-                    </Button>
+                  <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+                    <h3 className="text-lg font-semibold">Create New Access</h3>
+                    <AssetActions>
+                      <Button color='link' onClick={onDeselected}>
+                        Clear{' '}
+                        <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
+                      </Button>
+                    </AssetActions>
                   </div>
                   <AccessEditValues
                     selectedAccess={access}
@@ -196,12 +193,14 @@ const AssignAccess = (props: IProps) => {
               )}
             {!!access && !!access.teamId && (
               <div>
-                <div className='row justify-content-between'>
-                  <h3>Assign Exisiting Access</h3>
-                  <Button color='link' onClick={onDeselected}>
-                    Clear{' '}
-                    <i className='fas fa-times fa-sm' aria-hidden='true' />
-                  </Button>
+                <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
+                  <h3 className="text-lg font-semibold">Assign Existing Access</h3>
+                  <AssetActions>
+                    <Button color='link' onClick={onDeselected}>
+                      Clear{' '}
+                      <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
+                    </Button>
+                  </AssetActions>
                 </div>
                 <AccessEditValues
                   selectedAccess={access}
@@ -216,11 +215,11 @@ const AssignAccess = (props: IProps) => {
       </ModalBody>
       <ModalFooter>
         <Button
-          color='primary'
+          color='asset'
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          Assign {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

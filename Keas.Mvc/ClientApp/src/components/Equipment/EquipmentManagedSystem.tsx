@@ -28,8 +28,8 @@ const EquipmentManagedSystem = (props: IProps) => {
 
   return (
     <>
-      <div className='d-flex'>
-        <label> Managed System Id</label>
+      <div className='flex flex-wrap items-center gap-2'>
+        <span className="text-sm font-semibold">Managed System ID</span>
         <span />
         {renderManagedSystemInfoOrSearchId()}
       </div>

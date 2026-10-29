@@ -42,7 +42,7 @@ const EquipmentList = (props: IProps) => {
             <th>Name</th>
             <th>Assigned To</th>
             <th>Expiration</th>
-            <th className='list-actions'>Actions</th>
+            <th className='w-[10%]'>Actions</th>
           </tr>
         </thead>
         <tbody>{equipment}</tbody>

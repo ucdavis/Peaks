@@ -35,6 +35,8 @@ namespace Keas.Mvc.TagHelpers
 
         public bool StylesOnly { get; set; }
 
+        public string DevStylesheet { get; set; }
+
         [ViewContext, HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
 
@@ -51,6 +53,13 @@ namespace Keas.Mvc.TagHelpers
                 var origin = (_configuration["Vite:DevServerUrl"] ?? "http://localhost:5179").TrimEnd('/');
                 if (StylesOnly)
                 {
+                    // Block the first paint on the site CSS instead of waiting
+                    // for the JavaScript module graph to inject its styles.
+                    if (!string.IsNullOrWhiteSpace(DevStylesheet))
+                    {
+                        var source = origin + "/" + DevStylesheet.TrimStart('/') + "?direct";
+                        if (emitted.Add(source)) html.AppendHtml(Stylesheet(source));
+                    }
                     output.Content.SetHtmlContent(html);
                     return;
                 }

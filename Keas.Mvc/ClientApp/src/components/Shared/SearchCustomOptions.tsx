@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Typeahead } from 'react-bootstrap-typeahead';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { SearchCombobox } from './SearchCombobox';
 
 interface IProps {
   onSelect: (tag: string[]) => void;
@@ -13,10 +12,9 @@ interface IProps {
 // allows user to search for any text in the given field
 // as opposed to from a dropdown list of options
 const SearchCustomOptions = (props: IProps) => {
-  let ref;
   return (
     <div>
-      <Typeahead
+      <SearchCombobox
         id={props.id} // for accessibility
         options={[]}
         disabled={props.disabled}
@@ -35,13 +33,6 @@ const SearchCustomOptions = (props: IProps) => {
         allowNew={true}
         emptyLabel={''}
         newSelectionPrefix='Search for: '
-        onBlur={() => {
-          // there is a bug when using a typeahead inside a modal
-          // that this fixes. see https://github.com/ucdavis/Peaks/issues/1273
-          // but ideally we do not use refs
-          ref.hideMenu();
-        }}
-        ref={el => (ref = el)}
       />
     </div>
   );

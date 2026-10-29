@@ -1,3 +1,5 @@
+import { KeyIcon } from '@heroicons/react/24/solid';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -435,19 +437,19 @@ const KeySerialContainer = (props: IProps) => {
   const selectedKeySerialId = parseInt(id, 10);
   const selectedKeySerial = keySerials.find(s => s.id === selectedKeySerialId);
   return (
-    <div className='card keys-color'>
+    <div className='card mb-4 border border-main-border bg-base-100 shadow-sm keys-color'>
       <div className='card-header-keys'>
-        <div className='card-head row justify-content-between'>
-          <h2>
-            <i className='fas fa-key fa-xs' /> Key Serials
+        <div className='px-5 py-4 sm:px-6 flex items-center justify-between gap-4'>
+          <h2 className="text-xl font-semibold">
+            <KeyIcon data-icon="key" className='hero-icon size-5' /> Key Serials
           </h2>
-          <Button color='link' onClick={openCreateModal}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Key
+          <Button color='asset' size='sm' onClick={openCreateModal}>
+            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Key
             Serial
           </Button>
         </div>
       </div>
-      <div className='card-content'>
+      <div className='card-body gap-4 p-5 sm:p-6'>
         {props.selectedPerson && !props.selectedKey && (
           <KeySerialList
             keySerials={keySerials}

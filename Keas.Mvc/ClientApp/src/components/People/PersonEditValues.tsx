@@ -1,3 +1,5 @@
+import { AssetSummary } from '../Shared/AssetSummary';
+import { DateUtil } from '../../util/dates';
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
 import { FormFeedback, FormGroup, Input, Label } from 'reactstrap';
@@ -21,6 +23,7 @@ interface IProps {
 }
 
 const PersonEditValues = (props: IProps) => {
+  const fieldId = React.useId();
   if (!props.selectedPerson) {
     return null;
   }
@@ -38,13 +41,27 @@ const PersonEditValues = (props: IProps) => {
       : props.changeProperty('endDate', startOfDay(date));
   };
 
+  if (props.disableEditing) {
+    const person = props.selectedPerson;
+    return <AssetSummary fields={[
+      ['First name', person.firstName], ['Last name', person.lastName],
+      ['Email', person.email ? <a className='link link-hover' href={`mailto:${person.email}`}>{person.email}</a> : null],
+      ['Home phone', person.homePhone], ['Team phone', person.teamPhone], ['Title', person.title],
+      ['Start date', person.startDate ? DateUtil.formatDate(person.startDate) : null],
+      ['End date', person.endDate ? DateUtil.formatDate(person.endDate) : null],
+      ['Supervisor', person.supervisor?.name], ['Category', person.category],
+      ['Is supervisor', person.isSupervisor ? 'Yes' : 'No']
+    ]} tags={person.tags} notes={person.notes} />;
+  }
+
   return (
-    <div className='wrapperasset'>
-      <FormGroup>
-        <Label for='First Name'>First Name</Label>
+    <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
+      <FormGroup className='space-y-2'>
+        <Label for={`${fieldId}-firstName`}>First Name</Label>
         <Input
+          id={`${fieldId}-firstName`}
           type='text'
-          className='form-control'
+          className={`input w-full ${error?.path === 'firstName' ? 'input-error' : ''}`}
           readOnly={props.disableEditing}
           value={
             props.selectedPerson.firstName ? props.selectedPerson.firstName : ''
@@ -52,16 +69,17 @@ const PersonEditValues = (props: IProps) => {
           onChange={e => props.changeProperty('firstName', e.target.value)}
           invalid={error && error.path === 'firstName'}
         />
-        <FormFeedback>
+        <FormFeedback className='text-sm text-error'>
           {error && error.path === 'firstName' && error.message}
         </FormFeedback>
       </FormGroup>
 
-      <FormGroup>
-        <Label for='Last Name'>Last Name</Label>
+      <FormGroup className='space-y-2'>
+        <Label for={`${fieldId}-lastName`}>Last Name</Label>
         <Input
+          id={`${fieldId}-lastName`}
           type='text'
-          className='form-control'
+          className={`input w-full ${error?.path === 'lastName' ? 'input-error' : ''}`}
           readOnly={props.disableEditing}
           value={
             props.selectedPerson.lastName ? props.selectedPerson.lastName : ''
@@ -69,31 +87,33 @@ const PersonEditValues = (props: IProps) => {
           onChange={e => props.changeProperty('lastName', e.target.value)}
           invalid={error && error.path === 'lastName'}
         />
-        <FormFeedback>
+        <FormFeedback className='text-sm text-error'>
           {error && error.path === 'lastName' && error.message}
         </FormFeedback>
       </FormGroup>
 
-      <FormGroup>
-        <Label for='Email'>Email</Label>
+      <FormGroup className='space-y-2'>
+        <Label for={`${fieldId}-email`}>Email</Label>
         <Input
+          id={`${fieldId}-email`}
           type='text'
-          className='form-control'
+          className={`input w-full ${error?.path === 'email' ? 'input-error' : ''}`}
           readOnly={props.disableEditing}
           value={props.selectedPerson.email ? props.selectedPerson.email : ''}
           onChange={e => props.changeProperty('email', e.target.value)}
           invalid={error && error.path === 'email'}
         />
-        <FormFeedback>
+        <FormFeedback className='text-sm text-error'>
           {error && error.path === 'email' && error.message}
         </FormFeedback>
       </FormGroup>
 
-      <FormGroup>
-        <Label for='Home Phone Number'>Home Phone Number</Label>
+      <FormGroup className='space-y-2'>
+        <Label for={`${fieldId}-homePhone`}>Home Phone Number</Label>
         <Input
+          id={`${fieldId}-homePhone`}
           type='text'
-          className='form-control'
+          className={`input w-full ${error?.path === 'homePhone' ? 'input-error' : ''}`}
           readOnly={props.disableEditing}
           value={
             props.selectedPerson.homePhone ? props.selectedPerson.homePhone : ''
@@ -101,16 +121,17 @@ const PersonEditValues = (props: IProps) => {
           onChange={e => props.changeProperty('homePhone', e.target.value)}
           invalid={error && error.path === 'homePhone'}
         />
-        <FormFeedback>
+        <FormFeedback className='text-sm text-error'>
           {error && error.path === 'homePhone' && error.message}
         </FormFeedback>
       </FormGroup>
 
-      <FormGroup>
-        <Label for='Team Phone Number'>Team Phone Number</Label>
+      <FormGroup className='space-y-2'>
+        <Label for={`${fieldId}-teamPhone`}>Team Phone Number</Label>
         <Input
+          id={`${fieldId}-teamPhone`}
           type='text'
-          className='form-control'
+          className={`input w-full ${error?.path === 'teamPhone' ? 'input-error' : ''}`}
           readOnly={props.disableEditing}
           value={
             props.selectedPerson.teamPhone ? props.selectedPerson.teamPhone : ''
@@ -118,29 +139,28 @@ const PersonEditValues = (props: IProps) => {
           onChange={e => props.changeProperty('teamPhone', e.target.value)}
           invalid={error && error.path === 'teamPhone'}
         />
-        <FormFeedback>
+        <FormFeedback className='text-sm text-error'>
           {error && error.path === 'teamPhone' && error.message}
         </FormFeedback>
       </FormGroup>
 
-      <FormGroup>
-        <Label for='Title'>Title</Label>
+      <FormGroup className='space-y-2'>
+        <Label for={`${fieldId}-title`}>Title</Label>
         <Input
+          id={`${fieldId}-title`}
           type='text'
-          className='form-control'
+          className={`input w-full ${error?.path === 'title' ? 'input-error' : ''}`}
           readOnly={props.disableEditing}
           value={props.selectedPerson.title ? props.selectedPerson.title : ''}
           onChange={e => props.changeProperty('title', e.target.value)}
           invalid={error && error.path === 'title'}
         />
-        <FormFeedback>
+        <FormFeedback className='text-sm text-error'>
           {error && error.path === 'title' && error.message}
         </FormFeedback>
       </FormGroup>
 
-      <FormGroup>
-        <Label for='Start Date'>Start Date</Label>
-        <br />
+      <FormGroup className='space-y-2'>
         <AssignDate
           disabled={props.isDeleting}
           isRequired={false}
@@ -150,13 +170,11 @@ const PersonEditValues = (props: IProps) => {
               : null
           }
           onChangeDate={changeStartDate}
-          label='Set the start date'
+          label='Start date'
         />
       </FormGroup>
 
-      <FormGroup>
-        <Label for='End Date'>End Date</Label>
-        <br />
+      <FormGroup className='space-y-2'>
         <AssignDate
           disabled={props.isDeleting}
           isRequired={false}
@@ -166,7 +184,7 @@ const PersonEditValues = (props: IProps) => {
               : null
           }
           onChangeDate={changeEndDate}
-          label='Set the end date'
+          label='End date'
         />
       </FormGroup>
 
@@ -178,13 +196,14 @@ const PersonEditValues = (props: IProps) => {
         label='Supervisor'
       />
 
-      <FormGroup>
-        <Label for='Category'>Category</Label>
+      <FormGroup className='space-y-2'>
+        <Label for={`${fieldId}-category`}>Category</Label>
         <Input
+          id={`${fieldId}-category`}
           type='select'
           disabled={props.disableEditing}
           onChange={e => props.changeProperty('category', e.target.value)}
-          className='form-control'
+          className='select w-full'
           value={
             props.selectedPerson.category ? props.selectedPerson.category : ''
           }
@@ -204,19 +223,20 @@ const PersonEditValues = (props: IProps) => {
         </Input>
       </FormGroup>
 
-      <FormGroup>
-        <Label for='Notes'>Notes</Label>
+      <FormGroup className='space-y-2'>
+        <Label for={`${fieldId}-notes`}>Notes</Label>
         <Input
+          id={`${fieldId}-notes`}
           type='textarea'
-          className='form-control'
+          className='textarea min-h-28 w-full'
           readOnly={props.disableEditing}
           value={props.selectedPerson.notes || ''}
           onChange={e => props.changeProperty('notes', e.target.value)}
         />
       </FormGroup>
 
-      <FormGroup>
-        <Label for='Tags'>Tags</Label>
+      <FormGroup className='space-y-2'>
+        <Label for={`${fieldId}-tags`}>Tags</Label>
         <SearchDefinedOptions
           definedOptions={props.tags}
           disabled={props.disableEditing}
@@ -227,7 +247,7 @@ const PersonEditValues = (props: IProps) => {
           }
           onSelect={e => props.changeProperty('tags', e.join(','))}
           placeholder='Search for Tags'
-          id='searchTagsPersonEditValues'
+          id={`${fieldId}-tags`}
         />
       </FormGroup>
     </div>

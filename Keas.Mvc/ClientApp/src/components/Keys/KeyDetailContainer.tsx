@@ -1,8 +1,8 @@
+import { ArrowLeftIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { RouteChildrenProps } from 'react-router';
-import { Button } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import { IMatchParams } from '../../models/Shared';
 import { Context } from '../../Context';
@@ -60,8 +60,17 @@ const KeyDetailContainer = (props: IProps) => {
     );
   };
 
+  const tags = Array.from(
+    new Set(
+      (selectedKeyInfo.key.tags || '')
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(Boolean)
+    )
+  );
+
   return (
-    <div>
+    <div className='space-y-6'>
       {shouldOpenEditModal ? (
         <EditKey
           key={`edit-key-${props.selectedKeyInfo.id}`}
@@ -73,41 +82,52 @@ const KeyDetailContainer = (props: IProps) => {
           checkIfKeyCodeIsValid={props.checkValidKeyCodeOnEdit}
         />
       ) : null}
-      <div className='mb-3'>
-        <Button color='link' onClick={props.goBack}>
-          <i className='fas fa-arrow-left fa-xs' /> Return to Table
-        </Button>
-      </div>
-
-      <div className='d-flex flex-row flex-wrap-reverse justify-content-between'>
-        <h2 className='mb-3'>
-          {selectedKeyInfo.key.name} - {selectedKeyInfo.key.code}
-        </h2>
-        <div>
-          <Button
-            color='link'
-            onClick={() => {
-              setShouldOpenEditModal(true);
-            }}
-          >
-            <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
-            Edit Key
-          </Button>
+      <button
+        type='button'
+        className='btn btn-sm btn-ghost'
+        onClick={props.goBack}
+      >
+        <ArrowLeftIcon className='size-4' aria-hidden='true' /> Return to table
+      </button>
+      <header className='space-y-4'>
+        <div className='flex flex-wrap items-start justify-between gap-4'>
+          <div className='min-w-0 space-y-1'>
+            <h1 className='m-0 break-words text-2xl font-semibold'>
+              {selectedKeyInfo.key.name}
+            </h1>
+            <p className='m-0 text-sm text-base-content/60'>
+              Key code: {selectedKeyInfo.key.code}
+            </p>
+          </div>
+          <div className='flex flex-wrap items-center gap-2'>
+            <button
+              type='button'
+              className='btn btn-sm btn-asset btn-outline'
+              onClick={() => setShouldOpenEditModal(true)}
+            >
+              <PencilSquareIcon className='size-4' aria-hidden='true' />
+              Edit Key
+            </button>
+          </div>
         </div>
-      </div>
-      {selectedKeyInfo.key.tags && (
-        <p>
-          <i className='fas fa-tags mr-2' aria-hidden='true' />
-          {selectedKeyInfo.key.tags}
-        </p>
-      )}
-      {selectedKeyInfo.key.notes && (
-        <p>
-          <i className='fas fa-comment-alt mr-2' aria-hidden='true' />
-          {selectedKeyInfo.key.notes}
-        </p>
-      )}
-      <br />
+        {tags.length > 0 && (
+          <div className='flex flex-wrap gap-2' aria-label='Key tags'>
+            {tags.map(tag => (
+              <span
+                key={tag}
+                className='badge badge-asset badge-soft h-auto max-w-full break-words py-2'
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+        {selectedKeyInfo.key.notes && (
+          <p className='m-0 whitespace-pre-wrap break-words text-sm text-base-content/80'>
+            {selectedKeyInfo.key.notes}
+          </p>
+        )}
+      </header>
       <KeySerialContainer
         {...props.route}
         selectedKey={selectedKeyInfo.key}

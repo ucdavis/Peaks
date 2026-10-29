@@ -4,38 +4,38 @@
     ViewData["Title"] = "Expiring Items";
 }
 
-
-<form asp-action="ExpiringItems" method="get">
-    <div class="card history-color">
-        <div class="card-header-history">
-            <div class="card-head">
-                <h2>Expiring Items</h2>
-            </div>
+<div class="space-y-6 pb-8">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Expiring Items</h1>
         </div>
-        <div class="card-content">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="row align-items-end">
-                <div class="col-sm-4">
-                    <h3>Filters</h3>
-                    <div class="form-group">
-                        <label asp-for="ExpiresBefore" class="control-label"></label>
-                        <input asp-for="ExpiresBefore" class="form-control datepicker"/>
-                        <span asp-validation-for="ExpiresBefore" class="text-danger"></span>
-                        <div class="form-group">
-                            <label asp-for="ShowType" class="control-label"></label>
-                            <select class="form-control" asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
-                        </div>
-                        <div class="form-group">
-                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+    </div>
+    <div class="space-y-4">
+        <form class="space-y-5" asp-action="ExpiringItems" method="get">
+
+                    <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+                    <div class="grid items-start gap-6 lg:grid-cols-2">
+                        <div class="min-w-0 space-y-3">
+                            <h2 class="m-0 text-lg font-semibold">Filters</h2>
+                            <div class="space-y-2">
+                                <label asp-for="ExpiresBefore" class="block text-sm font-semibold"></label>
+                                <input asp-for="ExpiresBefore" class="input w-full datepicker"/>
+                                <span asp-validation-for="ExpiresBefore" class="text-sm text-error"></span>
+                                <div class="space-y-2">
+                                    <label asp-for="ShowType" class="block text-sm font-semibold"></label>
+                                    <select class="select w-full" asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
+                                </div>
+                                <div class="space-y-2">
+                                    <input type="submit" value="Refresh Report" class="btn btn-primary" />
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-           
-            <br>
-            <br>
-            <table id="dtExpiringItems" class="table dataTable">
+        </form>
+    </div>
+    <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4 sm:p-6">
+        <table id="dtExpiringItems" class="table dataTable">
                 <thead>
                 <tr>
                     <th>Team</th>
@@ -50,7 +50,7 @@
                     </th>
                     <th>
                         Expiration
-                    </th>    
+                    </th>
                     <th>Warning</th>
                     <th>
                         Link
@@ -76,22 +76,19 @@
                 }
                 </tbody>
             </table>
-
-        </div>
     </div>
-</form>
-
+</div>
 
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")
 }
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ImportJS");}        
-    
+    @{await Html.RenderPartialAsync("_ImportJS");}
+
     <script type="text/javascript">
         $('.dataTable').DataTable({
-            "dom": 'lBfrtip',
+            "layout": { topStart: ['pageLength', 'buttons'] },
             "buttons": [
                 { extend: 'copyHtml5' },
                 { extend: 'excelHtml5' },
@@ -104,4 +101,3 @@
         });
     </script>
 }
-
