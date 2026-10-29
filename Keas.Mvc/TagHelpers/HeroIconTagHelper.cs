@@ -29,6 +29,9 @@ namespace Keas.Mvc.TagHelpers
             output.Attributes.SetAttribute("data-icon", Name);
             output.Attributes.SetAttribute("xmlns", "http://www.w3.org/2000/svg");
             output.Attributes.SetAttribute("viewBox", "0 0 24 24");
+            // Presentation attributes bound the icon before CSS loads; size utilities still override them.
+            if (!output.Attributes.ContainsName("width")) output.Attributes.SetAttribute("width", "1.25em");
+            if (!output.Attributes.ContainsName("height")) output.Attributes.SetAttribute("height", "1.25em");
             output.Attributes.SetAttribute("fill", Variant == "solid" ? "currentColor" : "none");
             if (Variant == "outline")
             {

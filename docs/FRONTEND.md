@@ -84,9 +84,10 @@ conversion: Bootstrap grid, form and utility markup still needs migration.
 
 `src/index.tsx` delegates mounting to `renderApp.tsx`, which uses `createRoot`.
 Its imports load component styles before site styles. Razor emits all CSS
-from its manifest entry in the document head. In development, the same JavaScript
-CSS imports inject styles into the head, retaining Vite HMR and the original
-cascade order.
+from its manifest entry in the document head. In development, the head entry's
+`dev-stylesheet` also loads `src/styles/main.css?direct` as a normal stylesheet
+so server-rendered pages are styled before their first paint. The JavaScript
+CSS imports remain in place for Vite HMR and the original cascade order.
 The React module follows the Razor body and `ScriptVariables`, so `window.App`
 is ready before React reads it. The manifest helper resolves imported CSS,
 deduplicates tags per request, and prefixes published URLs with the request's

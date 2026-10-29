@@ -47,8 +47,12 @@ namespace Test.Integration
             using var server = fixture.CreateServer();
 
             await server.StartAsync(CancellationToken.None);
-            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
-            Assert.Equal("peaks-vite-test", await http.GetStringAsync(fixture.Url));
+            // Match the fixture's IPv4 listener without host DNS or proxy dependencies.
+            using var http = new HttpClient(new HttpClientHandler { UseProxy = false })
+            {
+                Timeout = TimeSpan.FromSeconds(5)
+            };
+            Assert.Equal("peaks-vite-test", await http.GetStringAsync($"http://{IPAddress.Loopback}:{fixture.Port}"));
 
             await server.StopAsync(CancellationToken.None);
 
