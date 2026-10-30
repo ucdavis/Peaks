@@ -287,6 +287,21 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
       });
     };
 
+    const updateAssignment = (previous: IEquipment, current: IEquipment) => {
+      onCreated(current);
+      updateList(current);
+      const previousPersonId = previous.assignment?.person?.id;
+      const currentPersonId = current.assignment?.person?.id;
+      if (previousPersonId !== currentPersonId) {
+        if (previousPersonId != null) {
+          props.assetInUseUpdated?.('equipment', previous.space?.id ?? null, previousPersonId, -1);
+        }
+        if (currentPersonId != null) {
+          props.assetInUseUpdated?.('equipment', current.space?.id ?? null, currentPersonId, 1);
+        }
+      }
+    };
+
     let saved = draft;
     if (draft.id === 0) {
       try {
@@ -303,6 +318,17 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
       onCreated(saved);
       updateList(saved);
       props.assetTotalUpdated?.('equipment', saved.space?.id ?? null, null, 1);
+    } else {
+      // A failed response does not prove the assignment failed to save.
+      try {
+        saved = await context.fetch(`/api/${context.team.slug}/equipment/details/${draft.id}`);
+      } catch (err) {
+        throw new Error('Unable to verify the saved assignment. Please try again before changing it.');
+      }
+      updateAssignment(draft, saved);
+      if (saved.assignment && (!person || saved.assignment.person?.id !== person.id)) {
+        throw new Error(`This equipment is already assigned to ${saved.assignment.person?.name || 'a person'}. Close this dialog and use Revoke to remove or change its assignment.`);
+      }
     }
 
     if (person) {
@@ -313,16 +339,17 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
           { method: 'POST' }
         );
       } catch (err) {
-        toast.error(`Equipment saved, but assignment failed${err.message ? `: ${err.message}` : '.'}`);
-        throw err;
+        toast.error(`Unable to confirm the assignment${err.message ? `: ${err.message}` : '.'}`);
+        throw new Error('The assignment could not be confirmed. Please retry to check its saved status.');
       }
-      saved = {
+      const updated = {
         ...assigned,
-        attributes: saved.attributes,
-        assignment: { ...assigned.assignment, person }
+        attributes: saved.attributes
       };
-      updateList(saved);
-      props.assetInUseUpdated?.('equipment', saved.space?.id ?? null, person.id, 1);
+      updateAssignment(saved, updated);
+      if (updated.assignment?.person?.id !== person.id) {
+        throw new Error('The saved assignment does not match the selected person. Close this dialog and review the equipment assignment.');
+      }
     }
 
     toast.success(person ? 'Equipment duplicated and assigned successfully!' : 'Equipment duplicated successfully!');

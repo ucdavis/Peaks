@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { render, cleanup, act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router';
+import { toast } from 'react-toastify';
 import { Context } from '../../Context';
 import { IEquipment } from '../../models/Equipment';
 import { ISpace } from '../../models/Spaces';
@@ -62,24 +63,30 @@ describe('Equipment duplication', () => {
         equipmentId: 901
       }))
     }));
-    const assign = vi.fn(async (url: string) => ({
-      ...saved,
-      assignment: {
-        id: 902,
-        equipmentId: saved.id,
-        equipment: null,
-        expiresAt: new Date('2030-01-01'),
-        person: url.includes(`personId=${person.id}&`) ? person : otherPerson
-      }
-    }));
+    // Model server state separately from the objects returned to the client.
+    const copySaved = () => JSON.parse(JSON.stringify(saved)) as IEquipment;
+    const assign = vi.fn(async (url: string) => {
+      saved = {
+        ...saved,
+        assignment: {
+          id: 902,
+          equipmentId: saved.id,
+          equipment: null,
+          expiresAt: new Date('2030-01-01'),
+          person: saved.assignment?.person || (url.includes(`personId=${person.id}&`) ? person : otherPerson)
+        }
+      };
+      return copySaved();
+    });
+    const details = vi.fn(async (id: number) => id === source.id ? source : copySaved());
     const fetch = vi.fn(async (url: string, init?: RequestInit) => {
       if (url.endsWith('/equipment/duplicate')) {
         saved = await duplicate(JSON.parse(init.body as string));
-        return saved;
+        return copySaved();
       }
       if (url.includes('/equipment/assign?')) return assign(url);
       if (url.includes('/people/searchPeople?')) return [otherPerson];
-      if (url.includes('/equipment/details/')) return source;
+      if (url.includes('/equipment/details/')) return details(Number(url.split('/').pop()));
       if (url.includes('/equipment/commonAttributeKeys/')) return ['wallKey'];
       if (url.includes('/equipment/ListEquipmentTypes/')) return ['Default', 'Laptop'];
       if (url.includes('/spaces/shortlist')) return [source.space];
@@ -115,7 +122,7 @@ describe('Equipment duplication', () => {
       );
     });
 
-    return { source, sourceSnapshot, person, otherPerson, duplicate, assign, fetch, assetTotalUpdated, assetInUseUpdated };
+    return { source, sourceSnapshot, person, otherPerson, duplicate, assign, details, fetch, assetTotalUpdated, assetInUseUpdated };
   };
 
   const saveCopy = () => fireEvent.click(screen.getByRole('button', { name: 'Save as new equipment' }));
@@ -160,7 +167,7 @@ describe('Equipment duplication', () => {
     fireEvent.change(screen.getByLabelText('Serial Number / Identifier'), { target: { value: 'RETRY-SERIAL' } });
     saveCopy();
 
-    expect(await screen.findByRole('alert')).toHaveTextContent('Your changes are still here');
+    expect(await screen.findByRole('alert')).toHaveTextContent('Save unavailable');
     expect(screen.getByLabelText('Serial Number / Identifier')).toHaveValue('RETRY-SERIAL');
     expect(screen.getByLabelText('Name')).not.toHaveAttribute('readonly');
     expect(state.assetTotalUpdated).not.toHaveBeenCalled();
@@ -206,6 +213,87 @@ describe('Equipment duplication', () => {
     expect(state.assetTotalUpdated).toHaveBeenCalledTimes(1);
     expect(state.assetInUseUpdated).toHaveBeenCalledExactlyOnceWith('equipment', 31, state.otherPerson.id, 1);
     expect(within(container).getAllByText('Saved copy')).toHaveLength(1);
+  });
+
+  it('reconciles a lost assignment response before allowing a cleared-person retry and counts the saved assignment once', async () => {
+    const state = await setup();
+    const success = vi.spyOn(toast, 'success');
+    const persistAssignment = state.assign.getMockImplementation();
+    state.assign.mockImplementationOnce(async url => {
+      await persistAssignment(url);
+      throw new Error('Response lost after saving');
+    });
+    await selectOtherPerson(state.otherPerson.name);
+    fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Reconciled copy' } });
+    saveCopy();
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('assignment could not be confirmed');
+    expect(state.assetInUseUpdated).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByRole('combobox', { name: 'Search for person by name or email' }), { target: { value: '' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save assignment' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(`already assigned to ${state.otherPerson.name}`);
+    expect(state.details).toHaveBeenCalledWith(901);
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(success).not.toHaveBeenCalled();
+    expect(state.assign).toHaveBeenCalledTimes(1);
+    expect(state.assetInUseUpdated).toHaveBeenCalledExactlyOnceWith('equipment', 31, state.otherPerson.id, 1);
+    const savedRow = within(container).getByText('Reconciled copy').closest('tr');
+    expect(savedRow).toHaveTextContent(`${state.otherPerson.lastName}, ${state.otherPerson.firstName}`);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save assignment' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent(`already assigned to ${state.otherPerson.name}`);
+    expect(state.details).toHaveBeenCalledTimes(2);
+    expect(state.assetInUseUpdated).toHaveBeenCalledTimes(1);
+    expect(success).not.toHaveBeenCalled();
+
+    await selectOtherPerson(state.otherPerson.name);
+    fireEvent.click(screen.getByRole('button', { name: 'Save assignment' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    expect(state.duplicate).toHaveBeenCalledTimes(1);
+    expect(state.assign).toHaveBeenCalledTimes(2);
+    expect(state.assetTotalUpdated).toHaveBeenCalledTimes(1);
+    expect(state.assetInUseUpdated).toHaveBeenCalledTimes(1);
+    expect(success).toHaveBeenCalledTimes(1);
+  });
+
+  it('allows a cleared-person retry only after confirming the saved equipment is unassigned', async () => {
+    const state = await setup();
+    state.assign.mockRejectedValueOnce(new Error('Assignment unavailable'));
+    await selectOtherPerson(state.otherPerson.name);
+    saveCopy();
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('assignment could not be confirmed');
+    fireEvent.change(screen.getByRole('combobox', { name: 'Search for person by name or email' }), { target: { value: '' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save assignment' }));
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+    expect(state.details).toHaveBeenCalledExactlyOnceWith(901);
+    expect(state.duplicate).toHaveBeenCalledTimes(1);
+    expect(state.assign).toHaveBeenCalledTimes(1);
+    expect(state.assetInUseUpdated).not.toHaveBeenCalled();
+    expect(state.assetTotalUpdated).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps a cleared-person retry open when the saved assignment cannot be verified', async () => {
+    const state = await setup();
+    const success = vi.spyOn(toast, 'success');
+    state.assign.mockRejectedValueOnce(new Error('Assignment unavailable'));
+    await selectOtherPerson(state.otherPerson.name);
+    saveCopy();
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('assignment could not be confirmed');
+    state.details.mockRejectedValueOnce(new Error('Details unavailable'));
+    fireEvent.change(screen.getByRole('combobox', { name: 'Search for person by name or email' }), { target: { value: '' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save assignment' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Unable to verify the saved assignment');
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(success).not.toHaveBeenCalled();
+    expect(state.duplicate).toHaveBeenCalledTimes(1);
+    expect(state.assign).toHaveBeenCalledTimes(1);
+    expect(state.assetInUseUpdated).not.toHaveBeenCalled();
+    expect(state.assetTotalUpdated).toHaveBeenCalledTimes(1);
   });
 
   it('allows changing the person from a person page without adding the copy to the original person', async () => {

@@ -126,7 +126,7 @@ const DuplicateEquipment = (props: IProps) => {
         setEquipment
       );
     } catch (e) {
-      setSaveError('Your changes are still here. Please try again.');
+      setSaveError(e.message || 'Your changes are still here. Please try again.');
       setSubmitting(false);
       return;
     }
@@ -176,7 +176,7 @@ const DuplicateEquipment = (props: IProps) => {
         {saveError && (
           <div role='alert' className='alert alert-error'>
             {equipment.id
-              ? 'Your new equipment has been saved, but its assignment failed. Retry the assignment, or clear Assign to to leave it unassigned.'
+              ? `Your new equipment has been saved. ${saveError}`
               : saveError}
           </div>
         )}
