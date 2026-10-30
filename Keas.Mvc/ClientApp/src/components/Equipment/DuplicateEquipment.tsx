@@ -1,9 +1,9 @@
-import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalFooter } from '../Shared/AppModal';
+import { ArrowPathIcon, DocumentDuplicateIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Form } from 'reactstrap';
+import { Button } from 'reactstrap';
 import {
   equipmentSchema,
   IEquipment,
@@ -11,7 +11,6 @@ import {
 } from '../../models/Equipment';
 import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
-import { ISpace } from '../../models/Spaces';
 import AssignPerson from '../People/AssignPerson';
 import AssignDate from '../Shared/AssignDate';
 import EquipmentEditValues from './EquipmentEditValues';
@@ -20,22 +19,20 @@ interface IProps {
   onDuplicate: (
     person: IPerson,
     equipment: IEquipment,
-    date: any,
-    duplicate?: boolean
-  ) => void;
+    date: string,
+    onCreated: (equipment: IEquipment) => void
+  ) => Promise<void>;
   modal: boolean;
   closeModal: () => void;
   selectedEquipment: IEquipment;
   person?: IPerson;
-  space: ISpace;
   tags: string[];
   commonAttributeKeys: string[];
   equipmentTypes: string[];
 }
 
 const DuplicateEquipment = (props: IProps) => {
-  // if we are on the person page, we use that person and don't allow changing it
-  // if we are duplicating an assignment, we initialize with the selected asset, a new date, and no person (unless we are on the person page)
+  // Start a new record, keeping descriptive values but never the source identity or assignment.
   const [error, setError] = useState<IValidationError>({
     message: '',
     path: ''
@@ -43,10 +40,10 @@ const DuplicateEquipment = (props: IProps) => {
   const [date, setDate] = useState<Date>(addYears(startOfDay(new Date()), 3));
   const [equipment, setEquipment] = useState<IEquipment>(() => {
     // copy the selected equipment but clear unique fields
-    if (!!props.selectedEquipment) {
+    if (props.selectedEquipment) {
       // equip may not be loaded yet
       return {
-        attributes: props.selectedEquipment.attributes.map(a => {
+        attributes: (props.selectedEquipment.attributes || []).map(a => {
           return { ...a, equipmentId: 0, id: 0 };
         }),
         availabilityLevel: props.selectedEquipment.availabilityLevel,
@@ -70,21 +67,26 @@ const DuplicateEquipment = (props: IProps) => {
 
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [validState, setValidState] = useState<boolean>(false);
+  const [saveError, setSaveError] = useState<string>('');
 
   useEffect(() => {
     const validateState = () => {
-      let error = yupAssetValidation(
+      const error = yupAssetValidation(
         equipmentSchema,
         equipment,
         {}, // no context
-        { date: date, person: person }
+        person ? { date, person } : undefined
       );
       setError(error);
       setValidState(error.message === '');
     };
 
     validateState();
-  }, [date, equipment, person, props.selectedEquipment]);
+  }, [date, equipment, person]);
+
+  if (!equipment) {
+    return null;
+  }
 
   const changeProperty = (property: string, value: string) => {
     setEquipment({ ...equipment, [property]: value });
@@ -94,50 +96,41 @@ const DuplicateEquipment = (props: IProps) => {
     setEquipment({ ...equipment, attributes: attributes });
   };
 
-  // clear everything out on close
   const confirmClose = () => {
-    if (!window.confirm('Please confirm you want to close!')) {
+    if (submitting) {
       return;
     }
-
-    closeModal();
-  };
-
-  const closeModal = () => {
-    setDate(addYears(startOfDay(new Date()), 3));
-    setEquipment(null);
-    setError({
-      message: '',
-      path: ''
-    });
-    setPerson(null);
-    setSubmitting(false);
-    setValidState(false);
+    if (!equipment.id && !window.confirm('Discard this equipment copy?')) {
+      return;
+    }
     props.closeModal();
   };
 
-  // assign the selected equipment even if we have to create it
-  const assignSelected = async () => {
+  const saveCopy = async (event: React.FormEvent) => {
+    event.preventDefault();
     if (!validState || submitting) {
       return;
     }
 
     setSubmitting(true);
-    const personData = props.person ? props.person : person;
-    const equipmentData = equipment;
-    equipmentData.attributes = equipmentData.attributes.filter(x => !!x.key);
+    setSaveError('');
+    const equipmentData = {
+      ...equipment,
+      attributes: equipment.attributes.filter(attribute => !!attribute.key)
+    };
     try {
       await props.onDuplicate(
-        personData,
+        person,
         equipmentData,
-        format(date, 'MM/dd/yyyy'),
-        true
+        person ? format(date, 'MM/dd/yyyy') : '',
+        setEquipment
       );
     } catch (e) {
+      setSaveError('Your changes are still here. Please try again.');
       setSubmitting(false);
       return;
     }
-    closeModal();
+    props.closeModal();
   };
 
   const onSelectPerson = (selectedPerson: IPerson) => {
@@ -156,70 +149,90 @@ const DuplicateEquipment = (props: IProps) => {
     <Modal
       isOpen={props.modal}
       toggle={confirmClose}
-      className='equipment-color'
+      className='equipment-color equipment-duplicate-modal'
+      labelledBy='equipment-duplicate-title'
     >
-      <ModalHeading>Duplicate Equipment</ModalHeading>
-      <ModalBody>
-        <div className='space-y-6'>
-          <Form className='space-y-6'>
-            <AssignPerson
-              person={person}
-              label='Assign To'
-              onSelect={onSelectPerson}
-              isRequired={equipment && equipment.teamId !== 0} //teamId is 0 on create or dupe
-              disabled={
-                !!props.person || //if on person page
-                (!!equipment && !!equipment.assignment) // if updating currently assigned (taken care of in initial state)
-              }
-              error={error}
-            />
-            {(!!person || !!props.person) && (
-              <AssignDate
-                date={date}
-                isRequired={true}
-                error={error}
-                onChangeDate={changeDate}
-              />
-            )}
-            {!!equipment && !equipment.teamId && (
-              <div>
-                <EquipmentEditValues
-            spacious
-                  selectedEquipment={equipment}
-                  commonAttributeKeys={props.commonAttributeKeys}
-                  changeProperty={changeProperty}
-                  disableEditing={false}
-                  updateAttributes={updateAttributes}
-                  space={props.space}
-                  tags={props.tags}
-                  equipmentTypes={props.equipmentTypes}
-                  error={error}
-                  duplicate={true}
-                />
-              </div>
-            )}
-            {!!equipment && !!equipment.teamId && (
-              // this is just for once user hits "Duplicate"
-              <EquipmentEditValues
-            spacious
-                selectedEquipment={equipment}
-                commonAttributeKeys={props.commonAttributeKeys}
-                disableEditing={true}
-                tags={props.tags}
-                error={error}
-              />
-            )}
-          </Form>
+      <div className='flex items-start justify-between gap-4 rounded-t-box border-b-[3px] border-asset-color p-5 sm:px-8 sm:py-6'>
+        <div className='min-w-0'>
+          <p className='mb-1 text-sm text-base-content/60'>Duplicate equipment</p>
+          <h2 id='equipment-duplicate-title' className='break-words text-2xl font-semibold'>{props.selectedEquipment.name}</h2>
         </div>
+        <button type='button' className='btn btn-ghost btn-square btn-sm shrink-0'
+          aria-label='Close equipment duplicate' onClick={confirmClose} disabled={submitting}>
+          <XMarkIcon className='size-5' aria-hidden='true' />
+        </button>
+      </div>
+      <form id='duplicate-equipment-form' onSubmit={saveCopy} aria-busy={submitting}
+        onKeyDown={event => {
+          // Enter in a lookup selects a result; it must not save while results are loading.
+          if (event.key === 'Enter' && (event.target as HTMLElement).getAttribute('role') === 'combobox') {
+            event.preventDefault();
+          }
+        }}>
+      <ModalBody>
+        <div className='rounded-box border border-main-border bg-base-200 p-4 text-sm'>
+          Create a new record using this equipment’s details. Review the values below and enter the new serial number or identifier.
+        </div>
+        {saveError && (
+          <div role='alert' className='alert alert-error'>
+            {equipment.id
+              ? 'Your new equipment has been saved, but its assignment failed. Retry the assignment, or clear Assign to to leave it unassigned.'
+              : saveError}
+          </div>
+        )}
+        <fieldset disabled={submitting} className='min-w-0 space-y-6'>
+          <EquipmentEditValues
+            spacious
+            selectedEquipment={equipment}
+            commonAttributeKeys={props.commonAttributeKeys}
+            changeProperty={changeProperty}
+            disableEditing={!!equipment.id}
+            updateAttributes={updateAttributes}
+            tags={props.tags}
+            equipmentTypes={props.equipmentTypes}
+            error={error}
+            duplicate={true}
+          />
+          <section className='space-y-4 border-t border-main-border pt-6' aria-labelledby='duplicate-assignment-title'>
+            <div>
+              <h3 id='duplicate-assignment-title' className='text-lg font-semibold'>Assignment <span className='text-sm font-normal text-base-content/60'>(optional)</span></h3>
+              <p className='mt-1 text-sm text-base-content/70'>Choose who will receive the new equipment, or leave it unassigned.</p>
+            </div>
+            <div className='grid min-w-0 gap-5 sm:grid-cols-2'>
+              <AssignPerson
+                person={person}
+                label='Assign to'
+                onSelect={onSelectPerson}
+                isRequired={false}
+                disabled={false}
+                error={error}
+              />
+              {!!person && (
+                <AssignDate
+                  date={date}
+                  isRequired={true}
+                  error={error}
+                  onChangeDate={changeDate}
+                />
+              )}
+            </div>
+          </section>
+        </fieldset>
       </ModalBody>
-      <ModalFooter>
+      </form>
+      <ModalFooter showCancel={false}>
+        <button type='button' className='btn btn-ghost' onClick={confirmClose} disabled={submitting}>Cancel</button>
         <Button
+          type='submit'
+          form='duplicate-equipment-form'
           color='asset'
-          onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Duplicate {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
-        </Button>{' '}
+          {submitting
+            ? <ArrowPathIcon className='hero-icon size-5 animate-spin' aria-hidden='true' />
+            : <DocumentDuplicateIcon className='hero-icon size-5' aria-hidden='true' />}
+          {submitting ? 'Saving…' : equipment.id ? 'Save assignment' : 'Save as new equipment'}
+        </Button>
       </ModalFooter>
     </Modal>
   );

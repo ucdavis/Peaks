@@ -198,12 +198,11 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     return (
       <DuplicateEquipment
         key={`duplicate-equipment-${selectedId}`}
-        onDuplicate={createAndMaybeAssignEquipment} // sends duplicate = true
+        onDuplicate={duplicateEquipment}
         modal={true}
         closeModal={closeModals}
         selectedEquipment={equipment}
         person={props.person}
-        space={props.space}
         tags={context.tags}
         commonAttributeKeys={commonAttributeKeys}
         equipmentTypes={equipmentTypes}
@@ -220,6 +219,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
         closeModal={closeModals}
         openEditModal={openEditModal}
         openUpdateModal={openAssignModal}
+        openDuplicateModal={openDuplicateModal}
         updateSelectedEquipment={updateEquipmentFromDetails}
       />
     );
@@ -270,11 +270,68 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     );
   };
 
+  const duplicateEquipment = async (
+    person: IPerson,
+    draft: IEquipment,
+    date: string,
+    onCreated: (equipment: IEquipment) => void
+  ) => {
+    // Keep the new record visible in the correct list, including if assignment fails.
+    const updateList = (saved: IEquipment) => {
+      const belongsToView =
+        (!props.person || saved.assignment?.person?.id === props.person.id) &&
+        (!props.space || saved.space?.id === props.space.id);
+      setEquipment(current => {
+        const otherEquipment = current.filter(item => item.id !== saved.id);
+        return belongsToView ? [...otherEquipment, saved] : otherEquipment;
+      });
+    };
+
+    let saved = draft;
+    if (draft.id === 0) {
+      try {
+        saved = await context.fetch(`/api/${context.team.slug}/equipment/duplicate`, {
+          body: JSON.stringify({ ...draft, teamId: context.team.id }),
+          method: 'POST'
+        });
+      } catch (err) {
+        toast.error(`Error duplicating equipment${err.message ? `, ${err.message}` : ''}`);
+        throw err;
+      }
+
+      // Retain the new identity before assigning so a retry never creates another copy.
+      onCreated(saved);
+      updateList(saved);
+      props.assetTotalUpdated?.('equipment', saved.space?.id ?? null, null, 1);
+    }
+
+    if (person) {
+      let assigned: IEquipment;
+      try {
+        assigned = await context.fetch(
+          `/api/${context.team.slug}/equipment/assign?equipmentId=${saved.id}&personId=${person.id}&date=${date}`,
+          { method: 'POST' }
+        );
+      } catch (err) {
+        toast.error(`Equipment saved, but assignment failed${err.message ? `: ${err.message}` : '.'}`);
+        throw err;
+      }
+      saved = {
+        ...assigned,
+        attributes: saved.attributes,
+        assignment: { ...assigned.assignment, person }
+      };
+      updateList(saved);
+      props.assetInUseUpdated?.('equipment', saved.space?.id ?? null, person.id, 1);
+    }
+
+    toast.success(person ? 'Equipment duplicated and assigned successfully!' : 'Equipment duplicated successfully!');
+  };
+
   const createAndMaybeAssignEquipment = async (
     person: IPerson,
     selectedEquipment: IEquipment,
-    date: any,
-    duplicate?: boolean
+    date: any
   ) => {
     let updateTotalAssetCount = false;
     let updateInUseAssetCount = false;
@@ -285,18 +342,12 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     if (selectedEquipment.id === 0) {
       selectedEquipment.teamId = context.team.id;
       try {
-        const url = !!duplicate
-          ? `/api/${context.team.slug}/equipment/duplicate`
-          : `/api/${context.team.slug}/equipment/create`;
+        const url = `/api/${context.team.slug}/equipment/create`;
         selectedEquipment = await context.fetch(url, {
           body: JSON.stringify(selectedEquipment),
           method: 'POST'
         });
-        toast.success(
-          !!duplicate
-            ? 'Equipment duplicated successfully!'
-            : 'Equipment created successfully!'
-        );
+        toast.success('Equipment created successfully!');
       } catch (err) {
         const errorMessage =
           err.message === ''
@@ -649,6 +700,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
           renderDeleteModal(selectedId, detailEquipment)}
         {activeAsset &&
           action === 'duplicate' &&
+          !!detailEquipment &&
           renderDuplicateModal(selectedId, detailEquipment)}
       </div>
     </div>
