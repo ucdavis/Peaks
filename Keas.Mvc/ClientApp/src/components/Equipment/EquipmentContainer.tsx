@@ -198,12 +198,11 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     return (
       <DuplicateEquipment
         key={`duplicate-equipment-${selectedId}`}
-        onDuplicate={createAndMaybeAssignEquipment} // sends duplicate = true
+        onDuplicate={duplicateEquipment}
         modal={true}
         closeModal={closeModals}
         selectedEquipment={equipment}
         person={props.person}
-        space={props.space}
         tags={context.tags}
         commonAttributeKeys={commonAttributeKeys}
         equipmentTypes={equipmentTypes}
@@ -220,6 +219,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
         closeModal={closeModals}
         openEditModal={openEditModal}
         openUpdateModal={openAssignModal}
+        openDuplicateModal={openDuplicateModal}
         updateSelectedEquipment={updateEquipmentFromDetails}
       />
     );
@@ -270,11 +270,95 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     );
   };
 
+  const duplicateEquipment = async (
+    person: IPerson,
+    draft: IEquipment,
+    date: string,
+    onCreated: (equipment: IEquipment) => void
+  ) => {
+    // Keep the new record visible in the correct list, including if assignment fails.
+    const updateList = (saved: IEquipment) => {
+      const belongsToView =
+        (!props.person || saved.assignment?.person?.id === props.person.id) &&
+        (!props.space || saved.space?.id === props.space.id);
+      setEquipment(current => {
+        const otherEquipment = current.filter(item => item.id !== saved.id);
+        return belongsToView ? [...otherEquipment, saved] : otherEquipment;
+      });
+    };
+
+    const updateAssignment = (previous: IEquipment, current: IEquipment) => {
+      onCreated(current);
+      updateList(current);
+      const previousPersonId = previous.assignment?.person?.id;
+      const currentPersonId = current.assignment?.person?.id;
+      if (previousPersonId !== currentPersonId) {
+        if (previousPersonId != null) {
+          props.assetInUseUpdated?.('equipment', previous.space?.id ?? null, previousPersonId, -1);
+        }
+        if (currentPersonId != null) {
+          props.assetInUseUpdated?.('equipment', current.space?.id ?? null, currentPersonId, 1);
+        }
+      }
+    };
+
+    let saved = draft;
+    if (draft.id === 0) {
+      try {
+        saved = await context.fetch(`/api/${context.team.slug}/equipment/duplicate`, {
+          body: JSON.stringify({ ...draft, teamId: context.team.id }),
+          method: 'POST'
+        });
+      } catch (err) {
+        toast.error(`Error duplicating equipment${err.message ? `, ${err.message}` : ''}`);
+        throw err;
+      }
+
+      // Retain the new identity before assigning so a retry never creates another copy.
+      onCreated(saved);
+      updateList(saved);
+      props.assetTotalUpdated?.('equipment', saved.space?.id ?? null, null, 1);
+    } else {
+      // A failed response does not prove the assignment failed to save.
+      try {
+        saved = await context.fetch(`/api/${context.team.slug}/equipment/details/${draft.id}`);
+      } catch (err) {
+        throw new Error('Unable to verify the saved assignment. Please try again before changing it.');
+      }
+      updateAssignment(draft, saved);
+      if (saved.assignment && (!person || saved.assignment.person?.id !== person.id)) {
+        throw new Error(`This equipment is already assigned to ${saved.assignment.person?.name || 'a person'}. Close this dialog and use Revoke to remove or change its assignment.`);
+      }
+    }
+
+    if (person) {
+      let assigned: IEquipment;
+      try {
+        assigned = await context.fetch(
+          `/api/${context.team.slug}/equipment/assign?equipmentId=${saved.id}&personId=${person.id}&date=${date}`,
+          { method: 'POST' }
+        );
+      } catch (err) {
+        toast.error(`Unable to confirm the assignment${err.message ? `: ${err.message}` : '.'}`);
+        throw new Error('The assignment could not be confirmed. Please retry to check its saved status.');
+      }
+      const updated = {
+        ...assigned,
+        attributes: saved.attributes
+      };
+      updateAssignment(saved, updated);
+      if (updated.assignment?.person?.id !== person.id) {
+        throw new Error('The saved assignment does not match the selected person. Close this dialog and review the equipment assignment.');
+      }
+    }
+
+    toast.success(person ? 'Equipment duplicated and assigned successfully!' : 'Equipment duplicated successfully!');
+  };
+
   const createAndMaybeAssignEquipment = async (
     person: IPerson,
     selectedEquipment: IEquipment,
-    date: any,
-    duplicate?: boolean
+    date: any
   ) => {
     let updateTotalAssetCount = false;
     let updateInUseAssetCount = false;
@@ -285,18 +369,12 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     if (selectedEquipment.id === 0) {
       selectedEquipment.teamId = context.team.id;
       try {
-        const url = !!duplicate
-          ? `/api/${context.team.slug}/equipment/duplicate`
-          : `/api/${context.team.slug}/equipment/create`;
+        const url = `/api/${context.team.slug}/equipment/create`;
         selectedEquipment = await context.fetch(url, {
           body: JSON.stringify(selectedEquipment),
           method: 'POST'
         });
-        toast.success(
-          !!duplicate
-            ? 'Equipment duplicated successfully!'
-            : 'Equipment created successfully!'
-        );
+        toast.success('Equipment created successfully!');
       } catch (err) {
         const errorMessage =
           err.message === ''
@@ -649,6 +727,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
           renderDeleteModal(selectedId, detailEquipment)}
         {activeAsset &&
           action === 'duplicate' &&
+          !!detailEquipment &&
           renderDuplicateModal(selectedId, detailEquipment)}
       </div>
     </div>
