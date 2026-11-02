@@ -99,6 +99,7 @@ const KeySerialContainer = (props: IProps) => {
         openEditModal={openEditModal}
         openDetailsModal={openDetailsModal}
         statusList={statusList}
+        searchableTags={context.tags}
         goToKeyDetails={props.goToKeyDetails}
       />
     );
@@ -125,6 +126,7 @@ const KeySerialContainer = (props: IProps) => {
         key={`edit-keySerial-${selectedId}`}
         selectedKeySerial={keySerial}
         statusList={statusList}
+        searchableTags={context.tags}
         isModalOpen={!!keySerial}
         onEdit={editKeySerial}
         openUpdateModal={openUpdateModal}
@@ -167,7 +169,8 @@ const KeySerialContainer = (props: IProps) => {
         keyId: keySerial.key.id,
         notes: keySerial.notes,
         number: keySerial.number,
-        status: keySerial.status
+        status: keySerial.status,
+        tags: keySerial.tags || ''
       };
 
       const createUrl = `/api/${team.slug}/keyserials/create`;
@@ -311,7 +314,8 @@ const KeySerialContainer = (props: IProps) => {
     const request = {
       notes: keySerial.notes,
       number: keySerial.number,
-      status: keySerial.status
+      status: keySerial.status,
+      tags: keySerial.tags || ''
     };
 
     const updateUrl = `/api/${team.slug}/keyserials/update/${keySerial.id}`;

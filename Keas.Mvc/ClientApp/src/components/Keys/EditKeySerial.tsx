@@ -12,6 +12,7 @@ import KeySerialEditValues from './KeySerialEditValues';
 interface IProps {
   selectedKeySerial: IKeySerial;
   statusList: string[];
+  searchableTags?: string[];
   isModalOpen: boolean;
   onEdit: (keySerial: IKeySerial) => void;
   openUpdateModal: (keySerial: IKeySerial) => void;
@@ -105,6 +106,7 @@ const EditKeySerial = (props: IProps) => {
               changeProperty={changeProperty}
               disableEditing={false}
               statusList={props.statusList}
+              searchableTags={props.searchableTags}
               goToKeyDetails={props.goToKeyDetails}
               error={error}
             />

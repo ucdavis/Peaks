@@ -7,6 +7,7 @@ export interface IKeySerial {
   number: string;
   status: string;
   notes: string;
+  tags?: string;
   key: IKey;
   keyId?: number;
   keySerialAssignment?: IKeySerialAssignment;
@@ -37,6 +38,7 @@ export const keySerialSchema: ObjectSchema<IKeySerial> = object({
     .default('Active')
     .required(),
   notes: string().notRequired().nullable(),
+  tags: string().notRequired().nullable(),
   key: mixed<IKey>(),
   keyId: number().notRequired().nullable(),
   keySerialAssignment: mixed<IKeySerialAssignment>().nullable()
