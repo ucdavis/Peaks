@@ -1,6 +1,6 @@
 import { AssetActions } from '../Shared/AssetSummary';
 import { Modal, ModalBody } from '../Shared/AppModal';
-import { PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { DocumentDuplicateIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -15,6 +15,7 @@ interface IProps {
   modal: boolean;
   closeModal: () => void;
   openEditModal: (equipment: IEquipment) => void;
+  openDuplicateModal: (equipment: IEquipment) => void;
   openUpdateModal: (equipment: IEquipment) => void;
   selectedEquipment: IEquipment;
   updateSelectedEquipment: (equipment: IEquipment, id?: number) => void;
@@ -91,6 +92,9 @@ const EquipmentDetails = (props: IProps) => {
           <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
             <h3 id='equipment-summary-title' className='text-lg font-semibold'>Overview</h3>
             <AssetActions>
+              <button type='button' className='btn btn-asset btn-outline btn-sm' onClick={() => props.openDuplicateModal(equipment)}>
+                <DocumentDuplicateIcon className='size-4' aria-hidden='true' /> Duplicate Equipment
+              </button>
               <button type='button' className='btn btn-asset btn-sm' onClick={() => props.openEditModal(equipment)}>
                 <PencilSquareIcon className='size-4' aria-hidden='true' /> Edit Equipment
               </button>
