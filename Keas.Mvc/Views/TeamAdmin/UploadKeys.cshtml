@@ -33,19 +33,20 @@
                     </div>
                 </div>
                 <div class="space-y-4 overflow-x-auto rounded-sm border border-main-border bg-base-100 p-5 [overflow-wrap:anywhere]">
-                    <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
-                    <p><b>KeyName<span class="space">,</span>KeyCode<span class="space">,</span>KeyNotes<span class="space">,</span>KeyTags<span class="space">,</span>SerialNumber<span class="space">,</span>KerbUser<span class="space">,</span>DateIssued<span class="space">,</span>DateDue<span class="space">,</span>Status<span class="space">,</span>SerialNotes</b></p>
+                    <p>Use the following column names in the CSV header. Older files may omit the SerialTags column:</p><br>
+                    <p><b>KeyName<span class="space">,</span>KeyCode<span class="space">,</span>KeyNotes<span class="space">,</span>KeyTags<span class="space">,</span>SerialNumber<span class="space">,</span>KerbUser<span class="space">,</span>DateIssued<span class="space">,</span>DateDue<span class="space">,</span>Status<span class="space">,</span>SerialNotes<span class="space">,</span>SerialTags</b></p>
                     <p>Text above copies properly. If you type the list out, omit the space after the commas.</p>
-                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_key_exampleV2.csv")" class="btn btn-outline" role="button"><hero-icon name="arrow-down-tray" class="size-5"></hero-icon> CSV file.</a></p>
-                    <p><hero-icon name="star" class="size-5" style="color: red"></hero-icon> Indicates new fields, Sept 2019</p>
+                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_key_exampleV3.csv")" class="btn btn-outline" role="button"><hero-icon name="arrow-down-tray" class="size-5"></hero-icon> CSV file.</a></p>
+                    <p>For KeyTags and SerialTags, separate tags with commas and surround the entire CSV field with quotation marks, for example <code>"Spare,Front desk"</code>. Add tag names, including Imported, to <a asp-controller="TagsManager" asp-action="Index">Team Tags</a> to filter by them.</p>
+                    <p><hero-icon name="star" class="size-5" style="color: red"></hero-icon> Indicates new fields, Nov 2026</p>
                     <dl class="space-y-3 [&_dt]:font-semibold [&_dd]:ms-0 [&_dd]:text-sm [&_dd]:leading-6">
                         <dt>KeyName</dt>
                         <dd>Required - Description of key (e.g. Example Hall exterior doors). If the same KeyCode appears later in the document, only the first KeyName will be used.</dd>
                         <dt>KeyCode</dt>
                         <dd>Required - Number for this key. First part of number on key</dd>
-                        <dt>KeyNotes <hero-icon name="star" class="size-5" style="color: red"></hero-icon></dt>
+                        <dt>KeyNotes</dt>
                         <dd>Optional - Notes about the Key Pattern. IMPORTANT! this will only be set if the key doesn't exist yet.</dd>
-                        <dt>KeyTags <hero-icon name="star" class="size-5" style="color: red"></hero-icon></dt>
+                        <dt>KeyTags</dt>
                         <dd>Optional - Tags for the Key Pattern. IMPORTANT! this will only be set if the key doesn't exist yet.</dd>
                         <dt>SerialNumber</dt>
                         <dd>Required - Identifier for this key within given KeyCode. Usually the second part of number on key. If serial is blank, the key will be created without any serials.</dd>
@@ -56,9 +57,11 @@
                         <dt>DateDue</dt>
                         <dd>Date this key should be returned</dd>
                         <dt>Status</dt>
-                        <dd>Status of this serial. Valid entries are: @(string.Join(", ", KeySerialStatusModel.StatusList)) <hero-icon name="star" class="size-5" style="color: red"></hero-icon>. If blank, serial will be set to "Active"</dd>
-                        <dt>SerialNotes <hero-icon name="star" class="size-5" style="color: red"></hero-icon></dt>
+                        <dd>Status of this serial. Valid entries are: @(string.Join(", ", KeySerialStatusModel.StatusList)). If blank, serial will be set to "Active"</dd>
+                        <dt>SerialNotes</dt>
                         <dd>Optional - Notes about the physical key.</dd>
+                        <dt>SerialTags <hero-icon name="star" class="size-5" style="color: red"></hero-icon></dt>
+                        <dd>Optional - Tags for the physical key. These are set only when the serial is created. Imported is added automatically, even when this field is blank or omitted. Existing serial tags are not changed.</dd>
                     </dl>
                 </div>
             </div>
@@ -80,7 +83,7 @@
                                 <th rowspan="2">Row</th>
                                 <th rowspan="2">Success</th>
 
-                                <th colspan="10">CSV Imported Values</th>
+                                <th colspan="11">CSV Imported Values</th>
                                 <th rowspan="2">Messages</th>
                                 <th rowspan="2">Errors</th>
                             </tr>
@@ -95,6 +98,7 @@
                                 <th>DateDue</th>
                                 <th>Status</th>
                                 <th>SerialNotes</th>
+                                <th>SerialTags</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -137,6 +141,9 @@
                                     </td>
                                     <td style="word-wrap: break-word; word-break: break-all; white-space: normal;">
                                         @Html.DisplayFor(a => item.Import.SerialNotes)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.Import.SerialTags)
                                     </td>
                                     <td>
                                         @string.Join(", ", item.Messages)

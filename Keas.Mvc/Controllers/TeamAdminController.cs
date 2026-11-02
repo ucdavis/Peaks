@@ -643,6 +643,12 @@ namespace Keas.Mvc.Controllers
                                     serial.Key = key;
                                     serial.Status = SetStatus(r.Status, result);
                                     serial.Notes = r.SerialNotes.Trim();
+                                    serial.Tags = string.Join(",", (r.SerialTags ?? string.Empty)
+                                        .Split(',')
+                                        .Select(tag => tag.Trim())
+                                        .Where(tag => tag.Length > 0 && !tag.Equals("Imported", StringComparison.OrdinalIgnoreCase))
+                                        .Distinct(StringComparer.Ordinal)
+                                        .Append("Imported"));
 
                                     serial.TeamId = team.Id;
 
@@ -675,6 +681,10 @@ namespace Keas.Mvc.Controllers
                                 else
                                 {
                                     result.Messages.Add("Serial Number already exists.");
+                                    if (!string.IsNullOrWhiteSpace(r.SerialTags))
+                                    {
+                                        result.Messages.Add("Serial tags not changed.");
+                                    }
                                 }
 
                                 //r.Status should never be null or empty at this point, but it doesn't really matter.
