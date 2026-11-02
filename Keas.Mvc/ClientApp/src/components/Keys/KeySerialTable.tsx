@@ -5,6 +5,7 @@ import { DateUtil } from '../../util/dates';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
+import { AssetFilterBar } from '../Shared/AssetFilterBar';
 import {
   PeaksColumn as Column,
   PeaksInitialState
@@ -16,6 +17,7 @@ import {
 
 interface IProps {
   keySerials: IKeySerial[];
+  tags?: string[];
   onAssign?: (keySerial: IKeySerial) => void;
   onRevoke?: (keySerial: IKeySerial) => void;
   onUpdate?: (keySerial: IKeySerial) => void;
@@ -24,6 +26,8 @@ interface IProps {
 }
 
 const KeySerialTable = (props: IProps) => {
+  const [tagFilters, setTagFilters] = React.useState<string[]>([]);
+
   const renderDropdownColumn = data => {
     const keySerial = data.row.original;
 
@@ -98,7 +102,16 @@ const KeySerialTable = (props: IProps) => {
     []
   );
 
-  const keySerialData = React.useMemo(() => keySerials, [keySerials]);
+  const keySerialData = React.useMemo(() => {
+    if (!tagFilters.length) {
+      return keySerials;
+    }
+
+    return keySerials.filter(serial => {
+      const serialTags = (serial.tags || '').split(',').map(tag => tag.trim());
+      return tagFilters.every(tag => serialTags.includes(tag));
+    });
+  }, [keySerials, tagFilters]);
 
   const initialState: PeaksInitialState = {
     sorting: [
@@ -109,11 +122,24 @@ const KeySerialTable = (props: IProps) => {
   };
 
   return (
-    <ReactTable
-      data={keySerialData}
-      columns={columns}
-      initialState={initialState}
-    />
+    <>
+      <AssetFilterBar
+        categories={[
+          {
+            id: 'tags',
+            label: 'Tags',
+            options: props.tags || [],
+            selected: tagFilters,
+            onChange: setTagFilters
+          }
+        ]}
+      />
+      <ReactTable
+        data={keySerialData}
+        columns={columns}
+        initialState={initialState}
+      />
+    </>
   );
 };
 

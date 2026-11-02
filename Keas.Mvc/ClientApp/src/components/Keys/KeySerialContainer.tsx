@@ -467,6 +467,7 @@ const KeySerialContainer = (props: IProps) => {
         {!props.selectedPerson && props.selectedKey && (
           <KeySerialTable
             keySerials={keySerials}
+            tags={context.tags}
             onRevoke={openRevokeModal}
             onAssign={openAssignModal}
             onEdit={openEditModal}

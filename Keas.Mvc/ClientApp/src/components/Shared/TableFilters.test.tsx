@@ -8,8 +8,10 @@ import {
 } from '@testing-library/react';
 import EquipmentTable from '../Equipment/EquipmentTable';
 import AccessTable from '../Access/AccessTable';
+import KeySerialTable from '../Keys/KeySerialTable';
 import { fakeEquipment } from '../specs/mockData/Equipment';
 import { fakeAccesses } from '../specs/mockData/Access';
+import { fakeKeySerials } from '../specs/mockData/KeySerial';
 
 afterEach(() => {
   cleanup();
@@ -118,4 +120,73 @@ it('details and actions retain the original equipment after sorting and filterin
   fireEvent.click(row.getByRole('button', { name: 'Row actions' }));
   fireEvent.click(screen.getByRole('menuitem', { name: 'Revoke' }));
   expect(revoke).toHaveBeenCalledWith(equipment[0]);
+});
+
+const serialsWithTags = [
+  'Spare,Front desk',
+  'Spare',
+  'Front desk',
+  'Spare-room',
+  null,
+  undefined,
+  '',
+  ' Front desk, Spare '
+].map((tags, id) => ({
+  ...fakeKeySerials[0],
+  id,
+  number: `${id}`,
+  status: id === 1 ? 'Lost' : 'Active',
+  tags,
+  key: { ...fakeKeySerials[0].key, tags: 'Spare,Front desk' }
+}));
+
+const selectSerialTag = (tag: string) => {
+  fireEvent.change(screen.getByRole('combobox', { name: 'Search asset filters' }), {
+    target: { value: tag }
+  });
+  fireEvent.click(screen.getByRole('option', { name: tag }));
+};
+
+const shownSerials = (container: HTMLElement) =>
+  Array.from(container.querySelectorAll('tbody tr'))
+    .filter(row => row.children.length > 1)
+    .map(row => row.children[1].textContent)
+    .sort();
+
+it('combines exact serial tags and restores rows when tag filters are removed or cleared', () => {
+  const { container } = render(
+    <KeySerialTable keySerials={serialsWithTags} tags={['Spare', 'Front desk']} />
+  );
+  const allSerials = serialsWithTags.map(serial => `ADD-${serial.number}`);
+  expect(shownSerials(container)).toEqual(allSerials);
+
+  selectSerialTag('Spare');
+  expect(shownSerials(container)).toEqual(['ADD-0', 'ADD-1', 'ADD-7']);
+  selectSerialTag('Front desk');
+  expect(shownSerials(container)).toEqual(['ADD-0', 'ADD-7']);
+
+  fireEvent.click(screen.getByRole('button', { name: 'Remove Tags: Spare' }));
+  expect(shownSerials(container)).toEqual(['ADD-0', 'ADD-2', 'ADD-7']);
+  fireEvent.click(screen.getByRole('button', { name: 'Clear all' }));
+  expect(shownSerials(container)).toEqual(allSerials);
+  expect(screen.queryByLabelText('Active filters')).not.toBeInTheDocument();
+});
+
+it('combines serial tags with status and retains the status filter when tags are cleared', () => {
+  const { container } = render(
+    <KeySerialTable keySerials={serialsWithTags} tags={['Spare', 'Front desk']} />
+  );
+  fireEvent.change(screen.getByRole('combobox', { name: 'Filter status' }), {
+    target: { value: 'inactive' }
+  });
+  selectSerialTag('Spare');
+  expect(shownSerials(container)).toEqual(['ADD-1']);
+  selectSerialTag('Front desk');
+  expect(shownSerials(container)).toEqual([]);
+  expect(screen.getByText('No matching records found. Try adjusting your filters.'))
+    .toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Clear all' }));
+  expect(shownSerials(container)).toEqual(['ADD-1']);
+  expect(screen.getByRole('combobox', { name: 'Filter status' })).toHaveValue('inactive');
 });
