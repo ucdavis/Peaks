@@ -55,12 +55,15 @@ namespace Test.TestsController
         }
 
         [Theory]
-        [InlineData("spare,front-desk")]
-        [InlineData("")]
-        [InlineData(null)]
-        public async Task CreatePersistsAndReturnsSerialTagsIndependentlyOfParent(string tags)
+        [InlineData("spare,front-desk", "spare,front-desk")]
+        [InlineData(" Spare , Front desk , ,Spare, ", "Spare,Front desk")]
+        [InlineData("Spare,spare,Front desk", "Spare,spare,Front desk")]
+        [InlineData(" \t ", "")]
+        [InlineData(",,,", "")]
+        [InlineData("", "")]
+        [InlineData(null, "")]
+        public async Task CreatePersistsAndReturnsSerialTagsIndependentlyOfParent(string tags, string expectedTags)
         {
-            var expectedTags = tags ?? string.Empty;
             var result = await _controller.Create(new CreateKeySerialViewModel
             {
                 KeyId = _key.Id,
@@ -77,9 +80,13 @@ namespace Test.TestsController
         }
 
         [Theory]
-        [InlineData("replacement,front-desk")]
-        [InlineData("")]
-        public async Task UpdateReplacesOrClearsSerialTagsIndependentlyOfParent(string tags)
+        [InlineData("replacement,front-desk", "replacement,front-desk")]
+        [InlineData(" Spare , Front desk , ,Spare, ", "Spare,Front desk")]
+        [InlineData("Spare,spare,Front desk", "Spare,spare,Front desk")]
+        [InlineData(" \t ", "")]
+        [InlineData(",,,", "")]
+        [InlineData("", "")]
+        public async Task UpdateReplacesOrClearsSerialTagsIndependentlyOfParent(string tags, string expectedTags)
         {
             var serial = await AddSerial("original");
 
@@ -90,19 +97,20 @@ namespace Test.TestsController
                 Tags = tags
             });
 
-            Assert.Equal(tags, Assert.IsType<KeySerial>(Assert.IsType<JsonResult>(result).Value).Tags);
-            _events.Verify(e => e.TrackUpdateKeySerial(It.Is<KeySerial>(s => s.Tags == tags)), Times.Once);
+            Assert.Equal(expectedTags, Assert.IsType<KeySerial>(Assert.IsType<JsonResult>(result).Value).Tags);
+            _events.Verify(e => e.TrackUpdateKeySerial(It.Is<KeySerial>(s => s.Tags == expectedTags)), Times.Once);
             _context.ChangeTracker.Clear();
-            Assert.Equal(tags, (await _context.KeySerials.SingleAsync()).Tags);
+            Assert.Equal(expectedTags, (await _context.KeySerials.SingleAsync()).Tags);
             Assert.Equal(ParentTags, (await _context.Keys.SingleAsync()).Tags);
         }
 
-        [Fact]
-        public async Task UpdateWithoutTagsPreservesThemWhileSavingOtherChanges()
+        [Theory]
+        [InlineData("{\"notes\":\"Updated notes\",\"number\":\"002\",\"status\":\"Lost\"}")]
+        [InlineData("{\"notes\":\"Updated notes\",\"number\":\"002\",\"status\":\"Lost\",\"tags\":null}")]
+        public async Task UpdateWithOmittedOrNullTagsPreservesThemWhileSavingOtherChanges(string json)
         {
             var serial = await AddSerial("original");
-            var model = JsonConvert.DeserializeObject<UpdateKeySerialViewModel>(
-                "{\"notes\":\"Updated notes\",\"number\":\"002\",\"status\":\"Lost\"}");
+            var model = JsonConvert.DeserializeObject<UpdateKeySerialViewModel>(json);
 
             var result = await _controller.Update(serial.Id, model);
 

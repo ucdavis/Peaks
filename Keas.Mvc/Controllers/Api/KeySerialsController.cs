@@ -183,7 +183,7 @@ namespace Keas.Mvc.Controllers.Api
                 Name = model.Number.Trim(),
                 Number = model.Number.Trim(),
                 Notes = model.Notes,
-                Tags = model.Tags ?? string.Empty,
+                Tags = NormalizeTags(model.Tags),
                 Status = model.Status ?? KeySerialStatusModel.Active,
             };
 
@@ -247,7 +247,7 @@ namespace Keas.Mvc.Controllers.Api
             // Existing clients omit tags; an empty string explicitly clears them.
             if (model.Tags != null)
             {
-                keySerial.Tags = model.Tags;
+                keySerial.Tags = NormalizeTags(model.Tags);
             }
             
 
@@ -380,5 +380,14 @@ namespace Keas.Mvc.Controllers.Api
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
         public ActionResult ListKeySerialStatus() => Json(KeySerialStatusModel.StatusList);
+
+        private static string NormalizeTags(string tags)
+        {
+            return string.Join(",", (tags ?? string.Empty)
+                .Split(',')
+                .Select(tag => tag.Trim())
+                .Where(tag => tag.Length > 0)
+                .Distinct(StringComparer.Ordinal));
+        }
     }
 }

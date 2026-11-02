@@ -141,7 +141,10 @@ const KeySerialEditValues = (props: IProps) => {
           <SearchDefinedOptions
             definedOptions={props.searchableTags || []}
             disabled={false}
-            selected={keySerial.tags ? keySerial.tags.split(',') : []}
+            selected={(keySerial.tags || '')
+              .split(',')
+              .map(tag => tag.trim())
+              .filter(Boolean)}
             onSelect={tags => props.changeProperty('tags', tags.join(','))}
             placeholder='Search for Tags'
             id='searchTagsKeySerialEditValues'
