@@ -5,6 +5,7 @@ using System.Linq;
 using Keas.Core.Data;
 using Keas.Core.Helper;
 using Keas.Core.Models;
+using Keas.Core.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -74,7 +75,12 @@ namespace Keas.Jobs.SendMail
 
             var expiringItems = new ExpiringItemsEmailModel();
             expiringItems.AccessAssignments = dbContext.AccessAssignments.Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Include(a => a.Access).Include(a => a.Person).ToListAsync().GetAwaiter().GetResult();
-            expiringItems.KeySerials = dbContext.KeySerials.Where(a => a.KeySerialAssignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.KeySerialAssignment.NextNotificationDate == null || a.KeySerialAssignment.NextNotificationDate <= DateTime.UtcNow)).Include(k => k.Key).Include(k => k.KeySerialAssignment).ThenInclude(k => k.Person).ToListAsync().GetAwaiter().GetResult();
+            expiringItems.KeySerials = dbContext.KeySerials
+                .Where(a => (a.Status == KeySerialStatusModel.Active || a.Status == KeySerialStatusModel.Special)
+                    && a.KeySerialAssignment.ExpiresAt <= DateTime.UtcNow.AddDays(30)
+                    && (a.KeySerialAssignment.NextNotificationDate == null || a.KeySerialAssignment.NextNotificationDate <= DateTime.UtcNow))
+                .Include(k => k.Key).Include(k => k.KeySerialAssignment).ThenInclude(k => k.Person)
+                .ToListAsync().GetAwaiter().GetResult();
             expiringItems.Equipment = dbContext.Equipment.Where(a => a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow)).Include(e => e.Assignment).ThenInclude(e => e.Person).ToListAsync().GetAwaiter().GetResult();
             expiringItems.Workstations = dbContext.Workstations.Where(a => a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow)).Include(w => w.Assignment).ThenInclude(w => w.Person).ToListAsync().GetAwaiter().GetResult();
 
