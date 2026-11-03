@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "People With Incomplete Documents";
+    var showUnknownStatus = Model.Any(item => item.UnknownDocumentCount > 0);
 }
 
 <div class="space-y-6 pb-8">
@@ -22,8 +23,18 @@
                     Email
                 </th>
                 <th>
-                    Incomplete Document Count
+                    Declined
                 </th>
+                <th>
+                    Sent
+                </th>
+                <th>
+                    Voided
+                </th>
+                @if (showUnknownStatus)
+                {
+                    <th>Other</th>
+                }
                 <th></th>
             </tr>
             </thead>
@@ -37,8 +48,18 @@
                         @Html.DisplayFor(modelItem => item.Email)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.IncompleteDocumentCount)
+                        @Html.DisplayFor(modelItem => item.DeclinedDocumentCount)
                     </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SentDocumentCount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.VoidedDocumentCount)
+                    </td>
+                    @if (showUnknownStatus)
+                    {
+                        <td>@Html.DisplayFor(modelItem => item.UnknownDocumentCount)</td>
+                    }
                     <td>
                         <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.PersonId)' target="_blank">Details</a>
                     </td>

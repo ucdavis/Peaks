@@ -377,14 +377,19 @@ namespace Keas.Mvc.Services
             }
 
             var people = await _context.People.AsNoTracking().Include(a => a.Documents)
-                .Where(a => a.TeamId == team.Id && a.Documents.Any(x => x.Active && x.Status != "Completed"))
+                .Where(a => a.TeamId == team.Id && a.Documents.Any(x => x.Active && (x.Status == null || x.Status.ToLower() != "completed")))
                 .Select(s => new IncompleteDocumentReportModel()
                 {
                     FirstName = s.FirstName,
                     LastName = s.LastName,
                     Email = s.Email,
                     PersonId = s.Id,
-                    IncompleteDocumentCount = s.Documents.Count(w => w.Active && w.Status != "Completed"),
+                    DeclinedDocumentCount = s.Documents.Count(w => w.Active && w.Status.ToLower() == "declined"),
+                    SentDocumentCount = s.Documents.Count(w => w.Active && w.Status.ToLower() == "sent"),
+                    VoidedDocumentCount = s.Documents.Count(w => w.Active && w.Status.ToLower() == "voided"),
+                    UnknownDocumentCount = s.Documents.Count(w => w.Active && (w.Status == null ||
+                        (w.Status.ToLower() != "declined" && w.Status.ToLower() != "sent" &&
+                         w.Status.ToLower() != "voided" && w.Status.ToLower() != "completed"))),
                 }).ToListAsync();
 
 
@@ -467,14 +472,19 @@ namespace Keas.Mvc.Services
         public async Task<IList<IncompleteDocumentReportModel>> IncompleteDocuments(Group group)
         {
             var people = await _context.People.AsNoTracking().Include(a => a.Team).Include(a => a.Documents)
-                .Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id) && a.Documents.Any(x => x.Active && x.Status != "Completed"))
+                .Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id) && a.Documents.Any(x => x.Active && (x.Status == null || x.Status.ToLower() != "completed")))
                 .Select(s => new IncompleteDocumentReportModel()
                 {
                     FirstName = s.FirstName,
                     LastName = s.LastName,
                     Email = s.Email,
                     PersonId = s.Id,
-                    IncompleteDocumentCount = s.Documents.Count(w => w.Active && w.Status != "Completed"),
+                    DeclinedDocumentCount = s.Documents.Count(w => w.Active && w.Status.ToLower() == "declined"),
+                    SentDocumentCount = s.Documents.Count(w => w.Active && w.Status.ToLower() == "sent"),
+                    VoidedDocumentCount = s.Documents.Count(w => w.Active && w.Status.ToLower() == "voided"),
+                    UnknownDocumentCount = s.Documents.Count(w => w.Active && (w.Status == null ||
+                        (w.Status.ToLower() != "declined" && w.Status.ToLower() != "sent" &&
+                         w.Status.ToLower() != "voided" && w.Status.ToLower() != "completed"))),
                     TeamName = s.Team.Name,
                     TeamSlug = s.Team.Slug,
                 }).ToListAsync();
