@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Reflection;
 using System.Threading.Tasks;
 using Keas.Core.Data;
@@ -11,6 +13,8 @@ using Keas.Core.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Mjml.Net;
 using Moq;
 using Serilog;
 using Xunit;
@@ -99,6 +103,112 @@ namespace Test.Integration
             emails.Verify(service => service.SendTeamExpiringMessage(It.IsAny<int>(), It.IsAny<ExpiringItemsEmailModel>()), Times.Exactly(2));
             emails.Verify(service => service.SendPersonNotification(), Times.Once);
             emails.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ExpirationJobSkipsTeamsWithoutRecipientsAndContinuesNotifications()
+        {
+            using var connection = new SqliteConnection("Data Source=:memory:");
+            connection.Open();
+            using var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseSqlite(connection).Options);
+            context.Database.EnsureCreated();
+            var expiresAt = DateTime.UtcNow.AddDays(10);
+            var skippedTeam = new Team { Name = "Skipped team", Slug = "skipped-team" };
+            var eligibleTeam = new Team { Name = "Eligible team", Slug = "eligible-team" };
+            var equipmentPerson = AddPerson(context, skippedTeam, "Equipment");
+            var workstationPerson = AddPerson(context, eligibleTeam, "Workstation");
+            var lostKey = AddKey(context, skippedTeam, equipmentPerson, KeySerialStatusModel.Lost, expiresAt);
+            var keyMaster = new User
+            {
+                Id = "key-master", FirstName = "Key", LastName = "Master", Email = "keys@example.test"
+            };
+            var spaceMaster = new User
+            {
+                Id = "space-master", FirstName = "Space", LastName = "Master", Email = "spaces@example.test"
+            };
+            context.TeamPermissions.AddRange(
+                new TeamPermission { Team = skippedTeam, User = keyMaster, Role = new Role { Name = Role.Codes.KeyMaster } },
+                new TeamPermission { Team = eligibleTeam, User = spaceMaster, Role = new Role { Name = Role.Codes.SpaceMaster } });
+            var equipment = new Equipment
+            {
+                Name = "Loan laptop",
+                Team = skippedTeam,
+                Assignment = new EquipmentAssignment { Person = equipmentPerson, ExpiresAt = expiresAt }
+            };
+            // Equipment teams precede workstation teams in the job's recipient list.
+            var workstation = new Workstation
+            {
+                Name = "Loan desk",
+                Team = eligibleTeam,
+                Space = new Space { BldgName = "Test building", RoomNumber = "101" },
+                Assignment = new WorkstationAssignment { Person = workstationPerson, ExpiresAt = expiresAt }
+            };
+            context.Equipment.Add(equipment);
+            context.Workstations.Add(workstation);
+            context.SaveChanges();
+            var notification = new PersonNotification
+            {
+                Team = eligibleTeam,
+                PersonId = workstationPerson.Id,
+                PersonName = workstationPerson.Name,
+                PersonEmail = workstationPerson.Email,
+                NotificationEmail = "changes@example.test",
+                ActorName = "Test admin",
+                Action = PersonNotification.Actions.Added
+            };
+            context.PersonNotifications.Add(notification);
+            context.SaveChanges();
+            context.ChangeTracker.Clear();
+
+            var pickupDirectory = Path.Combine(AppContext.BaseDirectory, "mail-expiration-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(pickupDirectory);
+            try
+            {
+                var emailService = new EmailService(context, Options.Create(new SparkpostSettings
+                {
+                    Host = "localhost", Port = 25, DisableSend = "No"
+                }), new MjmlRenderer());
+                var clientField = typeof(EmailService).GetField("_client", BindingFlags.NonPublic | BindingFlags.Instance);
+                Assert.NotNull(clientField);
+                using var client = Assert.IsType<SmtpClient>(clientField.GetValue(emailService));
+                client.DeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
+                client.PickupDirectoryLocation = pickupDirectory;
+                client.EnableSsl = false;
+                using var provider = new ServiceCollection()
+                    .AddSingleton(context)
+                    .AddSingleton<IEmailService>(emailService)
+                    .BuildServiceProvider();
+
+                InvokeSendEmails(provider);
+
+                var headers = Directory.GetFiles(pickupDirectory, "*.eml")
+                    .Select(path => File.ReadAllText(path).Split(new[] { "\r\n\r\n", "\n\n" }, 2, StringSplitOptions.None)[0])
+                    .ToArray();
+                Assert.Equal(4, headers.Length);
+                Assert.Equal(2, headers.Count(header => header.Contains("Subject: PEAKS Expiring Items")));
+                var teamEmail = Assert.Single(headers.Where(header => header.Contains("Subject: PEAKS Admin Expiring Items Notification")));
+                Assert.Contains(spaceMaster.Email, teamEmail);
+                Assert.DoesNotContain(headers, header => header.Contains(keyMaster.Email));
+                var personNotificationEmail = Assert.Single(headers.Where(header => header.Contains("Subject: PEAKS People Notification")));
+                Assert.Contains(notification.NotificationEmail, personNotificationEmail);
+
+                context.ChangeTracker.Clear();
+                var savedNotification = context.PersonNotifications.Single(item => item.Id == notification.Id);
+                Assert.False(savedNotification.Pending);
+                Assert.NotNull(savedNotification.NotificationDate);
+                Assert.Null(context.KeySerialAssignments.Single(assignment => assignment.KeySerialId == lostKey.Id).NextNotificationDate);
+                Assert.Equal(expiresAt.AddDays(-7), context.EquipmentAssignments.Single(assignment => assignment.Id == equipment.Assignment.Id).NextNotificationDate);
+                Assert.Equal(expiresAt.AddDays(-7), context.WorkstationAssignments.Single(assignment => assignment.Id == workstation.Assignment.Id).NextNotificationDate);
+            }
+            finally
+            {
+                foreach (var file in Directory.GetFiles(pickupDirectory))
+                {
+                    File.Delete(file);
+                }
+                Directory.Delete(pickupDirectory);
+            }
         }
 
         private static Person AddPerson(ApplicationDbContext context, Team team, string name)

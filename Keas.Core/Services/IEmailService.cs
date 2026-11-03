@@ -157,6 +157,12 @@ namespace Keas.Core.Services
                  .Select(u => new MailAddress(u.Email, u.Name))
                  .ToList();
 
+            if (!toEmails.Any())
+            {
+                Log.Information("Skipping expiration email for team {TeamId}: no eligible recipients", teamId);
+                return;
+            }
+
             using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Admin Expiring Items Notification" })
             {
                 toEmails.ForEach(message.To.Add);
