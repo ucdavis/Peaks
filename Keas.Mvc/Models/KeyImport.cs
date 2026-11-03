@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using CsvHelper.Configuration.Attributes;
 
 namespace Keas.Mvc.Models
 {
@@ -26,6 +27,9 @@ namespace Keas.Mvc.Models
 
         public string Status { get; set; }
         public string SerialNotes { get; set; }
+
+        [Optional]
+        public string SerialTags { get; set; }
 
     }
 
@@ -54,6 +58,7 @@ namespace Keas.Mvc.Models
                 KeyName = import.KeyName,
                 Status = import.Status,
                 SerialNotes = import.SerialNotes,
+                SerialTags = import.SerialTags,
             };
         }
 

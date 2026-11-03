@@ -53,6 +53,7 @@
                     <th>Building</th>
                     <th>Room Name</th>
                     <th>Room Number</th>
+                    <th>Serial Tags</th>
                 </tr>
             </thead>
             <tbody>
@@ -92,6 +93,7 @@
                                     <td>@space.BldgName</td>
                                     <td>@space.RoomName</td>
                                     <td>@space.RoomNumber</td>
+                                    <td>@serial.Tags?.Replace(",", ", ")</td>
                                 </tr>
                             }
                         }
@@ -121,7 +123,7 @@
                 "order": [1, "asc"],
                 "columnDefs": [
                     { "type": "date", "targets": [9] },
-                    { "targets" : [ 0,4,5,6,9,10,12,13], "visible" : false}
+                    { "targets" : [ 0,4,5,6,9,10,12,13,20], "visible" : false}
                 ]
         });
     </script>

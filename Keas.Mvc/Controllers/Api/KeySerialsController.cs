@@ -183,6 +183,7 @@ namespace Keas.Mvc.Controllers.Api
                 Name = model.Number.Trim(),
                 Number = model.Number.Trim(),
                 Notes = model.Notes,
+                Tags = NormalizeTags(model.Tags),
                 Status = model.Status ?? KeySerialStatusModel.Active,
             };
 
@@ -243,6 +244,11 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: Do we want to update the Name too? When we create it, we make Number and Name the same.
             keySerial.Status = model.Status;
             keySerial.Notes = model.Notes;
+            // Existing clients omit tags; an empty string explicitly clears them.
+            if (model.Tags != null)
+            {
+                keySerial.Tags = NormalizeTags(model.Tags);
+            }
             
 
             await _eventService.TrackUpdateKeySerial(keySerial);
@@ -374,5 +380,14 @@ namespace Keas.Mvc.Controllers.Api
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
         public ActionResult ListKeySerialStatus() => Json(KeySerialStatusModel.StatusList);
+
+        private static string NormalizeTags(string tags)
+        {
+            return string.Join(",", (tags ?? string.Empty)
+                .Split(',')
+                .Select(tag => tag.Trim())
+                .Where(tag => tag.Length > 0)
+                .Distinct(StringComparer.Ordinal));
+        }
     }
 }

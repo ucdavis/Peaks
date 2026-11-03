@@ -1,0 +1,4 @@
+KeyName,KeyCode,KeyNotes,KeyTags,SerialNumber,KerbUser,DateIssued,DateDue,Status,SerialNotes,SerialTags
+Example key. Delete this line,AEXMPLE,,"SpareX,Front desk1",1,xxxx,8/18/1994,12/15/2032,Active,,"Spare,Front desk"
+Example lost key. Delete this line.,AEXMPLE,,,2,,,,Lost,,
+Destroyed key. Delete this line.,AEXMPLE2,,,1,,,,Destroyed,,

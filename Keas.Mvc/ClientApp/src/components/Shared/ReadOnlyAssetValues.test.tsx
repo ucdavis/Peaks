@@ -13,9 +13,11 @@ it('displays immutable key values as text while keeping serial edits functional'
   expect(container.querySelector('input, select, textarea')).toBeNull();
   expect(screen.getByText(serial.key.name)).toBeTruthy();
   rerender(<KeySerialEditValues keySerial={serial} disableEditing={false} changeProperty={change} />);
-  expect(container.querySelectorAll('input')).toHaveLength(1);
+  const numberInput = screen.getByDisplayValue(serial.number);
+  expect(numberInput).toBeEnabled();
+  expect(screen.getByRole('combobox', { name: 'Tags' })).toBeEnabled();
   expect(container.querySelector('select')).not.toBeNull();
   expect(container.querySelector('textarea')).not.toBeNull();
-  fireEvent.change(container.querySelector('input'), { target: { value: 'NEW-123' } });
+  fireEvent.change(numberInput, { target: { value: 'NEW-123' } });
   expect(change).toHaveBeenCalledWith('number', 'NEW-123');
 });

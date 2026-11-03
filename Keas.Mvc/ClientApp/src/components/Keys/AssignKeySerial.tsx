@@ -20,6 +20,7 @@ interface IProps {
   selectedKey: IKey;
   selectedKeySerial: IKeySerial;
   statusList: string[];
+  searchableTags?: string[];
   isModalOpen: boolean;
   onCreate: (person: IPerson, keySerial: IKeySerial, date: any) => void;
   onOpenModal: () => void;
@@ -224,6 +225,7 @@ const AssignKeySerial = (props: IProps) => {
                       changeProperty={changeProperty}
                       disableEditing={false}
                       statusList={props.statusList}
+                      searchableTags={props.searchableTags}
                       goToKeyDetails={props.goToKeyDetails}
                       error={error}
                     />

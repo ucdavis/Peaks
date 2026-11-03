@@ -6,12 +6,14 @@ import { IKey } from '../../models/Keys';
 import { IKeySerial } from '../../models/KeySerials';
 import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   keySerial: IKeySerial;
   person?: IPerson;
   disableEditing: boolean;
   statusList?: string[];
+  searchableTags?: string[];
   error?: IValidationError;
   changeProperty?: (property: string, value: string) => void;
   openEditModal?: (keySerial: IKeySerial) => void;
@@ -68,7 +70,7 @@ const KeySerialEditValues = (props: IProps) => {
     return <AssetSummary title='Key details' fields={[
       ['Key name', keySerial.key.name], ['Key code', keySerial.key.code],
       ['Key serial number', numberValue], ['Status', statusValue]
-    ]} notes={keySerial.notes} actions={<>
+    ]} tags={keySerial.tags} notes={keySerial.notes} actions={<>
       {props.openEditModal && !props.person && renderEditKeySerial()}
       {props.goToKeyDetails && <button type='button' className='btn btn-asset btn-outline btn-sm' onClick={goToKeyDetails}><LinkIcon className='size-4' aria-hidden='true' />View Key Details</button>}
     </>} />;
@@ -132,6 +134,25 @@ const KeySerialEditValues = (props: IProps) => {
           />
           <FormFeedback>
             {error && error.path === 'notes' && error.message}
+          </FormFeedback>
+        </FormGroup>
+        <FormGroup>
+          <Label for='searchTagsKeySerialEditValues'>Tags</Label>
+          <SearchDefinedOptions
+            definedOptions={props.searchableTags || []}
+            disabled={false}
+            selected={(keySerial.tags || '')
+              .split(',')
+              .map(tag => tag.trim())
+              .filter(Boolean)}
+            onSelect={tags => props.changeProperty('tags', tags.join(','))}
+            placeholder='Search for Tags'
+            id='searchTagsKeySerialEditValues'
+            inputProps={{ 'aria-label': 'Tags' }}
+            isInvalid={error && error.path === 'tags'}
+          />
+          <FormFeedback>
+            {error && error.path === 'tags' && error.message}
           </FormFeedback>
         </FormGroup>
       </div>

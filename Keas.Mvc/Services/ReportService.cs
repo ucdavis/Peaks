@@ -328,6 +328,7 @@ namespace Keas.Mvc.Services
                     SerialNumber = b.Number,
                     Status = b.Status,
                     Notes = b.Notes,
+                    Tags = b.Tags,
                     IsAssigned = b.KeySerialAssignmentId.HasValue && b.KeySerialAssignment != null,
                     Assignment = !b.KeySerialAssignmentId.HasValue || b.KeySerialAssignment == null ? null : new AssignmentReportModel
                     {
