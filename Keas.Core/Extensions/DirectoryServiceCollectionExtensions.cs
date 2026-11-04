@@ -1,3 +1,4 @@
+using Keas.Core.Data;
 using Keas.Core.Models;
 using Keas.Core.Services;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +19,9 @@ namespace Keas.Core.Extensions
             {
                 services.AddRosettaClientWithFactory(options => configuration.GetSection("RosettaClient").Bind(options));
                 services.AddScoped<IClient>(provider => provider.GetRequiredService<RosettaClient>().Api);
-                services.AddScoped<IUpdateFromIamService, UpdateFromRosettaService>();
+                services.AddScoped<IUpdateFromIamService>(provider => new UpdateFromRosettaService(
+                    provider.GetRequiredService<IClient>(), provider.GetRequiredService<ApplicationDbContext>(),
+                    configuration.GetValue<int?>("LivedName:BatchSize")));
             }
             else
             {

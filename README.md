@@ -78,10 +78,15 @@ When enabled, configure `RosettaClient:BaseUrl`, `RosettaClient:TokenUrl`,
 configuration provider. `RosettaClient:Scope` is optional. Keep credentials out of
 tracked settings files.
 
-Full name synchronization uses Rosetta POST lookups in batches of 100 IAM IDs.
-Department imports and incremental name updates use paged GET requests because
-the POST endpoint does not support department or modified-date filters. Department
-pages are reused for identity and title data without per-person remote lookups.
+Rosetta name synchronization uses GraphQL POST requests selecting only IAM ID,
+lived first and last names, pronouns, and campus email. Incremental updates page
+through recently changed people; full refreshes send batches of local IAM IDs.
+`LivedName:BatchSize` defaults to `50` in both hosts and must be greater than zero.
+Override it in configuration or with the `LivedName__BatchSize` environment variable.
+GraphQL errors fail the affected page before its records are applied.
+
+Department imports continue using paged GET requests. Department pages are reused
+for identity and title data without per-person remote lookups.
 Incremental updates include a small overlap because Rosetta accepts relative time
 windows instead of the job's Pacific calendar date. Missing directory records or
 incomplete lived names do not clear existing user data. Department codes are
