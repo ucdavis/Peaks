@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using Keas.Core.Data;
 using Keas.Core.Helper;
-using Keas.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,15 +30,16 @@ namespace Keas.Jobs.LivedName
             _log.Information("Running {job} build {build}", assembyName.Name, assembyName.Version);
 
             // setup di
-            var provider = ConfigureServices();
+            using var provider = ConfigureServices();
+            using var scope = provider.CreateScope();
 
 
-            UpdateLivedNames(provider);
+            UpdateLivedNames(scope.ServiceProvider);
 
 
         }
 
-        private static void UpdateLivedNames(ServiceProvider provider)
+        private static void UpdateLivedNames(IServiceProvider provider)
         {
             Log.Information("Staring UpdateLivedNames");
             var updateService = provider.GetService<IUpdateFromIamService>();
@@ -56,9 +56,7 @@ namespace Keas.Jobs.LivedName
             services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
                         sqlOptions => sqlOptions.UseCompatibilityLevel(140)));
 
-            services.Configure<IamAuthSettings>(Configuration.GetSection("Authentication"));
-
-            services.AddTransient<IUpdateFromIamService, UpdateFromIamService>();
+            services.AddDirectoryServices(Configuration);
 
             return services.BuildServiceProvider();
         }

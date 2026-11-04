@@ -7,6 +7,7 @@ using AspNetCore.Security.CAS;
 using Elastic.Apm.NetCoreAll;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Core.Services;
 using Keas.Mvc.Attributes;
@@ -60,7 +61,6 @@ namespace Keas.Mvc
             services.AddHostedService<ViteDevelopmentServer>();
 
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
-            services.Configure<IamAuthSettings>(Configuration.GetSection("Authentication")); //Yes, pretty much the same as above. Just in core instead.
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
             services.Configure<ServiceNowSettings>(Configuration.GetSection("ServiceNow"));
             services.Configure<SuperuserSettings>(Configuration.GetSection("Superuser"));
@@ -68,8 +68,11 @@ namespace Keas.Mvc
             services.Configure<DocumentSigningSettings>(Configuration.GetSection("DocumentSigning"));
 
             // setup services
-            services.AddScoped<IIdentityService, IdentityService>();
-            services.AddScoped<IUpdateFromIamService, UpdateFromIamService>();
+            services.AddDirectoryServices(Configuration);
+            if (Configuration.GetValue<bool>("FeatureFlags:UseRosetta"))
+                services.AddScoped<IIdentityService, RosettaIdentityService>();
+            else
+                services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ISecurityService, SecurityService>();
 
             services.AddDistributedMemoryCache();

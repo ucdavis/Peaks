@@ -21,6 +21,7 @@
     <!-- EF SQL Server brings an older vulnerable PKCS dependency; use the .NET 10 servicing version. -->
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
     <PackageReference Include="Serilog" Version="4.3.1" />
+    <PackageReference Include="UCD.Rosetta.Client" Version="1.0.7" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations/Sql/**/*.sql" />

@@ -63,6 +63,30 @@ See [frontend development](docs/FRONTEND.md) for test commands, asset publishing
 
 With Visual Studio, open `Keas.sln` and run `Keas.Mvc` after completing the dependency and secrets setup.
 
+## Optional Rosetta identity services
+
+`FeatureFlags:UseRosetta` defaults to `false` in both MVC and the LivedName job.
+With the flag disabled or absent, both continue using the existing IAM services
+and do not require Rosetta configuration. Enable it separately in each host's
+configuration to select the new services (environment variable:
+`FeatureFlags__UseRosetta=true`). MVC's manual name-update actions use the same flag.
+
+Both hosts' `appsettings.json` files contain a `RosettaClient` section with development
+URLs, `[EXTERNAL]` credential placeholders, and the `read:public read:healthEmail` scope.
+When enabled, configure `RosettaClient:BaseUrl`, `RosettaClient:TokenUrl`,
+`RosettaClient:ClientId`, and `RosettaClient:ClientSecret` through the deployment's
+configuration provider. `RosettaClient:Scope` is optional. Keep credentials out of
+tracked settings files.
+
+Full name synchronization uses Rosetta POST lookups in batches of 100 IAM IDs.
+Department imports and incremental name updates use paged GET requests because
+the POST endpoint does not support department or modified-date filters. Department
+pages are reused for identity and title data without per-person remote lookups.
+Incremental updates include a small overlap because Rosetta accepts relative time
+windows instead of the job's Pacific calendar date. Missing directory records or
+incomplete lived names do not clear existing user data. Department codes are
+resolved through Rosetta's UCPath department directory.
+
 ## Optional local development login
 
 To bypass CAS locally, enable the login screen with a personal user secret:

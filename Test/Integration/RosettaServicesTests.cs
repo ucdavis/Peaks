@@ -1,0 +1,451 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Keas.Core.Data;
+using Keas.Core.Domain;
+using Keas.Core.Extensions;
+using Keas.Core.Services;
+using Keas.Mvc;
+using Keas.Mvc.Models;
+using Keas.Mvc.Services;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
+using Moq;
+using UCD.Rosetta.Client.Core.Configuration;
+using UCD.Rosetta.Client.Generated;
+using Xunit;
+using Person = Keas.Core.Domain.Person;
+using RosettaPerson = UCD.Rosetta.Client.Generated.Person;
+
+namespace Test.Integration
+{
+    public class RosettaServicesTests
+    {
+        [Theory]
+        [InlineData(null, typeof(IdentityService), typeof(UpdateFromIamService))]
+        [InlineData("false", typeof(IdentityService), typeof(UpdateFromIamService))]
+        [InlineData("true", typeof(RosettaIdentityService), typeof(UpdateFromRosettaService))]
+        public void MvcStartupSelectsBothDirectoryServicesFromTheFeatureFlag(string enabled, System.Type identityType, System.Type updateType)
+        {
+            var configuration = Configuration(new Dictionary<string, string>
+            {
+                ["FeatureFlags:UseRosetta"] = enabled
+            });
+            var environment = new Mock<IWebHostEnvironment>();
+            environment.SetupGet(value => value.EnvironmentName).Returns("Production");
+            var services = new ServiceCollection();
+
+            new Startup(configuration, environment.Object).ConfigureServices(services);
+
+            using var files = (IDisposable)Assert.Single(services.Where(service => service.ServiceType == typeof(IFileProvider))).ImplementationInstance;
+            var identity = Assert.Single(services.Where(service => service.ServiceType == typeof(IIdentityService)));
+            Assert.Equal(identityType, identity.ImplementationType);
+            Assert.Equal(ServiceLifetime.Scoped, identity.Lifetime);
+            Assert.Equal(updateType, Assert.Single(services.Where(service => service.ServiceType == typeof(IUpdateFromIamService))).ImplementationType);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("false")]
+        public void MissingOrDisabledFlagKeepsIamWithoutRosettaConfiguration(string enabled)
+        {
+            using var database = new TestDatabase();
+            var configuration = Configuration(new Dictionary<string, string>
+            {
+                ["FeatureFlags:UseRosetta"] = enabled
+            });
+            var services = new ServiceCollection();
+            services.AddSingleton(database.Context);
+            services.AddDirectoryServices(configuration);
+            using var provider = services.BuildServiceProvider();
+            using var scope = provider.CreateScope();
+
+            Assert.IsType<UpdateFromIamService>(scope.ServiceProvider.GetRequiredService<IUpdateFromIamService>());
+            Assert.Null(scope.ServiceProvider.GetService<IClient>());
+            Assert.DoesNotContain(services, service => service.ServiceType == typeof(IConfigureOptions<RosettaClientOptions>));
+        }
+
+        [Fact]
+        public void EnabledFlagResolvesRosettaAndBindsItsConfiguration()
+        {
+            using var database = new TestDatabase();
+            var configuration = Configuration(new Dictionary<string, string>
+            {
+                ["FeatureFlags:UseRosetta"] = "true",
+                ["RosettaClient:BaseUrl"] = "https://rosetta.example/api/{version}",
+                ["RosettaClient:TokenUrl"] = "https://auth.example/token",
+                ["RosettaClient:ClientId"] = "test-client",
+                ["RosettaClient:ClientSecret"] = "test-only-placeholder",
+                ["RosettaClient:ApiVersion"] = "v1",
+                ["RosettaClient:Scope"] = "read:public read:healthEmail"
+            });
+            var services = new ServiceCollection();
+            services.AddSingleton(database.Context);
+            services.AddDirectoryServices(configuration);
+            using var provider = services.BuildServiceProvider();
+            using var scope = provider.CreateScope();
+
+            Assert.IsType<UpdateFromRosettaService>(scope.ServiceProvider.GetRequiredService<IUpdateFromIamService>());
+            var client = Assert.IsType<Client>(scope.ServiceProvider.GetRequiredService<IClient>());
+            Assert.Equal("https://rosetta.example/api/v1/", client.BaseUrl);
+            Assert.Equal("read:public read:healthEmail", scope.ServiceProvider.GetRequiredService<IOptions<RosettaClientOptions>>().Value.Scope);
+        }
+
+        [Fact]
+        public async Task FullSyncSendsBulkPostBatchesAndExcludesEmptyIamIds()
+        {
+            using var database = new TestDatabase();
+            var records = Enumerable.Range(0, 101).Select(DirectoryPerson).ToDictionary(person => person.Iam_id);
+            database.Context.Users.AddRange(records.Values.Select(LocalUser));
+            database.Context.Users.Add(new User { Id = "no-iam", FirstName = "Old", LastName = "Name", Email = "no-iam@example.com" });
+            database.Context.Users.Add(new User { Id = "blank-iam", Iam = " ", FirstName = "Old", LastName = "Name", Email = "blank-iam@example.com" });
+            await database.Context.SaveChangesAsync();
+            database.Context.ChangeTracker.Clear();
+            var batches = new List<string[]>();
+            using var handler = new RosettaHandler(async request =>
+            {
+                Assert.Equal(HttpMethod.Post, request.Method);
+                Assert.Equal("/api/v1/people", request.RequestUri.AbsolutePath);
+                Assert.Equal(string.Empty, request.RequestUri.Query);
+                Assert.Equal("application/json", request.Content.Headers.ContentType.MediaType);
+                using var body = JsonDocument.Parse(await request.Content.ReadAsStringAsync());
+                var ids = body.RootElement.GetProperty("iamids").EnumerateArray().Select(value => value.GetString()).ToArray();
+                Assert.False(body.RootElement.GetProperty("count").GetBoolean());
+                Assert.Equal(ids.Length, body.RootElement.GetProperty("limit").GetInt32());
+                Assert.Equal(0, body.RootElement.GetProperty("offset").GetInt32());
+                batches.Add(ids);
+                return ids.Select(id => records[id]).ToArray();
+            });
+            using var http = new HttpClient(handler);
+            var service = new UpdateFromRosettaService(CreateClient(http), database.Context);
+
+            Assert.Equal(101, await service.UpdateAllUsersFromIam());
+
+            Assert.Equal(new[] { 100, 1 }, batches.Select(batch => batch.Length));
+            Assert.Equal(records.Keys.OrderBy(id => id), batches.SelectMany(batch => batch).OrderBy(id => id));
+            database.Context.ChangeTracker.Clear();
+            Assert.Equal(101, await database.Context.Users.CountAsync(user => user.FirstName == "Lived"));
+            Assert.Equal("Old", (await database.Context.Users.FindAsync("no-iam")).FirstName);
+        }
+
+        [Fact]
+        public async Task SyncPreservesInvalidOrMissingRecordsAndSeparatesEmailOnlyChanges()
+        {
+            using var database = new TestDatabase();
+            var records = Enumerable.Range(0, 7).Select(DirectoryPerson).ToArray();
+            var users = records.Select(LocalUser).ToArray();
+            database.Context.Users.AddRange(users);
+            var team = new Team { Name = "Sync team", Slug = "sync-team" };
+            var active = TeamPerson(users[0], team);
+            var inactive = TeamPerson(users[0], new Team { Name = "Inactive team", Slug = "inactive-team" });
+            inactive.Active = false;
+            database.Context.People.AddRange(active, inactive);
+            await database.Context.SaveChangesAsync();
+            var activeId = active.Id;
+            var inactiveId = inactive.Id;
+            database.Context.ChangeTracker.Clear();
+            records[1].Name.Lived_first_name = "Old";
+            records[1].Name.Lived_last_name = "Name";
+            records[1].Name.Lived_pronouns = "old pronouns";
+            records[2].Name.Lived_first_name = " ";
+            records[4].Name.Lived_first_name = "Old";
+            records[4].Name.Lived_last_name = "Name";
+            records[4].Name.Lived_pronouns = null;
+            records[4].Email.Campus = " ";
+            records[5].Name = null;
+            records[6].Name.Lived_first_name = "Old";
+            records[6].Name.Lived_last_name = "Name";
+            records[6].Name.Lived_pronouns = "old pronouns";
+            records[6].Email = null;
+            using var handler = new RosettaHandler(request => Task.FromResult(records.Where((person, index) => index != 3).ToArray()));
+            using var http = new HttpClient(handler);
+            var service = new UpdateFromRosettaService(CreateClient(http), database.Context);
+
+            Assert.Equal(2, await service.UpdateAllUsersFromIam());
+
+            database.Context.ChangeTracker.Clear();
+            var saved = await database.Context.Users.OrderBy(user => user.Id).ToArrayAsync();
+            Assert.Equal("Lived", saved[0].FirstName);
+            Assert.Equal("Person", saved[0].LastName);
+            Assert.Equal("they/them", saved[0].Pronouns);
+            Assert.Equal(records[0].Email.Campus, saved[0].Email);
+            Assert.Equal("Old", saved[1].FirstName);
+            Assert.Equal(records[1].Email.Campus, saved[1].Email);
+            foreach (var index in new[] { 2, 3, 5, 6 })
+            {
+                Assert.Equal("Old", saved[index].FirstName);
+                Assert.Equal("old pronouns", saved[index].Pronouns);
+                Assert.Equal($"old-{index}@example.com", saved[index].Email);
+            }
+            Assert.Null(saved[4].Pronouns);
+            Assert.Equal("old-4@example.com", saved[4].Email);
+            var savedActive = await database.Context.People.SingleAsync(person => person.Id == activeId);
+            Assert.Equal("Lived", savedActive.FirstName);
+            Assert.Equal("Person", savedActive.LastName);
+            Assert.Equal("old-0@example.com", savedActive.Email);
+            var savedInactive = await database.Context.People.IgnoreQueryFilters().SingleAsync(person => person.Id == inactiveId);
+            Assert.Equal("Old", savedInactive.FirstName);
+            Assert.False(savedInactive.Active);
+        }
+
+        [Fact]
+        public async Task IncrementalSyncPagesChangesAndUpdatesOnlyLocalUsers()
+        {
+            using var database = new TestDatabase();
+            var records = Enumerable.Range(0, 101).Select(DirectoryPerson).ToArray();
+            database.Context.Users.AddRange(LocalUser(records[99]), LocalUser(records[100]));
+            await database.Context.SaveChangesAsync();
+            database.Context.ChangeTracker.Clear();
+            var offsets = new List<int>();
+            using var handler = new RosettaHandler(request =>
+            {
+                Assert.Equal(HttpMethod.Get, request.Method);
+                var query = QueryHelpers.ParseQuery(request.RequestUri.Query);
+                Assert.Equal("100", query["limit"].ToString());
+                Assert.Equal("false", query["count"].ToString());
+                Assert.Equal("all", query["affiliationState"].ToString());
+                Assert.Contains(query["modifiedsince"].ToString(), new[] { "3d", "4d" });
+                var offset = int.Parse(query["offset"]);
+                offsets.Add(offset);
+                return Task.FromResult(records.Skip(offset).Take(100).ToArray());
+            });
+            using var http = new HttpClient(handler);
+            var service = new UpdateFromRosettaService(CreateClient(http), database.Context);
+
+            Assert.Equal(2, await service.UpdateUsersFromLastModifiedDateInIam(DateTime.UtcNow.Date.AddDays(-2)));
+
+            Assert.Equal(new[] { 0, 100 }, offsets);
+            database.Context.ChangeTracker.Clear();
+            Assert.Equal(2, await database.Context.Users.CountAsync());
+            Assert.All(await database.Context.Users.ToListAsync(), user => Assert.Equal("Lived", user.FirstName));
+        }
+
+        [Theory]
+        [InlineData("first-name")]
+        [InlineData("last-name")]
+        [InlineData("login")]
+        [InlineData("email")]
+        public async Task IdentityLookupRejectsIncompleteDirectoryRecords(string missing)
+        {
+            using var database = new TestDatabase();
+            var record = DirectoryPerson(0);
+            switch (missing)
+            {
+                case "first-name": record.Name.Lived_first_name = null; break;
+                case "last-name": record.Name.Lived_last_name = " "; break;
+                case "login": record.Id.Login_id = null; break;
+                case "email": record.Email.Campus = null; break;
+            }
+            using var handler = new RosettaHandler(request => Task.FromResult(new[] { record }));
+            using var http = new HttpClient(handler);
+            var service = Identity(CreateClient(http), database.Context, Mock.Of<INotificationService>(MockBehavior.Strict));
+
+            Assert.Null(await service.GetByKerberos("user000"));
+            Assert.Empty(await database.Context.Users.ToListAsync());
+        }
+
+        [Fact]
+        public async Task IdentityLookupMapsLivedNamesAndRejectsAmbiguousIdentities()
+        {
+            using var database = new TestDatabase();
+            var record = DirectoryPerson(0);
+            var response = new[] { record };
+            using var handler = new RosettaHandler(request => Task.FromResult(response));
+            using var http = new HttpClient(handler);
+            var service = Identity(CreateClient(http), database.Context, Mock.Of<INotificationService>(MockBehavior.Strict));
+
+            var user = await service.GetByKerberos(record.Id.Login_id);
+
+            Assert.Equal(record.Iam_id, user.Iam);
+            Assert.Equal(record.Id.Login_id, user.Id);
+            Assert.Equal("Lived", user.FirstName);
+            Assert.Equal("Person", user.LastName);
+            Assert.Equal("they/them", user.Pronouns);
+            Assert.Equal(record.Email.Campus, user.Email);
+            Assert.Equal("Primary title", await service.GetTitle(record.Iam_id));
+            Assert.Equal("1999999999", await service.GetIamSupervisor(record.Iam_id));
+            response = new[] { record, DirectoryPerson(1) };
+            await Assert.ThrowsAsync<InvalidOperationException>(() => service.GetByEmail("shared@example.com"));
+        }
+
+        [Theory]
+        [InlineData(null, "alias@example.com")]
+        [InlineData(" ", "alias@example.com")]
+        [InlineData("campus@example.com", "campus@example.com")]
+        public async Task EmailLookupUsesTheVerifiedAliasWhenCampusEmailIsMissing(string campusEmail, string expectedEmail)
+        {
+            using var database = new TestDatabase();
+            var record = DirectoryPerson(0);
+            record.Email.Campus = campusEmail;
+            using var handler = new RosettaHandler(request =>
+            {
+                Assert.Equal("alias@example.com", QueryHelpers.ParseQuery(request.RequestUri.Query)["email"].ToString());
+                return Task.FromResult(new[] { record });
+            });
+            using var http = new HttpClient(handler);
+            var service = Identity(CreateClient(http), database.Context, Mock.Of<INotificationService>(MockBehavior.Strict));
+
+            var user = await service.GetByEmail("alias@example.com");
+
+            Assert.NotNull(user);
+            Assert.Equal(record.Iam_id, user.Iam);
+            Assert.Equal(expectedEmail, user.Email);
+        }
+
+        [Fact]
+        public async Task BulkImportPagesPeopleAndPreservesReactivationAndNotificationsWithoutPerPersonRequests()
+        {
+            using var database = new TestDatabase();
+            var team = new Team { Name = "Import team", Slug = "import-team" };
+            database.Context.Teams.Add(team);
+            var records = Enumerable.Range(0, 101).Select(DirectoryPerson).ToArray();
+            for (var index = 0; index < 100; index++)
+            {
+                var user = LocalUser(records[index]);
+                database.Context.Users.Add(user);
+                if (index < 99)
+                {
+                    var person = TeamPerson(user, team);
+                    person.Active = index != 98;
+                    database.Context.People.Add(person);
+                }
+            }
+            await database.Context.SaveChangesAsync();
+            database.Context.ChangeTracker.Clear();
+            // Existing users are matched by IAM even if Rosetta's login differs.
+            records[98].Id.Login_id = "changed-login";
+            records[99].Id.Login_id = null;
+            var notifications = new List<(string UserId, string Action)>();
+            var notificationService = new Mock<INotificationService>(MockBehavior.Strict);
+            notificationService.Setup(service => service.PersonUpdated(It.IsAny<Person>(), It.IsAny<Team>(),
+                    team.Slug, "Test Actor", "actor", It.IsAny<string>(), "Bulk Load from PPS code: TEST"))
+                .Callback<Person, Team, string, string, string, string, string>((person, actualTeam, slug, actorName, actorId, action, notes) =>
+                {
+                    Assert.True(person.Id > 0);
+                    Assert.Equal(team.Id, actualTeam.Id);
+                    notifications.Add((person.UserId, action));
+                })
+                .Returns(Task.CompletedTask);
+            var offsets = new List<int>();
+            using var handler = new RosettaHandler(request =>
+            {
+                Assert.Equal(HttpMethod.Get, request.Method);
+                var query = QueryHelpers.ParseQuery(request.RequestUri.Query);
+                Assert.Equal("TEST", query["department"].ToString());
+                Assert.Equal("100", query["limit"].ToString());
+                Assert.Equal("withAffiliation", query["affiliationState"].ToString());
+                Assert.False(query.ContainsKey("iamid"));
+                Assert.False(query.ContainsKey("loginid"));
+                var offset = int.Parse(query["offset"]);
+                offsets.Add(offset);
+                return Task.FromResult(records.Skip(offset).Take(100).ToArray());
+            });
+            using var http = new HttpClient(handler);
+            var service = Identity(CreateClient(http), database.Context, notificationService.Object);
+
+            var result = await service.BulkLoadPeople("TEST", team.Slug, "Test Actor", "actor");
+
+            Assert.StartsWith("3 new people added to the team.", result);
+            Assert.Equal(new[] { 0, 100 }, offsets);
+            Assert.Equal(new[]
+            {
+                ("user098", PersonNotification.Actions.Reactivated),
+                ("user099", PersonNotification.Actions.Added),
+                ("user100", PersonNotification.Actions.Added)
+            }, notifications);
+            database.Context.ChangeTracker.Clear();
+            Assert.Equal(101, await database.Context.People.CountAsync());
+            Assert.Equal(101, await database.Context.Users.CountAsync());
+            var added = await database.Context.People.SingleAsync(person => person.UserId == "user100");
+            Assert.Equal("Lived", added.FirstName);
+            Assert.Equal("Primary title", added.Title);
+            Assert.Equal("Primary title", (await database.Context.People.SingleAsync(person => person.UserId == "user099")).Title);
+            Assert.Equal("Old", (await database.Context.People.SingleAsync(person => person.UserId == "user098")).FirstName);
+            notificationService.VerifyAll();
+        }
+
+        private static IConfiguration Configuration(Dictionary<string, string> values) =>
+            new ConfigurationBuilder().AddInMemoryCollection(values).Build();
+
+        private static Client CreateClient(HttpClient http) => new Client(http) { BaseUrl = "https://rosetta.example/api/v1" };
+
+        private static RosettaIdentityService Identity(IClient client, ApplicationDbContext context, INotificationService notifications) =>
+            new RosettaIdentityService(client, Options.Create(new AuthSettings()), context, notifications);
+
+        private static RosettaPerson DirectoryPerson(int index) => new RosettaPerson
+        {
+            Iam_id = (1000000000L + index).ToString(),
+            Id = new Id { Login_id = $"user{index:D3}" },
+            Name = new Name { Lived_first_name = "Lived", Lived_last_name = "Person", Lived_pronouns = "they/them" },
+            Email = new Email { Campus = $"current-{index}@example.com" },
+            Employee_association = new[]
+            {
+                new Employee_association { Position_title = "Secondary title" },
+                new Employee_association { Position_title = "Primary title", Job_indicator = Employee_associationJob_indicator.P, Reports_to_iam_id = "1999999999" }
+            }
+        };
+
+        private static User LocalUser(RosettaPerson person) => new User
+        {
+            Id = person.Id.Login_id,
+            Iam = person.Iam_id,
+            FirstName = "Old",
+            LastName = "Name",
+            Pronouns = "old pronouns",
+            Email = $"old-{long.Parse(person.Iam_id) - 1000000000L}@example.com"
+        };
+
+        private static Person TeamPerson(User user, Team team) => new Person
+        {
+            User = user,
+            Team = team,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email
+        };
+
+        private sealed class TestDatabase : IDisposable
+        {
+            private readonly SqliteConnection _connection = new SqliteConnection("Data Source=:memory:");
+            public ApplicationDbContext Context { get; }
+
+            public TestDatabase()
+            {
+                _connection.Open();
+                Context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().UseSqlite(_connection).Options);
+                Context.Database.EnsureCreated();
+            }
+
+            public void Dispose()
+            {
+                Context.Dispose();
+                _connection.Dispose();
+            }
+        }
+
+        private sealed class RosettaHandler : HttpMessageHandler
+        {
+            private readonly Func<HttpRequestMessage, Task<RosettaPerson[]>> _respond;
+
+            public RosettaHandler(Func<HttpRequestMessage, Task<RosettaPerson[]>> respond) => _respond = respond;
+
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>
+                new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(JsonSerializer.Serialize(await _respond(request)), Encoding.UTF8, "application/json")
+                };
+        }
+    }
+}
