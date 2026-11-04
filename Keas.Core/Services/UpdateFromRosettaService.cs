@@ -151,10 +151,10 @@ namespace Keas.Core.Services
             return new RosettaPerson
             {
                 Iam_id = person.TryGetProperty("iam_id", out var iamId) ? iamId.GetString() : null,
-                Name = Records(person, "name").Select(record => record.Deserialize<Name>())
+                Name = Records(person, "name").ToArray().Select(record => record.Deserialize<Name>())
                     .FirstOrDefault(name => !string.IsNullOrWhiteSpace(name.Lived_first_name)
                         && !string.IsNullOrWhiteSpace(name.Lived_last_name)),
-                Email = Records(person, "email").Select(record => record.Deserialize<Email>())
+                Email = Records(person, "email").ToArray().Select(record => record.Deserialize<Email>())
                     .FirstOrDefault(email => !string.IsNullOrWhiteSpace(email.Campus))
             };
         }
