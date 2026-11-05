@@ -142,7 +142,7 @@ namespace Keas.Mvc.Services
 
         }
 
-        public async Task<User> GetByEmail(string email)
+        public virtual async Task<User> GetByEmail(string email)
         {
             var clientws = new IetClient(_authSettings.IamKey);
             // get IAM from email
@@ -178,7 +178,7 @@ namespace Keas.Mvc.Services
             return user;
         }
 
-        public async Task<User> GetByKerberos(string kerb)
+        public virtual async Task<User> GetByKerberos(string kerb)
         {
             var clientws = new IetClient(_authSettings.IamKey);
             var ucdKerbResult = await clientws.Kerberos.Search(KerberosSearchField.userId, kerb);
@@ -264,7 +264,7 @@ namespace Keas.Mvc.Services
 
         }
 
-        public async Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode)
+        public virtual async Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode)
         {
             var clientws = new IetClient(_authSettings.IamKey);
             var results = await clientws.PpsDepartment.Search(PPSDepartmentSearchField.deptCode, ppsCode);
@@ -281,7 +281,7 @@ namespace Keas.Mvc.Services
             return results.ResponseData.Results.FirstOrDefault();
         }
 
-        public async Task<string> GetTitle(string iamId)
+        public virtual async Task<string> GetTitle(string iamId)
         {
             var title = string.Empty;
             try
@@ -301,7 +301,7 @@ namespace Keas.Mvc.Services
             return title;
         }
 
-        public async Task<string> GetIamSupervisor(string iamId)
+        public virtual async Task<string> GetIamSupervisor(string iamId)
         {
             var iam = string.Empty;
             try
@@ -321,7 +321,7 @@ namespace Keas.Mvc.Services
             return iam;
         }
 
-        public async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
+        public virtual async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
         {
             int newpeople = 0;
             StringBuilder warning = new StringBuilder();
