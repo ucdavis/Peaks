@@ -49,14 +49,38 @@ namespace Keas.Mvc.Controllers
             var updatedCount = 0;
             var skippedCount = 0;
 
-            if (string.IsNullOrWhiteSpace(model.Ids))
+            // Values for unchecked changes must not block a different update or deletion.
+            if (model.DeleteUsers || !model.UpdateCategory) ModelState.Remove(nameof(model.Category));
+            if (model.DeleteUsers || !model.UpdateStartDate) ModelState.Remove(nameof(model.StartDate));
+            if (model.DeleteUsers || !model.UpdateEndDate) ModelState.Remove(nameof(model.EndDate));
+            if (model.DeleteUsers || !model.UpdateSupervisorEmail) ModelState.Remove(nameof(model.SupervisorEmail));
+            if (model.DeleteUsers || !model.UpdateTags) ModelState.Remove(nameof(model.SelectedTags));
+
+            var ids = new HashSet<int>();
+            foreach (var value in (model.Ids ?? string.Empty).Split(','))
             {
-                ErrorMessage = "Must select at least one person to update.";
-                await PopulateBulkEdit(model);
-                return View(model);
+                if (!int.TryParse(value.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out var id) || id <= 0)
+                {
+                    ModelState.AddModelError(string.Empty, "Select one or more valid people from the table.");
+                    break;
+                }
+                ids.Add(id);
             }
-            var ids = model.Ids.Split(",").Select(a => int.Parse(a)).ToArray();
-            var persons = await _context.People.Include(a => a.Supervisor).Where(a => ids.Contains(a.Id)).ToListAsync();
+
+            if (!model.DeleteUsers && !model.UpdateCategory && !model.UpdateEndDate && !model.UpdateStartDate && !model.UpdateSupervisorEmail && !model.UpdateTags)
+            {
+                ModelState.AddModelError(string.Empty, "Select at least one change to apply.");
+            }
+
+            if (!ModelState.IsValid) return await InvalidBulkEdit(model);
+
+            var persons = await _context.People.Include(a => a.Supervisor)
+                .Where(a => a.Team.Slug == Team && ids.Contains(a.Id)).ToListAsync();
+            if (persons.Count != ids.Count)
+            {
+                ModelState.AddModelError(string.Empty, "Some selected people are no longer available in this team. Review your selection and try again.");
+                return await InvalidBulkEdit(model);
+            }
 
             if (model.DeleteUsers)
             {
@@ -91,43 +115,61 @@ namespace Keas.Mvc.Controllers
             else
             {
                 int? supervisorId = null;
-                if (!model.UpdateCategory && !model.UpdateEndDate && !model.UpdateStartDate && !model.UpdateSupervisorEmail && !model.UpdateTags)
+                if (model.UpdateCategory)
                 {
-                    ErrorMessage = "You have not selected anything to update.";
-                    await PopulateBulkEdit(model);
-                    return View(model);
-                }
-                if (model.UpdateSupervisorEmail)
-                {
-                    if (!string.IsNullOrWhiteSpace(model.SupervisorEmail))
+                    var category = model.Category?.Trim();
+                    model.Category = PersonCategories.Types.FirstOrDefault(a => a.Equals(category, StringComparison.OrdinalIgnoreCase));
+                    if (model.Category == null && !string.IsNullOrEmpty(category) && category != "-- Not Set --")
                     {
-                        var supervisor = await _context.People.Where(a => a.Team.Slug == Team && a.Email == model.SupervisorEmail).FirstOrDefaultAsync();
-                        if (supervisor == null)
-                        {
-                            ErrorMessage = "Supervisor not found.";
-                            await PopulateBulkEdit(model);
-                            return View(model);
-                        }
-                        else
-                        {
-                            supervisorId = supervisor.Id;
-                        }
+                        ModelState.AddModelError(nameof(model.Category), "Choose a category from the list.");
                     }
                 }
+
+                if (model.UpdateTags)
+                {
+                    var allowedTags = await _context.Tags.Where(a => a.Team.Slug == Team).Select(a => a.Name).ToListAsync();
+                    model.SelectedTags = (model.SelectedTags ?? Array.Empty<string>()).Distinct().ToArray();
+                    if (model.SelectedTags.Any(tag => !allowedTags.Contains(tag)))
+                    {
+                        ModelState.AddModelError(nameof(model.SelectedTags), "Choose tags that are available in this team.");
+                    }
+                }
+
+                if (model.UpdateSupervisorEmail && !string.IsNullOrWhiteSpace(model.SupervisorEmail))
+                {
+                    var email = model.SupervisorEmail.Trim().ToUpperInvariant();
+                    var supervisors = await _context.People.Where(a => a.Team.Slug == Team && a.Email.ToUpper() == email).Take(2).ToListAsync();
+                    if (supervisors.Count != 1)
+                    {
+                        ModelState.AddModelError(nameof(model.SupervisorEmail), "Enter the email of exactly one active person in this team, or leave blank to clear the supervisor.");
+                    }
+                    else if (ids.Contains(supervisors[0].Id))
+                    {
+                        ModelState.AddModelError(nameof(model.SupervisorEmail), "A person cannot be their own supervisor. Remove the supervisor from the selected people.");
+                    }
+                    else
+                    {
+                        supervisorId = supervisors[0].Id;
+                    }
+                }
+
+                if ((model.UpdateStartDate || model.UpdateEndDate) && persons.Any(person =>
+                    (model.UpdateStartDate ? model.StartDate : person.StartDate)?.Date >
+                    (model.UpdateEndDate ? model.EndDate : person.EndDate)?.Date))
+                {
+                    ModelState.AddModelError(model.UpdateEndDate ? nameof(model.EndDate) : nameof(model.StartDate),
+                        "These changes would put an end date before a start date for at least one selected person.");
+                }
+
+                // Validate the entire selection before changing any tracked person.
+                if (!ModelState.IsValid) return await InvalidBulkEdit(model);
+
                 foreach (var person in persons)
                 {
 
                     if (model.UpdateCategory)
                     {
-                        if (PersonCategories.Types.Contains(model.Category))
-                        {
-                            person.Category = PersonCategories.Types.Single(a =>
-                                a.Equals(model.Category.Trim(), StringComparison.OrdinalIgnoreCase));
-                        }
-                        else
-                        {
-                            person.Category = string.Empty;
-                        }
+                        person.Category = model.Category ?? string.Empty;
                     }
 
                     if (model.UpdateStartDate)
@@ -162,9 +204,18 @@ namespace Keas.Mvc.Controllers
 
             _context.UpdateRange(persons);
             await _context.SaveChangesAsync();
+            model.DeleteUsers = false;
+            ModelState.Remove(nameof(model.DeleteUsers));
             await PopulateBulkEdit(model);
-            Message = $"{ids.Length} people selected. Updated: {updatedCount} Skipped: {skippedCount}";
+            Message = $"{ids.Count} people selected. Updated: {updatedCount} Skipped: {skippedCount}";
             return View(model);
+        }
+
+        private async Task<IActionResult> InvalidBulkEdit(BulkEditModel model)
+        {
+            ErrorMessage = "No changes were saved. Correct the invalid fields or selection and try again.";
+            await PopulateBulkEdit(model);
+            return View(nameof(BulkEdit), model);
         }
 
         public IActionResult UploadPeople()
@@ -452,7 +503,6 @@ namespace Keas.Mvc.Controllers
             model.CategoryChoices.Add("-- Not Set --");
             model.CategoryChoices.AddRange(PersonCategories.Types);
             model.Tags = await _context.Tags.Where(a => a.Team.Slug == Team).Select(a => a.Name).ToListAsync();
-            model.DeleteUsers = false;
         }
 
     }
