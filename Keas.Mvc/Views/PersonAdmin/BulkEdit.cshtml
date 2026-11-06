@@ -133,10 +133,15 @@
                 });
             $("#Ids").val(ids);
         });
-        var selectedIds = ($("#Ids").val() || "").split(",").map(function (id) { return id.trim(); });
-        table.rows().every(function () {
-            if (selectedIds.includes(this.id())) this.select();
-        });
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <text>
+            var selectedIds = ($("#Ids").val() || "").split(",").map(function (id) { return id.trim(); });
+            table.rows().every(function () {
+                if (selectedIds.includes(this.id())) this.select();
+            });
+            </text>
+        }
 
         function syncBulkEditFields() {
             var deleting = $("#DeleteUsers").is(":checked");

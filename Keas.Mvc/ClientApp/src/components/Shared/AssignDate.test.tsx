@@ -46,6 +46,27 @@ it('allows an optional date to be cleared through keyboard entry', () => {
   expect(onChangeDate).toHaveBeenLastCalledWith(null);
 });
 
+it('reports a cleared optional date as valid after closing the calendar', () => {
+  const onValidityChange = vi.fn();
+  const Field = () => {
+    const [date, setDate] = React.useState(new Date(2026, 10, 6));
+    return <form>
+      <AssignDate date={date} isRequired={false} onChangeDate={setDate} onValidityChange={onValidityChange} />
+    </form>;
+  };
+  const { container } = render(<Field />);
+  fireEvent.click(screen.getByRole('button', { name: 'Toggle calendar' }));
+  for (const name of ['Month', 'Day', 'Year']) {
+    fireEvent.change(screen.getByRole('spinbutton', { name }), { target: { value: '' } });
+  }
+  expect(screen.getByRole('spinbutton', { name: 'Month' })).toBeRequired();
+  fireEvent.click(screen.getByRole('button', { name: 'Toggle calendar' }));
+  expect(screen.getByRole('spinbutton', { name: 'Month' })).not.toBeRequired();
+  expect(container.querySelector('form').checkValidity()).toBe(true);
+  expect(onValidityChange).toHaveBeenLastCalledWith(true);
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+});
+
 it('shows validation and opens and closes its calendar', () => {
   render(
     <AssignDate
