@@ -49,6 +49,13 @@ namespace Keas.Mvc.Controllers
             var updatedCount = 0;
             var skippedCount = 0;
 
+            if (!model.DeleteUsers && !ModelState.IsValid)
+            {
+                ErrorMessage = "No changes were saved. Correct the invalid fields and try again.";
+                await PopulateBulkEdit(model);
+                return View(model);
+            }
+
             if (string.IsNullOrWhiteSpace(model.Ids))
             {
                 ErrorMessage = "Must select at least one person to update.";

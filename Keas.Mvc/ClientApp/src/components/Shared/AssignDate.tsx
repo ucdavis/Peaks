@@ -14,6 +14,7 @@ interface IProps {
   error?: IValidationError;
   label?: string;
   disabled?: boolean;
+  onValidityChange?: (valid: boolean) => void;
 }
 
 const AssignDate = (props: IProps) => {
@@ -21,6 +22,15 @@ const AssignDate = (props: IProps) => {
   const [calendarHost, setCalendarHost] = React.useState<HTMLDivElement>(null);
   const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [calendarView, setCalendarView] = React.useState<CalendarProps['view']>('month');
+  const [incomplete, setIncomplete] = React.useState(false);
+  const validateDate = () => {
+    const inputs = Array.from(anchor.current?.querySelectorAll<HTMLInputElement>('input[type="number"]') || []);
+    const partial = inputs.some(input => input.value !== '') && inputs.some(input => input.value === '');
+    inputs.forEach(input => input.setCustomValidity(partial ? 'Enter a complete date (MM/DD/YYYY) or clear all date fields.' : ''));
+    setIncomplete(partial);
+    props.onValidityChange?.(!partial && inputs.every(input => input.validity.valid));
+  };
+  React.useLayoutEffect(validateDate, [props.date, props.disabled]);
   const largerPeriod = { month: 'year', year: 'decade', decade: 'century', century: 'century' }[calendarView];
   React.useEffect(() => {
     if (props.disabled) {
@@ -67,12 +77,12 @@ const AssignDate = (props: IProps) => {
         <legend className='text-sm font-semibold'>
           {props.label ? props.label : 'Set the expiration date'}
         </legend>
-        <div ref={anchor} className='peaks-date-picker relative'>
+        <div ref={anchor} className='peaks-date-picker relative' onChange={validateDate}>
         <DatePicker
           portalContainer={calendarHost}
           onCalendarOpen={() => setCalendarOpen(true)}
           onCalendarClose={() => setCalendarOpen(false)}
-          className={`peaks-date-picker ${props.error?.path === 'date' ? 'peaks-date-picker--error' : ''}`}
+          className={`peaks-date-picker ${incomplete || props.error?.path === 'date' ? 'peaks-date-picker--error' : ''}`}
           calendarIcon={<CalendarDaysIcon className='size-5' aria-hidden='true' />}
           calendarProps={{
             view: calendarView,
@@ -98,6 +108,7 @@ const AssignDate = (props: IProps) => {
         />
         <div ref={setCalendarHost} className='peaks-calendar-host' />
         </div>
+        {incomplete && <div className='text-sm text-error' role='alert'>Enter a complete date (MM/DD/YYYY) or clear all date fields.</div>}
         {props.error && props.error.path === 'date' && (
           <div className='text-sm text-error'>{props.error.message}</div>
         )}
