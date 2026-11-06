@@ -13,7 +13,7 @@ export function renderDateFields() {
     const DateField = () => {
       const [date, setDate] = React.useState(initialDate);
       const [valid, setValid] = React.useState(true);
-      const value = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}` : '';
+      const value = date ? `${String(date.getFullYear()).padStart(4, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}` : '';
       return <>
         <input type='hidden' name={name} value={valid ? value : 'incomplete-date'} />
         <AssignDate label={label} date={date} isRequired={false} onChangeDate={setDate} onValidityChange={setValid} />
