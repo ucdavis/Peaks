@@ -313,6 +313,19 @@ body {
     z-index: 30;
   }
 
+  .peaks-calendar-host {
+    position: absolute;
+    width: 20rem;
+    max-width: calc(100vw - 2.5rem);
+    overflow-y: auto;
+    z-index: 30;
+  }
+
+  .peaks-calendar-host .react-date-picker__calendar {
+    margin: 0;
+    max-width: 100%;
+  }
+
   .peaks-date-picker .react-calendar {
     width: 100%;
     padding: 0.75rem;

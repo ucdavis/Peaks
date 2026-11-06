@@ -17,11 +17,49 @@ interface IProps {
 }
 
 const AssignDate = (props: IProps) => {
+  const anchor = React.useRef<HTMLDivElement>(null);
+  const [calendarHost, setCalendarHost] = React.useState<HTMLDivElement>(null);
+  const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [calendarView, setCalendarView] = React.useState<CalendarProps['view']>('month');
   const largerPeriod = { month: 'year', year: 'decade', decade: 'century', century: 'century' }[calendarView];
   React.useEffect(() => {
-    if (props.disabled) setCalendarView('month');
+    if (props.disabled) {
+      setCalendarView('month');
+      setCalendarOpen(false);
+    }
   }, [props.disabled]);
+
+  React.useLayoutEffect(() => {
+    if (!calendarOpen || !calendarHost || !anchor.current) return;
+    const positionCalendar = () => {
+      const rect = anchor.current.getBoundingClientRect();
+      const modal = anchor.current.closest('.modal');
+      const bounds = modal?.getBoundingClientRect();
+      const topBound = Math.max(8, bounds?.top || 0);
+      const bottomBound = Math.min(window.innerHeight - 8, bounds?.bottom ?? window.innerHeight);
+      const below = Math.max(0, bottomBound - rect.bottom - 8);
+      const above = Math.max(0, rect.top - topBound - 8);
+      const height = calendarHost.scrollHeight;
+      const openBelow = height <= below || below >= above;
+      const available = openBelow ? below : above;
+      const left = Math.max(8, Math.min(rect.left, window.innerWidth - calendarHost.offsetWidth - 8));
+      Object.assign(calendarHost.style, {
+        left: `${left - rect.left}px`,
+        top: `${openBelow ? rect.height + 8 : -Math.min(height, available) - 8}px`,
+        maxHeight: `${available}px`
+      });
+    };
+    positionCalendar();
+    window.addEventListener('resize', positionCalendar);
+    window.addEventListener('scroll', positionCalendar, true);
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(positionCalendar) : null;
+    if (calendarHost.firstElementChild) observer?.observe(calendarHost.firstElementChild);
+    return () => {
+      window.removeEventListener('resize', positionCalendar);
+      window.removeEventListener('scroll', positionCalendar, true);
+      observer?.disconnect();
+    };
+  }, [calendarOpen, calendarHost, calendarView]);
 
   if (!props.disabled) {
     return (
@@ -29,7 +67,11 @@ const AssignDate = (props: IProps) => {
         <legend className='text-sm font-semibold'>
           {props.label ? props.label : 'Set the expiration date'}
         </legend>
+        <div ref={anchor} className='peaks-date-picker relative'>
         <DatePicker
+          portalContainer={calendarHost}
+          onCalendarOpen={() => setCalendarOpen(true)}
+          onCalendarClose={() => setCalendarOpen(false)}
           className={`peaks-date-picker ${props.error?.path === 'date' ? 'peaks-date-picker--error' : ''}`}
           calendarIcon={<CalendarDaysIcon className='size-5' aria-hidden='true' />}
           calendarProps={{
@@ -54,6 +96,8 @@ const AssignDate = (props: IProps) => {
           value={props.date}
           onChange={props.onChangeDate}
         />
+        <div ref={setCalendarHost} className='peaks-calendar-host' />
+        </div>
         {props.error && props.error.path === 'date' && (
           <div className='text-sm text-error'>{props.error.message}</div>
         )}

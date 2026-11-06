@@ -130,3 +130,31 @@ it('renders disabled expiration values without an editable picker', () => {
   );
   expect(screen.getByRole('definition')).toHaveTextContent('—');
 });
+
+it('repositions the calendar when its modal scrolls without using page scroll offsets', () => {
+  let top = 600;
+  const rect = (y: number, height: number) => ({
+    top: y, bottom: y + height, left: 20, right: 340,
+    width: 320, height, x: 20, y, toJSON: () => ({})
+  });
+  const { container } = render(
+    <div className='modal'>
+      <AssignDate date={new Date(2026, 9, 22)} isRequired={false} onChangeDate={vi.fn()} />
+    </div>
+  );
+  const modal = container.querySelector('.modal');
+  const anchor = container.querySelector('.peaks-date-picker');
+  const host = container.querySelector<HTMLElement>('.peaks-calendar-host');
+  vi.spyOn(modal, 'getBoundingClientRect').mockImplementation(() => rect(0, 768));
+  vi.spyOn(anchor, 'getBoundingClientRect').mockImplementation(() => rect(top, 40));
+  vi.spyOn(host, 'scrollHeight', 'get').mockReturnValue(300);
+  vi.spyOn(host, 'offsetWidth', 'get').mockReturnValue(320);
+
+  fireEvent.click(screen.getByRole('button', { name: 'Toggle calendar' }));
+  expect(host.style.top).toBe('-308px');
+  expect(host).toContainElement(container.querySelector('.react-calendar'));
+
+  top = 100;
+  fireEvent.scroll(modal);
+  expect(host.style.top).toBe('48px');
+});
