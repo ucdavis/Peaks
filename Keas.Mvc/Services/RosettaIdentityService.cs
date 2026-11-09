@@ -18,7 +18,7 @@ namespace Keas.Mvc.Services
 {
     public class RosettaIdentityService : IdentityService
     {
-        private const int PageSize = 100;
+        private const int PageSize = 100; //Possibly could make this configurable, or use the same value as the lived name batch size.
         private readonly IClient _client;
         private readonly ApplicationDbContext _context;
         private readonly Dictionary<string, RosettaPerson> _peopleByIam = new(StringComparer.OrdinalIgnoreCase);
