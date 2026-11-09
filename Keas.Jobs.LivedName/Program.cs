@@ -41,7 +41,7 @@ namespace Keas.Jobs.LivedName
 
         private static void UpdateLivedNames(IServiceProvider provider)
         {
-            Log.Information("Staring UpdateLivedNames");
+            Log.Information("Starting UpdateLivedNames");
             var updateService = provider.GetService<IUpdateFromIamService>();
             var count = updateService.UpdateUsersFromLastModifiedDateInIam(DateTime.UtcNow.AddDays(-1).ToPacificTime().Date).GetAwaiter().GetResult();
             Log.Information("Updated {count} users", count);
