@@ -107,8 +107,9 @@ namespace Test.TestsController
                 ? $"{_firstLocalPerson.Id},{_foreignPerson.Id}"
                 : _foreignPerson.Id.ToString();
 
-            await _controller.BulkEdit(CreateModel(ids, deactivate));
+            Assert.IsType<ViewResult>(await _controller.BulkEdit(CreateModel(ids, deactivate)));
 
+            Assert.False(string.IsNullOrWhiteSpace(_controller.ErrorMessage));
             _context.ChangeTracker.Clear();
             var people = await _context.People.IgnoreQueryFilters().OrderBy(person => person.Id).ToArrayAsync();
             Assert.Equal(3, people.Length);
@@ -121,12 +122,19 @@ namespace Test.TestsController
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public async Task BulkEditWithOnlyAuthorizedTeamIdsUpdatesSelectedPeople(bool deactivate)
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public async Task BulkEditWithOnlyAuthorizedTeamIdsUpdatesSelectedPeople(bool deactivate, bool includeDuplicateId)
         {
             await AssertManagerCanAccessOnlyTeamA();
-            var model = CreateModel($"{_firstLocalPerson.Id},{_secondLocalPerson.Id}", deactivate);
+            var ids = $"{_firstLocalPerson.Id},{_secondLocalPerson.Id}";
+            if (includeDuplicateId)
+            {
+                ids += $",{_firstLocalPerson.Id}";
+            }
+            var model = CreateModel(ids, deactivate);
 
             var result = Assert.IsType<ViewResult>(await _controller.BulkEdit(model));
 
