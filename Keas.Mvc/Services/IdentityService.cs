@@ -142,6 +142,11 @@ namespace Keas.Mvc.Services
 
         }
 
+        /// <summary>
+        /// Note, this may be overridden by the RosettaIdentityService. When we remove the IAM part of this we should look into refactoring this.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         public virtual async Task<User> GetByEmail(string email)
         {
             var clientws = new IetClient(_authSettings.IamKey);
