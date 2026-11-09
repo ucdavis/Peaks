@@ -390,20 +390,31 @@ namespace Test.Integration
         }
 
         [Theory]
-        [InlineData("first-name")]
-        [InlineData("last-name")]
-        [InlineData("login")]
-        [InlineData("email")]
-        public async Task IdentityLookupRejectsIncompleteDirectoryRecords(string missing)
+        [InlineData("first-name", false)]
+        [InlineData("first-name", true)]
+        [InlineData("last-name", false)]
+        [InlineData("last-name", true)]
+        [InlineData("login", false)]
+        [InlineData("login", true)]
+        [InlineData("iam", false)]
+        [InlineData("iam", true)]
+        [InlineData("email", false)]
+        public async Task IdentityLookupRejectsIncompleteDirectoryRecords(string missing, bool useHealthEmail)
         {
             using var database = new TestDatabase();
             var record = DirectoryPerson(0);
+            if (useHealthEmail)
+            {
+                record.Email.Campus = null;
+                record.Email.Health = "health@example.com";
+            }
             switch (missing)
             {
                 case "first-name": record.Name.Lived_first_name = null; break;
                 case "last-name": record.Name.Lived_last_name = " "; break;
                 case "login": record.Id.Login_id = null; break;
-                case "email": record.Email.Campus = null; break;
+                case "iam": record.Iam_id = null; break;
+                case "email": record.Email = null; break;
             }
             using var handler = new RosettaHandler(request => Task.FromResult(new[] { record }));
             using var http = new HttpClient(handler);
@@ -438,14 +449,61 @@ namespace Test.Integration
         }
 
         [Theory]
-        [InlineData(null, "alias@example.com")]
-        [InlineData(" ", "alias@example.com")]
+        [InlineData(null, "health@example.com")]
+        [InlineData("", "health@example.com")]
+        [InlineData(" ", "health@example.com")]
         [InlineData("campus@example.com", "campus@example.com")]
-        public async Task EmailLookupUsesTheVerifiedAliasWhenCampusEmailIsMissing(string campusEmail, string expectedEmail)
+        public async Task KerberosLookupUsesHealthEmailWhenCampusEmailIsMissing(string campusEmail, string expectedEmail)
         {
             using var database = new TestDatabase();
             var record = DirectoryPerson(0);
             record.Email.Campus = campusEmail;
+            record.Email.Health = "health@example.com";
+            using var handler = new RosettaHandler(request => Task.FromResult(new[] { record }));
+            using var http = new HttpClient(handler);
+            var service = Identity(CreateClient(http), database.Context, Mock.Of<INotificationService>(MockBehavior.Strict));
+
+            var user = await service.GetByKerberos(record.Id.Login_id);
+
+            Assert.NotNull(user);
+            Assert.Equal(record.Iam_id, user.Iam);
+            Assert.Equal(record.Id.Login_id, user.Id);
+            Assert.Equal(expectedEmail, user.Email);
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData("not-an-email")]
+        [InlineData("***")]
+        public async Task KerberosLookupRejectsMissingOrInvalidHealthEmailWhenCampusEmailIsMissing(string healthEmail)
+        {
+            using var database = new TestDatabase();
+            var record = DirectoryPerson(0);
+            record.Email.Campus = null;
+            record.Email.Health = healthEmail;
+            using var handler = new RosettaHandler(request => Task.FromResult(new[] { record }));
+            using var http = new HttpClient(handler);
+            var service = Identity(CreateClient(http), database.Context, Mock.Of<INotificationService>(MockBehavior.Strict));
+
+            Assert.Null(await service.GetByKerberos(record.Id.Login_id));
+            Assert.Empty(await database.Context.Users.ToListAsync());
+        }
+
+        [Theory]
+        [InlineData(null, null, "alias@example.com")]
+        [InlineData(" ", null, "alias@example.com")]
+        [InlineData("campus@example.com", null, "campus@example.com")]
+        [InlineData(null, "health@example.com", "alias@example.com")]
+        [InlineData(" ", "health@example.com", "alias@example.com")]
+        [InlineData("campus@example.com", "health@example.com", "campus@example.com")]
+        public async Task EmailLookupUsesTheVerifiedAliasWhenCampusEmailIsMissing(string campusEmail, string healthEmail, string expectedEmail)
+        {
+            using var database = new TestDatabase();
+            var record = DirectoryPerson(0);
+            record.Email.Campus = campusEmail;
+            record.Email.Health = healthEmail;
             using var handler = new RosettaHandler(request =>
             {
                 Assert.Equal("alias@example.com", QueryHelpers.ParseQuery(request.RequestUri.Query)["email"].ToString());
@@ -484,6 +542,8 @@ namespace Test.Integration
             // Existing users are matched by IAM even if Rosetta's login differs.
             records[98].Id.Login_id = "changed-login";
             records[99].Id.Login_id = null;
+            records[100].Email.Campus = null;
+            records[100].Email.Health = "health@example.com";
             var notifications = new List<(string UserId, string Action)>();
             var notificationService = new Mock<INotificationService>(MockBehavior.Strict);
             notificationService.Setup(service => service.PersonUpdated(It.IsAny<Person>(), It.IsAny<Team>(),
@@ -528,6 +588,8 @@ namespace Test.Integration
             var added = await database.Context.People.SingleAsync(person => person.UserId == "user100");
             Assert.Equal("Lived", added.FirstName);
             Assert.Equal("Primary title", added.Title);
+            Assert.Equal(records[100].Email.Health, added.Email);
+            Assert.Equal(records[100].Email.Health, (await database.Context.Users.SingleAsync(user => user.Id == "user100")).Email);
             Assert.Equal("Primary title", (await database.Context.People.SingleAsync(person => person.UserId == "user099")).Title);
             Assert.Equal("Old", (await database.Context.People.SingleAsync(person => person.UserId == "user098")).FirstName);
             notificationService.VerifyAll();

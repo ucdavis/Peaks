@@ -87,6 +87,14 @@ GraphQL errors fail the affected page before its records are applied.
 
 Department imports continue using paged GET requests. Department pages are reused
 for identity and title data without per-person remote lookups.
+
+Identity lookups prefer campus email, then the address matched by an email search,
+then Health email. The [Rosetta contract shipped with client 1.0.8](https://github.com/ucdavis/Rosetta-API-Client-DotNet/blob/640ea749ae9cf79f827e706d78dbc8f273f7a7d7/specs/rosetta-api.json#L8712)
+makes campus email optional and exposes Health email with `read:healthEmail` or
+`read:sensitive`. Kerberos lookups and department imports can use that Health
+address when campus email is absent. User validation still rejects missing or
+invalid email addresses and incomplete names or identity IDs.
+
 Incremental updates include a small overlap because Rosetta accepts relative time
 windows instead of the job's Pacific calendar date. Missing directory records or
 incomplete lived names do not clear existing user data. Department codes are

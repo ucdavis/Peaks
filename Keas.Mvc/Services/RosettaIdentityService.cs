@@ -186,6 +186,10 @@ namespace Keas.Mvc.Services
             if (string.IsNullOrWhiteSpace(person?.Iam_id) || string.IsNullOrWhiteSpace(person.Id?.Login_id))
                 return null;
 
+            // Rosetta makes Campus optional and exposes Health with read:healthEmail/read:sensitive.
+            // Preserve a matched email alias before using the directory's health address.
+            var email = !string.IsNullOrWhiteSpace(person.Email?.Campus) ? person.Email.Campus
+                : !string.IsNullOrWhiteSpace(matchedEmail) ? matchedEmail : person.Email?.Health;
             var user = new User
             {
                 Id = person.Id.Login_id,
@@ -193,7 +197,7 @@ namespace Keas.Mvc.Services
                 FirstName = person.Name?.Lived_first_name,
                 LastName = person.Name?.Lived_last_name,
                 Pronouns = person.Name?.Lived_pronouns,
-                Email = !string.IsNullOrWhiteSpace(person.Email?.Campus) ? person.Email.Campus : matchedEmail
+                Email = email
             };
             return Validator.TryValidateObject(user, new ValidationContext(user), new List<ValidationResult>(),
                 validateAllProperties: true) ? user : null;
