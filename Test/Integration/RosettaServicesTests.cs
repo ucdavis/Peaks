@@ -595,6 +595,87 @@ namespace Test.Integration
             notificationService.VerifyAll();
         }
 
+        [Fact]
+        public async Task BulkImportContinuesAfterAnInvalidOperationForOnePerson()
+        {
+            using var database = new TestDatabase();
+            var team = new Team { Name = "Import team", Slug = "import-team" };
+            database.Context.Teams.Add(team);
+            await database.Context.SaveChangesAsync();
+            var records = Enumerable.Range(0, 3).Select(DirectoryPerson).ToArray();
+            using var handler = new RosettaHandler(request => Task.FromResult(records));
+            using var http = new HttpClient(handler);
+            var notifications = new NotificationService(database.Context, Mock.Of<ISecurityService>(MockBehavior.Strict));
+            var service = new Mock<RosettaIdentityService>(CreateClient(http), Options.Create(new AuthSettings()),
+                database.Context, notifications) { CallBase = true };
+            service.Setup(identity => identity.GetByKerberos("user001"))
+                .ThrowsAsync(new InvalidOperationException("Rosetta returned ambiguous identity records."));
+
+            var result = await service.Object.BulkLoadPeople("TEST", team.Slug, "Test Actor", "actor");
+
+            Assert.StartsWith("2 new people added to the team.", result);
+            Assert.Contains(" Kerb Id: user001 failed to save.", result);
+            database.Context.ChangeTracker.Clear();
+            Assert.Equal(new[] { "user000", "user002" },
+                await database.Context.Users.OrderBy(user => user.Id).Select(user => user.Id).ToArrayAsync());
+            var people = await database.Context.People.OrderBy(person => person.UserId).ToArrayAsync();
+            Assert.Equal(new[] { "user000", "user002" }, people.Select(person => person.UserId));
+            var savedNotifications = await database.Context.PersonNotifications.OrderBy(notification => notification.PersonId).ToArrayAsync();
+            Assert.Equal(people.Select(person => person.Id), savedNotifications.Select(notification => notification.PersonId));
+            Assert.All(savedNotifications, notification =>
+            {
+                Assert.Equal(PersonNotification.Actions.Added, notification.Action);
+                Assert.Equal(team.Id, notification.TeamId);
+                Assert.Equal("actor", notification.ActorId);
+            });
+            service.Verify(identity => identity.GetByKerberos("user001"), Times.Once);
+        }
+
+        [Fact]
+        public async Task BulkImportPropagatesOtherPersonLookupExceptions()
+        {
+            using var database = new TestDatabase();
+            var team = new Team { Name = "Import team", Slug = "import-team" };
+            database.Context.Teams.Add(team);
+            await database.Context.SaveChangesAsync();
+            using var handler = new RosettaHandler(request => Task.FromResult(new[] { DirectoryPerson(0) }));
+            using var http = new HttpClient(handler);
+            var service = new Mock<RosettaIdentityService>(CreateClient(http), Options.Create(new AuthSettings()),
+                database.Context, Mock.Of<INotificationService>(MockBehavior.Strict)) { CallBase = true };
+            var failure = new HttpRequestException("Directory lookup failed.");
+            service.Setup(identity => identity.GetByKerberos("user000")).ThrowsAsync(failure);
+
+            Assert.Same(failure, await Assert.ThrowsAsync<HttpRequestException>(() =>
+                service.Object.BulkLoadPeople("TEST", team.Slug, "Test Actor", "actor")));
+            Assert.Empty(await database.Context.Users.ToListAsync());
+            Assert.Empty(await database.Context.People.ToListAsync());
+            Assert.Empty(await database.Context.PersonNotifications.ToListAsync());
+        }
+
+        [Fact]
+        public async Task BulkImportPropagatesAmbiguityWhenCachingDirectoryRecords()
+        {
+            using var database = new TestDatabase();
+            var team = new Team { Name = "Import team", Slug = "import-team" };
+            database.Context.Teams.Add(team);
+            await database.Context.SaveChangesAsync();
+            var records = new[] { DirectoryPerson(0), DirectoryPerson(1) };
+            records[1].Id.Login_id = records[0].Id.Login_id;
+            using var handler = new RosettaHandler(request => Task.FromResult(records));
+            using var http = new HttpClient(handler);
+            var notifications = new NotificationService(database.Context, Mock.Of<ISecurityService>(MockBehavior.Strict));
+            var service = Identity(CreateClient(http), database.Context, notifications);
+
+            var failure = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                service.BulkLoadPeople("TEST", team.Slug, "Test Actor", "actor"));
+
+            Assert.Equal("Rosetta returned ambiguous identity records.", failure.Message);
+            database.Context.ChangeTracker.Clear();
+            Assert.Equal(records[0].Iam_id, (await database.Context.Users.SingleAsync()).Iam);
+            Assert.Single(await database.Context.People.ToListAsync());
+            Assert.Single(await database.Context.PersonNotifications.ToListAsync());
+        }
+
         private static IConfiguration Configuration(Dictionary<string, string> values) =>
             new ConfigurationBuilder().AddInMemoryCollection(values).Build();
 

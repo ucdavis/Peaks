@@ -137,10 +137,18 @@ namespace Keas.Mvc.Services
                         continue;
                     }
 
-                    var result = await GetOrCreatePersonFromKerberos(kerb, team.Id, team, actorName, actorId,
-                        $"Bulk Load from PPS code: {ppsCode}");
-                    added += result.peopleCount;
-                    if (result.Person == null) warnings.Append($" Kerb Id: {kerb} failed to save.");
+                    try
+                    {
+                        var result = await GetOrCreatePersonFromKerberos(kerb, team.Id, team, actorName, actorId,
+                            $"Bulk Load from PPS code: {ppsCode}");
+                        added += result.peopleCount;
+                        if (result.Person == null) warnings.Append($" Kerb Id: {kerb} failed to save.");
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        warnings.Append($" Kerb Id: {kerb} failed to save.");
+                        continue;
+                    }
                 }
 
                 if (page.Count < PageSize) break;
