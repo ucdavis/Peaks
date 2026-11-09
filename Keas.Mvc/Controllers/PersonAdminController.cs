@@ -56,7 +56,14 @@ namespace Keas.Mvc.Controllers
                 return View(model);
             }
             var ids = model.Ids.Split(",").Select(a => int.Parse(a)).ToArray();
-            var persons = await _context.People.Include(a => a.Supervisor).Where(a => ids.Contains(a.Id)).ToListAsync();
+            var persons = await _context.People.Include(a => a.Supervisor)
+                .Where(a => a.Team.Slug == Team && ids.Contains(a.Id)).ToListAsync();
+            if (persons.Count != ids.Distinct().Count())
+            {
+                ErrorMessage = "All selected people must be active and belong to this team. No changes were made.";
+                await PopulateBulkEdit(model);
+                return View(model);
+            }
 
             if (model.DeleteUsers)
             {
