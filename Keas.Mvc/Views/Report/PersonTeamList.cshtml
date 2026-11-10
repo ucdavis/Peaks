@@ -1,35 +1,74 @@
 @model System.Collections.Generic.List<Keas.Core.Domain.Team>
-
-<h1 class="text-3xl font-semibold">@ViewBag.PersonName</h1>
-
-@foreach (var team in Model)
-{
-    <h3 class="text-lg font-semibold">Team: @team.Name</h3>
-    <h4 class="text-base font-semibold">Admins:</h4>
-    <table id="@team.Slug" class="table dataTable">
-        <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>Email</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in team.TeamPermissions.Select(a => a.User).Distinct())
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(a => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(a => item.Email)                
-                </td>
-            </tr>
-        }
-
-        </tbody>
-    </table>
+@{
+    ViewData["Title"] = "Lookup teams";
 }
 
+<div class="space-y-8 pb-8">
+    <header class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Lookup teams</h1>
+            <p class="m-0 break-words text-base-content/70">@ViewBag.PersonName</p>
+        </div>
+        <a class="btn btn-ghost" asp-action="Index"><hero-icon name="arrow-left" class="size-4" aria-hidden="true"></hero-icon>Reports</a>
+    </header>
 
+    @if (!Model.Any())
+    {
+        <p class="m-0 text-base-content/70">No teams were found for this person.</p>
+    }
+
+    @foreach (var team in Model)
+    {
+        <section class="min-w-0 space-y-4" aria-labelledby="team-@(team.Id)-heading">
+            <div class="space-y-1">
+                <h2 id="team-@(team.Id)-heading" class="m-0 text-xl font-semibold text-base-content">@team.Name</h2>
+                <p class="m-0 text-sm text-base-content/70">Team administrators</p>
+            </div>
+            <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4 sm:p-6">
+                <table id="team-@(team.Id)-admins" class="table dataTable">
+                    <caption class="sr-only">Administrators for @team.Name</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var contact in team.TeamPermissions.Select(permission => permission.User).Distinct())
+                        {
+                            <tr>
+                                <td class="font-semibold">@contact.Name</td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(contact.Email))
+                                    {
+                                        <a class="link link-hover text-primary" href="mailto:@contact.Email">@contact.Email</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-base-content/60">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+</div>
+
+@section Styles {
+    @await Html.PartialAsync("_DataTableStyles")
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ImportJS")
+    <script>
+        $('.dataTable').DataTable({
+            layout: { topStart: ['pageLength', 'buttons'] },
+            buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'print'],
+            language: { emptyTable: 'No team administrators are listed.' }
+        });
+    </script>
+}
