@@ -12,7 +12,6 @@ using Keas.Core.Domain;
 using Keas.Core.Extensions;
 using Keas.Core.Services;
 using Keas.Mvc;
-using Keas.Mvc.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.WebUtilities;
@@ -108,6 +107,35 @@ namespace Test.Integration
             var client = Assert.IsType<Client>(scope.ServiceProvider.GetRequiredService<IClient>());
             Assert.Equal("https://rosetta.example/api/v1/", client.BaseUrl);
             Assert.Equal("read:public read:healthEmail", scope.ServiceProvider.GetRequiredService<IOptions<RosettaClientOptions>>().Value.Scope);
+        }
+
+        [Fact]
+        public async Task RosettaIdentityResolvesAndLooksUpUsersWithoutIamDependencies()
+        {
+            using var database = new TestDatabase();
+            var record = DirectoryPerson(0);
+            using var handler = new RosettaHandler(request => Task.FromResult(new[] { record }));
+            using var http = new HttpClient(handler);
+            var services = new ServiceCollection();
+            services.AddSingleton(database.Context);
+            services.AddSingleton<IClient>(CreateClient(http));
+            services.AddSingleton(Mock.Of<INotificationService>(MockBehavior.Strict));
+            services.AddScoped<IIdentityService, RosettaIdentityService>();
+            using var provider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateOnBuild = true,
+                ValidateScopes = true
+            });
+            using var scope = provider.CreateScope();
+            var service = scope.ServiceProvider.GetRequiredService<IIdentityService>();
+
+            var user = await service.GetByKerberos(record.Id.Login_id);
+
+            Assert.IsType<RosettaIdentityService>(service);
+            Assert.Equal(record.Iam_id, user.Iam);
+            Assert.Equal(record.Id.Login_id, user.Id);
+            Assert.Equal(record.Email.Campus, user.Email);
+            Assert.Equal("Primary title", await service.GetTitle(user.Iam));
         }
 
         [Fact]
@@ -596,6 +624,33 @@ namespace Test.Integration
         }
 
         [Fact]
+        public async Task PersonCreationDoesNotSaveOrNotifyWhenRosettaHasNoMatchingUser()
+        {
+            using var database = new TestDatabase();
+            var team = new Team { Name = "Import team", Slug = "import-team" };
+            database.Context.Teams.Add(team);
+            await database.Context.SaveChangesAsync();
+            using var handler = new RosettaHandler(request =>
+            {
+                Assert.Equal("missing-user", QueryHelpers.ParseQuery(request.RequestUri.Query)["loginid"].ToString());
+                return Task.FromResult(Array.Empty<RosettaPerson>());
+            });
+            using var http = new HttpClient(handler);
+            var notifications = new Mock<INotificationService>(MockBehavior.Strict);
+            var service = Identity(CreateClient(http), database.Context, notifications.Object);
+
+            var result = await service.GetOrCreatePersonFromKerberos("missing-user", team.Id, team,
+                "Test Actor", "actor", "CSV People Import");
+
+            Assert.Null(result.Person);
+            Assert.Equal(0, result.peopleCount);
+            Assert.Empty(await database.Context.Users.ToListAsync());
+            Assert.Empty(await database.Context.People.ToListAsync());
+            Assert.Empty(await database.Context.PersonNotifications.ToListAsync());
+            notifications.VerifyNoOtherCalls();
+        }
+
+        [Fact]
         public async Task BulkImportContinuesAfterAnInvalidOperationForOnePerson()
         {
             using var database = new TestDatabase();
@@ -606,8 +661,7 @@ namespace Test.Integration
             using var handler = new RosettaHandler(request => Task.FromResult(records));
             using var http = new HttpClient(handler);
             var notifications = new NotificationService(database.Context, Mock.Of<ISecurityService>(MockBehavior.Strict));
-            var service = new Mock<RosettaIdentityService>(CreateClient(http), Options.Create(new AuthSettings()),
-                database.Context, notifications) { CallBase = true };
+            var service = new Mock<RosettaIdentityService>(CreateClient(http), database.Context, notifications) { CallBase = true };
             service.Setup(identity => identity.GetByKerberos("user001"))
                 .ThrowsAsync(new InvalidOperationException("Rosetta returned ambiguous identity records."));
 
@@ -640,8 +694,8 @@ namespace Test.Integration
             await database.Context.SaveChangesAsync();
             using var handler = new RosettaHandler(request => Task.FromResult(new[] { DirectoryPerson(0) }));
             using var http = new HttpClient(handler);
-            var service = new Mock<RosettaIdentityService>(CreateClient(http), Options.Create(new AuthSettings()),
-                database.Context, Mock.Of<INotificationService>(MockBehavior.Strict)) { CallBase = true };
+            var service = new Mock<RosettaIdentityService>(CreateClient(http), database.Context,
+                Mock.Of<INotificationService>(MockBehavior.Strict)) { CallBase = true };
             var failure = new HttpRequestException("Directory lookup failed.");
             service.Setup(identity => identity.GetByKerberos("user000")).ThrowsAsync(failure);
 
@@ -716,7 +770,7 @@ namespace Test.Integration
         };
 
         private static RosettaIdentityService Identity(IClient client, ApplicationDbContext context, INotificationService notifications) =>
-            new RosettaIdentityService(client, Options.Create(new AuthSettings()), context, notifications);
+            new RosettaIdentityService(client, context, notifications);
 
         private static RosettaPerson DirectoryPerson(int index) => new RosettaPerson
         {

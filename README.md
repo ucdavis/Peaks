@@ -71,6 +71,10 @@ and do not require Rosetta configuration. Enable it separately in each host's
 configuration to select the new services (environment variable:
 `FeatureFlags__UseRosetta=true`). MVC's manual name-update actions use the same flag.
 
+MVC's IAM `IdentityService` and `RosettaIdentityService` independently implement
+`IIdentityService`. Rosetta owns its person creation and reactivation workflow and
+does not inherit IAM behavior or require IAM authentication settings.
+
 Both hosts' `appsettings.json` files contain a `RosettaClient` section with development
 URLs, `[EXTERNAL]` credential placeholders, and the `read:public read:healthEmail` scope.
 When enabled, configure `RosettaClient:BaseUrl`, `RosettaClient:TokenUrl`,

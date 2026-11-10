@@ -142,12 +142,7 @@ namespace Keas.Mvc.Services
 
         }
 
-        /// <summary>
-        /// Note, this may be overridden by the RosettaIdentityService. When we remove the IAM part of this we should look into refactoring this.
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        public virtual async Task<User> GetByEmail(string email)
+        public async Task<User> GetByEmail(string email)
         {
             var clientws = new IetClient(_authSettings.IamKey);
             // get IAM from email
@@ -183,7 +178,7 @@ namespace Keas.Mvc.Services
             return user;
         }
 
-        public virtual async Task<User> GetByKerberos(string kerb)
+        public async Task<User> GetByKerberos(string kerb)
         {
             var clientws = new IetClient(_authSettings.IamKey);
             var ucdKerbResult = await clientws.Kerberos.Search(KerberosSearchField.userId, kerb);
@@ -269,7 +264,7 @@ namespace Keas.Mvc.Services
 
         }
 
-        public virtual async Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode)
+        public async Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode)
         {
             var clientws = new IetClient(_authSettings.IamKey);
             var results = await clientws.PpsDepartment.Search(PPSDepartmentSearchField.deptCode, ppsCode);
@@ -286,7 +281,7 @@ namespace Keas.Mvc.Services
             return results.ResponseData.Results.FirstOrDefault();
         }
 
-        public virtual async Task<string> GetTitle(string iamId)
+        public async Task<string> GetTitle(string iamId)
         {
             var title = string.Empty;
             try
@@ -306,7 +301,7 @@ namespace Keas.Mvc.Services
             return title;
         }
 
-        public virtual async Task<string> GetIamSupervisor(string iamId)
+        public async Task<string> GetIamSupervisor(string iamId)
         {
             var iam = string.Empty;
             try
@@ -326,7 +321,7 @@ namespace Keas.Mvc.Services
             return iam;
         }
 
-        public virtual async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
+        public async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
         {
             int newpeople = 0;
             StringBuilder warning = new StringBuilder();
