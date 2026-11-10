@@ -7,32 +7,112 @@ using System.Threading.Tasks;
 using ietws.PPSDepartment;
 using Keas.Core.Data;
 using Keas.Core.Domain;
-using Keas.Mvc.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Serilog;
 using UCD.Rosetta.Client.Generated;
+using Person = Keas.Core.Domain.Person;
 using RosettaPerson = UCD.Rosetta.Client.Generated.Person;
 
 namespace Keas.Mvc.Services
 {
-    public class RosettaIdentityService : IdentityService
+    public class RosettaIdentityService : IIdentityService
     {
         private const int PageSize = 100; //Possibly could make this configurable, or use the same value as the lived name batch size.
         private readonly IClient _client;
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
         private readonly Dictionary<string, RosettaPerson> _peopleByIam = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, RosettaPerson> _peopleByKerberos = new(StringComparer.OrdinalIgnoreCase);
 
-        public RosettaIdentityService(IClient client, IOptions<AuthSettings> authSettings,
-            ApplicationDbContext context, INotificationService notificationService)
-            : base(authSettings, context, notificationService)
+        public RosettaIdentityService(IClient client, ApplicationDbContext context,
+            INotificationService notificationService)
         {
             _client = client;
             _context = context;
+            _notificationService = notificationService;
         }
 
-        public override async Task<User> GetByEmail(string email)
+        public async Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId, Team team, string actorName, string actorId, string notes)
+        {
+            var user = await _context.Users.Include(u => u.People).IgnoreQueryFilters().Where(u => u.Id == kerb).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                user = await GetByKerberos(kerb);
+                if (user == null)
+                {
+                    return (null, 0);
+                }
+
+                try
+                {
+                    _context.Users.Add(user);
+                    var person = await CreatePersonFromUser(user, teamId);
+                    _context.People.Add(person);
+                    await _context.SaveChangesAsync();
+                    await _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Added, notes);
+                    await _context.SaveChangesAsync();
+                    return (person, 1);
+                }
+                catch (Exception)
+                {
+                    var local = _context.Set<User>().Local.FirstOrDefault(entry => entry.Id == user.Id);
+                    if (local != null)
+                    {
+                        _context.Entry(local).State = EntityState.Detached;
+                    }
+
+                    var localPerson = _context.Set<Person>().Local.FirstOrDefault(entry => entry.UserId == user.Id);
+                    if (localPerson != null)
+                    {
+                        _context.Entry(localPerson).State = EntityState.Detached;
+                    }
+
+                    var localNotification = _context.Set<PersonNotification>().Local.FirstOrDefault();
+                    if (localNotification != null)
+                    {
+                        _context.Entry(localNotification).State = EntityState.Detached;
+                    }
+
+                    return (null, 0);
+                }
+            }
+
+            var existingPerson = user.People.FirstOrDefault(p => p.TeamId == teamId);
+            if (existingPerson != null)
+            {
+                if (!existingPerson.Active)
+                {
+                    existingPerson.Active = true;
+                    await _notificationService.PersonUpdated(existingPerson, team, team.Slug, actorName, actorId, PersonNotification.Actions.Reactivated, notes);
+                    await _context.SaveChangesAsync();
+                    return (existingPerson, 1);
+                }
+                return (existingPerson, 0);
+            }
+
+            var newPerson = await CreatePersonFromUser(user, teamId);
+            _context.People.Add(newPerson);
+            await _context.SaveChangesAsync();
+            await _notificationService.PersonUpdated(newPerson, team, team.Slug, actorName, actorId, PersonNotification.Actions.Added, notes);
+            await _context.SaveChangesAsync();
+            return (newPerson, 1);
+        }
+
+        private async Task<Person> CreatePersonFromUser(User user, int teamId)
+        {
+            return new Person
+            {
+                User = user,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Active = true,
+                TeamId = teamId,
+                Title = await GetTitle(user.Iam)
+            };
+        }
+
+        public async Task<User> GetByEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email)) return null;
 
@@ -41,7 +121,7 @@ namespace Keas.Mvc.Services
             return CreateUser(SelectPerson(people), email);
         }
 
-        public override async Task<User> GetByKerberos(string kerb)
+        public virtual async Task<User> GetByKerberos(string kerb)
         {
             if (string.IsNullOrWhiteSpace(kerb)) return null;
 
@@ -54,7 +134,7 @@ namespace Keas.Mvc.Services
             return CreateUser(person);
         }
 
-        public override async Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode)
+        public async Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode)
         {
             if (string.IsNullOrWhiteSpace(ppsCode)) return null;
 
@@ -68,7 +148,7 @@ namespace Keas.Mvc.Services
             };
         }
 
-        public override async Task<string> GetTitle(string iamId)
+        public async Task<string> GetTitle(string iamId)
         {
             try
             {
@@ -85,7 +165,7 @@ namespace Keas.Mvc.Services
             }
         }
 
-        public override async Task<string> GetIamSupervisor(string iamId)
+        public async Task<string> GetIamSupervisor(string iamId)
         {
             try
             {
@@ -106,7 +186,7 @@ namespace Keas.Mvc.Services
             }
         }
 
-        public override async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
+        public async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
         {
             // An empty department filter would search the entire directory.
             if (string.IsNullOrWhiteSpace(ppsCode))
