@@ -10,6 +10,27 @@ it('submits shared picker edits using the original MVC field name and date forma
   expect(new FormData(document.querySelector('form')).get('StartDate')).toBe('2026-11-22');
 });
 
+it.each(['required', 'data-val-required="The Start field is required."'])('preserves required report dates from %s', requiredAttribute => {
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+  document.body.innerHTML = `<form method="get"><div data-date-field data-label="Start created date"><input name="Start" type="date" ${requiredAttribute} /></div></form>`;
+  act(() => renderDateFields());
+  const form = document.querySelector('form');
+  expect(screen.getByRole('spinbutton', { name: 'Year' })).toBeRequired();
+  expect(form.checkValidity()).toBe(false);
+
+  for (const [name, value] of [['Month', '11'], ['Day', '6'], ['Year', '2026']]) {
+    fireEvent.change(screen.getByRole('spinbutton', { name }), { target: { value } });
+  }
+  expect(form.checkValidity()).toBe(true);
+  expect(new FormData(form).get('Start')).toBe('2026-11-06');
+
+  for (const name of ['Month', 'Day', 'Year']) {
+    fireEvent.change(screen.getByRole('spinbutton', { name }), { target: { value: '' } });
+  }
+  expect(form.checkValidity()).toBe(false);
+  expect(new FormData(form).get('Start')).toBe('incomplete-date');
+});
+
 it('does not submit an old date when a complete entry is invalid or has a short year', () => {
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
   document.body.innerHTML = '<form><div data-date-field><input name="StartDate" type="date" value="2026-01-31" /></div></form>';

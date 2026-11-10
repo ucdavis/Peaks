@@ -10,13 +10,14 @@ export function renderDateFields() {
     const initialDate = input.value ? new Date(`${input.value}T00:00:00`) : null;
     const name = input.name;
     const label = container.dataset.label;
+    const isRequired = input.required || input.hasAttribute('data-val-required');
     const DateField = () => {
       const [date, setDate] = React.useState(initialDate);
       const [valid, setValid] = React.useState(true);
       const value = date ? `${String(date.getFullYear()).padStart(4, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}` : '';
       return <>
         <input type='hidden' name={name} value={valid ? value : 'incomplete-date'} />
-        <AssignDate label={label} date={date} isRequired={false} onChangeDate={setDate} onValidityChange={setValid} />
+        <AssignDate label={label} date={date} isRequired={isRequired} onChangeDate={setDate} onValidityChange={setValid} />
       </>;
     };
     createRoot(container).render(<DateField />);

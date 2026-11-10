@@ -206,13 +206,6 @@ body {
     color: #fff !important;
   }
 
-  /* Date-picker positioning. */
-  .gj-datepicker-bootstrap [role=right-icon] button .gj-icon,
-  .gj-datepicker-bootstrap [role=right-icon] button .material-icons {
-    top: 8px !important;
-  }
-
-
   /* Each asset takes a turn bouncing and pulsing in its own color. */
   .peaks-loader-icon {
     display: inline-flex;
