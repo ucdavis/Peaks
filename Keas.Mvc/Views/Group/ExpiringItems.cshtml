@@ -18,8 +18,10 @@
                         <div class="min-w-0 space-y-3">
                             <h2 class="m-0 text-lg font-semibold">Filters</h2>
                             <div class="space-y-2">
-                                <label asp-for="ExpiresBefore" class="block text-sm font-semibold"></label>
-                                <input asp-for="ExpiresBefore" class="input w-full datepicker"/>
+                                <div data-date-field data-label="Expires before">
+                                    <label asp-for="ExpiresBefore" class="block text-sm font-semibold"></label>
+                                    <input asp-for="ExpiresBefore" class="input w-full"/>
+                                </div>
                                 <span asp-validation-for="ExpiresBefore" class="text-sm text-error"></span>
                                 <div class="space-y-2">
                                     <label asp-for="ShowType" class="block text-sm font-semibold"></label>
