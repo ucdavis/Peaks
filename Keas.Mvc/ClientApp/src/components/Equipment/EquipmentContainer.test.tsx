@@ -124,7 +124,7 @@ describe('Equipment duplication', () => {
     return { source, sourceSnapshot, person, otherPerson, duplicate, assign, details, fetch, assetTotalUpdated, assetInUseUpdated };
   };
 
-  const saveCopy = () => fireEvent.click(screen.getByRole('button', { name: 'Save as new equipment' }));
+  const saveCopy = () => fireEvent.click(screen.getByRole('button', { name: 'Save' }));
   const selectOtherPerson = async (name: string) => {
     fireEvent.change(screen.getByRole('combobox', { name: 'Search for person by name or email' }), { target: { value: name } });
     fireEvent.click(await screen.findByRole('option', { name: new RegExp(name) }));
@@ -186,7 +186,7 @@ describe('Equipment duplication', () => {
     fireEvent.change(personSearch, { target: { value: 'Searching' } });
     expect(fireEvent.keyDown(personSearch, { key: 'Enter', code: 'Enter' })).toBe(false);
     expect(state.duplicate).not.toHaveBeenCalled();
-    expect(screen.getByRole('button', { name: 'Save as new equipment' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled();
   });
 
   it('preserves the new record after assignment fails and retries assignment without creating another copy', async () => {
@@ -344,7 +344,7 @@ describe('Equipment duplication', () => {
   it('does not open an empty duplication dialog when the source is missing', async () => {
     await setup({ missing: true });
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Save as new equipment' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument();
   });
 });
 

@@ -177,7 +177,7 @@ const CreatePerson = (props: IProps) => {
             onClick={createSelected}
             disabled={!validState || submitting}
           >
-            Add {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+            Save {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

@@ -218,7 +218,7 @@ const AssignAccess = (props: IProps) => {
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Assign {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+          {access?.id ? 'Assign' : 'Save'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

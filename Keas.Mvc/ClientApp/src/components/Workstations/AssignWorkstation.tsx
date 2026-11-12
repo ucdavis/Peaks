@@ -222,7 +222,7 @@ const AssignWorkstation = (props: IProps) => {
             onClick={assignSelected}
             disabled={!validState || submitting}
           >
-            {workstation?.assignment ? 'Save changes' : 'Assign'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+            {!workstation?.id ? 'Save' : workstation.assignment ? 'Save changes' : 'Assign'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>
         </ModalFooter>
       </Modal>

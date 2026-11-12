@@ -240,7 +240,7 @@ describe('Key Serial Container', () => {
     selectTag(dialog, 'Front desk');
     fireEvent.click(within(dialog).getByRole('button', { name: 'Remove Spare' }));
     expect(within(dialog).queryByRole('button', { name: 'Remove Spare' })).toBeNull();
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Assign' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(fetch).toHaveBeenCalledWith(
       '/api/team/keyserials/create',

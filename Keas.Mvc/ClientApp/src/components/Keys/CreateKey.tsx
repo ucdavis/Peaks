@@ -74,7 +74,7 @@ const CreateKey = (props: IProps) => {
             onClick={editSelected}
             disabled={!validState || submitting}
           >
-            Create
+            Save
             {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin ml-2' />}
           </Button>
         </ModalFooter>

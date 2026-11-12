@@ -253,7 +253,7 @@ const AssignEquipment = (props: IProps) => {
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          {equipment?.assignment ? 'Save changes' : 'Assign'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+          {!equipment?.id ? 'Save' : equipment.assignment ? 'Save changes' : 'Assign'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>
