@@ -84,9 +84,13 @@ with a collapsible stacked menu below `lg` and horizontal navigation above it.
 closing other open dropdowns. The asset navigation uses Tailwind classes too.
 Reactstrap remains in use for dialogs and other React controls. Its modal
 compatibility block in `main.css` is required to keep those dialogs visible.
-The shared `SearchCombobox` replaces react-bootstrap-typeahead. Some server-rendered
-report and bulk-edit dates still use Gijgo; keep its shared report includes and
-the `.gj-datepicker-bootstrap` positioning rules until those fields are migrated.
+The shared `SearchCombobox` replaces react-bootstrap-typeahead. Server-rendered
+report and bulk-edit dates use the same `AssignDate` picker as the React screens.
+`renderDateFields.tsx` replaces MVC inputs inside `[data-date-field]` containers,
+preserving field names, required validation and `yyyy-MM-dd` submission values.
+These fields cover Person Actions, Actions by Admins, Bulk Edit People, and the
+team/group Completed Documents and Expiring Items reports. Gijgo's scripts,
+stylesheets, initializers and positioning rules have been removed.
 
 `src/index.tsx` delegates mounting to `renderApp.tsx`, which uses `createRoot`.
 Its imports load component styles before site styles. Razor emits all CSS
