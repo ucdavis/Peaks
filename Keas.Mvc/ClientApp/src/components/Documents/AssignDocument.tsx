@@ -1,5 +1,4 @@
 import { ModalBody, Modal, ModalFooter, ModalHeading } from '../Shared/AppModal';
-import * as React from 'react';
 import { useEffect, useContext, useState, useId } from 'react';
 import { AppContext } from '../../models/Shared';
 import { Context } from '../../Context';

@@ -1,5 +1,4 @@
 import { ArrowPathIcon, CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';

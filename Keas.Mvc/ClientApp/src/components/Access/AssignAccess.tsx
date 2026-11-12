@@ -2,7 +2,6 @@ import { AssetActions } from '../Shared/AssetSummary';
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button } from 'reactstrap';
 import { accessSchema, IAccess, IAccessAssignment } from '../../models/Access';
@@ -219,7 +218,7 @@ const AssignAccess = (props: IProps) => {
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Assign {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+          {access?.id ? 'Assign' : 'Save'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

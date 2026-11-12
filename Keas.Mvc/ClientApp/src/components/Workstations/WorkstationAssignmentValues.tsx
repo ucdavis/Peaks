@@ -1,6 +1,5 @@
 import { AssetActions, AssetSummary } from '../Shared/AssetSummary';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IWorkstation } from '../../models/Workstations';
 import { DateUtil } from '../../util/dates';

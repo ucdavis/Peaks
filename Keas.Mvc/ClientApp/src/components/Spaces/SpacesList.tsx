@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ISpace } from '../../models/Spaces';
 import SpacesListItem from './SpacesListItem';
 

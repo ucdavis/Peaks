@@ -1,5 +1,4 @@
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
-import * as React from 'react';
 import { useState } from 'react';
 import { Button } from 'reactstrap';
 import { IWorkstation } from '../../models/Workstations';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { cleanup, fireEvent, render, within, screen } from '@testing-library/react';
 import KeyTable from '../Keys/KeyTable';
 import KeySerialTable from '../Keys/KeySerialTable';

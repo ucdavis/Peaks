@@ -1,6 +1,5 @@
 import { Modal, ModalBody, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Table } from 'reactstrap';

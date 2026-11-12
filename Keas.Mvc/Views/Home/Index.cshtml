@@ -4,7 +4,7 @@
 @model Keas.Mvc.Models.HomeViewModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
     var teamSlug = TempData["TeamName"] as string;
     var isTeamAdmin = (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded;
     var hasAssetRole = (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded;
@@ -16,6 +16,19 @@
         <h1 class="m-0 text-3xl font-semibold text-base-content">Welcome to PEAKS, @User.GetNameClaim()</h1>
         <p class="m-0 text-lg text-base-content/70">View your assignments and manage your team's assets.</p>
     </header>
+
+    <div class="alert alert-success items-start" role="status">
+        <hero-icon name="chat-bubble-left-right" class="size-6 shrink-0" aria-hidden="true"></hero-icon>
+        <div class="min-w-0 space-y-1">
+            <h2 class="m-0 text-lg font-semibold">Welcome to PEAKS 2.0!</h2>
+            <p class="m-0">
+                For help or to report an issue,
+                <a href="https://caeshelp.ucdavis.edu/" class="link link-hover font-semibold" target="_blank" rel="noopener noreferrer">submit a help ticket</a>.
+                For suggestions or feedback, visit our
+                <a href="https://feedback.ucdavis.edu/app/Peaks" class="link link-hover font-semibold" target="_blank" rel="noopener noreferrer">feedback page</a>.
+            </p>
+        </div>
+    </div>
 
     @if (Model.PendingItems)
     {

@@ -1,6 +1,5 @@
 import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import { KeyIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 

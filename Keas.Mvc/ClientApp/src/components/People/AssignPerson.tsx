@@ -1,6 +1,5 @@
 import { AssetSummary } from '../Shared/AssetSummary';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useState } from 'react';
 import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { Link } from 'react-router-dom';
@@ -45,7 +44,7 @@ const AssignPerson = (props: IProps) => {
             placeholder='Search for person by name or email'
             labelKey={(option: IPerson) => `${option.name} (${option.email})`}
             filterBy={() => true} // don't filter on top of our search
-            renderMenuItemChildren={(option: any, propsData, index) => (
+            renderMenuItemChildren={(option: any, propsData) => (
               <div>
                 <div>
                   <Highlighter key='name' search={propsData.text}>

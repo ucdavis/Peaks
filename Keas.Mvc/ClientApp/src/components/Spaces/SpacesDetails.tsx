@@ -1,5 +1,4 @@
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { Button, Alert } from 'reactstrap';
 import { IMatchParams } from '../../models/Shared';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, cleanup, act, screen, within, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router';
 import { Context } from '../../Context';
@@ -41,7 +40,7 @@ afterEach(() => {
 
 describe('Key Serial Container', () => {
   const contextObject = {
-    fetch: (url: any, index: any) => {},
+    fetch: (_url: any, _index: any) => {},
     permissions: ['DepartmentalAdmin', 'Admin'],
     team: { id: 1, name: 'Team', slug: 'team' },
     tags: []
@@ -241,7 +240,7 @@ describe('Key Serial Container', () => {
     selectTag(dialog, 'Front desk');
     fireEvent.click(within(dialog).getByRole('button', { name: 'Remove Spare' }));
     expect(within(dialog).queryByRole('button', { name: 'Remove Spare' })).toBeNull();
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Assign' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Save' }));
 
     await waitFor(() => expect(fetch).toHaveBeenCalledWith(
       '/api/team/keyserials/create',

@@ -1,6 +1,4 @@
 import { Modal, ModalBody, ModalHeading } from '../Shared/AppModal';
-import * as React from 'react';
-import { Button } from 'reactstrap';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import AccessEditValues from './AccessEditValues';
 import AccessAssignmentValues from './AccessAssignmentValues';

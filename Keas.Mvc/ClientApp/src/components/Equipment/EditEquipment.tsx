@@ -1,6 +1,5 @@
 import { Modal, ModalBody, ModalFooter } from '../Shared/AppModal';
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button } from 'reactstrap';
 import {

@@ -38,7 +38,7 @@ const SpaceWorkstationColumnFilter = ({ column }) => {
 };
 
 // Logic to control what rows get displayed
-const workstationFilter = (row: any, id, filterValue) => {
+const workstationFilter = (row: any, _id, filterValue) => {
   if (filterValue === 'all') {
     return true;
   }
@@ -112,7 +112,7 @@ const SpacesTable = (props: IProps) => {
         ),
         meta: { Filter: SpaceWorkstationColumnFilter },
         filterFn: workstationFilter,
-        header: header => (
+        header: () => (
           <div>
             Workstations{' '}
             <InformationCircleIcon

@@ -10,6 +10,11 @@
 @{
     var currentController = this.ViewContext.RouteData.Values["controller"].ToString();
     var activeMenu = string.Empty;
+    var pageTitle = $"{ViewData["Title"]} - PEAKS";
+    var siteDescription = "Manage people, equipment, access, keys, and spaces with PEAKS at UC Davis.";
+    var siteOrigin = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var pageUrl = $"{siteOrigin}{Context.Request.PathBase}{Context.Request.Path}";
+    var previewImageUrl = $"{siteOrigin}{Url.Content("~/images/thumbnail.jpg")}";
     switch (currentController.ToLower())
     {
         case "asset":
@@ -49,7 +54,23 @@
     </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PEAKS</title>
+    <title>@pageTitle</title>
+    <meta name="description" content="@siteDescription" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="PEAKS" />
+    <meta property="og:title" content="@pageTitle" />
+    <meta property="og:description" content="@siteDescription" />
+    <meta property="og:url" content="@pageUrl" />
+    <meta property="og:image" content="@previewImageUrl" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="PEAKS at UC Davis" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@pageTitle" />
+    <meta name="twitter:description" content="@siteDescription" />
+    <meta name="twitter:image" content="@previewImageUrl" />
+    <meta name="twitter:image:alt" content="PEAKS at UC Davis" />
     <link id="site-favicon" rel="icon" type="image/x-icon" href="~/favicon.ico" asp-append-version="true" />
     <link id="dark-favicon" rel="icon" type="image/png" sizes="256x256" href="~/favicon-dark.png"
           media="(prefers-color-scheme: dark)" asp-append-version="true" />
@@ -313,7 +334,7 @@
                 </main>
             </div>
             <footer class="content-wrapper mt-8 shrink-0 py-6 text-sm text-base-content/60">
-                <p>Copyright &copy; <span id="copywrite-year"></span> The Regents of the University of California, Davis campus.
+                <p>Copyright &copy; @DateTime.Now.Year The Regents of the University of California, Davis campus.
                     All rights reserved.</p>
                 </footer>
                 <div class="w-full shrink-0 bg-[linear-gradient(to_right,#1e3a5b_0%,#1e3a5b_44%,#dbbc5b_57%,#dbbc5b_100%)]"

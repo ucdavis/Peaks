@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { IHistory } from '../../models/Shared';
 import { DateUtil } from '../../util/dates';
 import { useContext } from 'react';

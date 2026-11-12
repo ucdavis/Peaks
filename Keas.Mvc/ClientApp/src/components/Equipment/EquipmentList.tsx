@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { IEquipment } from '../../models/Equipment';
 import EquipmentListItem from './EquipmentListItem';
 

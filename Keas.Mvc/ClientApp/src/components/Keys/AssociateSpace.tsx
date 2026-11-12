@@ -1,7 +1,6 @@
 import { DisplayField } from '../Shared/AssetSummary';
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button } from 'reactstrap';
 import { IKeyInfo } from '../../models/Keys';
@@ -168,7 +167,7 @@ const AssociateSpace = (props: IProps) => {
         {renderCreateKey()}
       </ModalBody>
       <ModalFooter>
-        <span className='text-danger'>{error}</span>
+        <span className='text-sm text-error' role='alert'>{error}</span>
         <Button
           color='asset'
           onClick={assignSelected}

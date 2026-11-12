@@ -1,5 +1,4 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useState } from 'react';
 import { Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
@@ -35,7 +34,7 @@ const SearchEquipment = (props: IProps) => {
             placeholder='Search for equipment by name or by serial number'
             labelKey='label'
             allowNew={false}
-            renderMenuItemChildren={(option: any, props, index) => (
+            renderMenuItemChildren={(option: any, props) => (
               <div className={!!option.equipment.assignment ? 'opacity-40' : ''}>
                 <div>
                   <Highlighter key='equipment.name' search={props.text}>

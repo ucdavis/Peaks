@@ -1,6 +1,5 @@
 import { BriefcaseIcon } from '@heroicons/react/24/solid';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { toast } from 'react-toastify';

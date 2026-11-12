@@ -1,6 +1,5 @@
 import { AssetActions, AssetSummary, DisplayField } from '../Shared/AssetSummary';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';

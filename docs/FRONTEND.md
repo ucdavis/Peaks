@@ -33,6 +33,12 @@ profiles and leave `Vite__UseDevServer` unset or set it to `false`.
 
 ## Assets and tests
 
+### Link previews
+
+The shared layout uses `wwwroot/images/thumbnail.jpg` (1200 × 630) for Open Graph
+and large-image Twitter cards. It builds absolute page and image URLs from the
+request, including the application PathBase. The footer year is rendered by Razor.
+
 ### Icons
 
 Icons use the outline set from `@heroicons/react/24/outline`. React components
@@ -63,24 +69,28 @@ and `border-main-border`; no prefixes are required. Both React and Razor views
 are scanned for classes. Use complete class names rather than constructing them
 from string fragments.
 
-`styles/legacy.css` contains the flattened application styles, without Bootstrap.
-There is no Sass compiler or Gunrockin dependency. The legacy layer sits between
-the base reset and modern components/utilities so new classes can override it.
-Its `--legacy-rem` variable preserves old 8px/10px sizing while the document keeps
-a normal root font size for modern components. Remove legacy rules as each screen
-is migrated; put new styles and tokens in `main.css`.
+`styles/asset-colors.css` and `styles/asset-tables.css` contain the shared asset
+color contexts and React table styles, and are imported by `main.css`. Report and
+admin DataTables use `wwwroot/css/datatables-peaks.css`, loaded through
+`_DataTableStyles.cshtml`. The old Sass files and `styles/legacy.css` are removed;
+there is no Sass compiler or Gunrockin dependency.
 
-Bootstrap's package, CDN CSS, JavaScript and Popper script are removed. The shared
+Bootstrap's package, vendored `wwwroot/lib/bootstrap` bundle, CDN CSS, JavaScript
+and Popper script are removed. The shared
 layout uses native details dropdowns and a small menu/message handler instead.
 Navigation styling is expressed directly in Tailwind classes in `_Layout.cshtml`,
 with a collapsible stacked menu below `lg` and horizontal navigation above it.
 `src/navigation.ts` handles mobile expansion, Escape, outside-click dismissal and
-closing other open dropdowns. The legacy navigation selectors have been removed;
-the asset screen's `.react-tabs` styles remain until that separate UI is migrated.
-Reactstrap and react-bootstrap-typeahead remain temporarily because existing
-React screens still use them. A small modal compatibility block in `main.css`
-keeps Reactstrap dialogs visible, but this is not a completed screen-by-screen
-conversion: Bootstrap grid, form and utility markup still needs migration.
+closing other open dropdowns. The asset navigation uses Tailwind classes too.
+Reactstrap remains in use for dialogs and other React controls. Its modal
+compatibility block in `main.css` is required to keep those dialogs visible.
+The shared `SearchCombobox` replaces react-bootstrap-typeahead. Server-rendered
+report and bulk-edit dates use the same `AssignDate` picker as the React screens.
+`renderDateFields.tsx` replaces MVC inputs inside `[data-date-field]` containers,
+preserving field names, required validation and `yyyy-MM-dd` submission values.
+These fields cover Person Actions, Actions by Admins, Bulk Edit People, and the
+team/group Completed Documents and Expiring Items reports. Gijgo's scripts,
+stylesheets, initializers and positioning rules have been removed.
 
 `src/index.tsx` delegates mounting to `renderApp.tsx`, which uses `createRoot`.
 Its imports load component styles before site styles. Razor emits all CSS

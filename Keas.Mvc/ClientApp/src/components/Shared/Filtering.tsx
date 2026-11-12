@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { flexRender, HeaderGroup } from '@tanstack/react-table';
 import { peaksFeatures } from './tableFeatures';
 

@@ -1,5 +1,4 @@
 import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
-import * as React from 'react';
 import { useMemo } from 'react';
 import { IPerson, IPersonInfo } from '../../models/People';
 import { ReactTableUtil } from '../../util/tableUtil';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { IWorkstation } from '../../models/Workstations';
 import WorkstationListItem from './WorkstationListItem';
 

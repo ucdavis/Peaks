@@ -1,6 +1,5 @@
 import { DisplayField } from '../Shared/AssetSummary';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useState } from 'react';
 import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
@@ -36,7 +35,7 @@ const SearchWorkstations = (props: IProps) => {
             labelKey='name'
             filterBy={() => true} // don't filter on top of our search
             allowNew={false}
-            renderMenuItemChildren={(option: any, propsData, index) => (
+            renderMenuItemChildren={(option: any, propsData) => (
               <div className={!!option.assignment ? 'opacity-40' : ''}>
                 <div>
                   <Highlighter key='name' search={propsData.text}>

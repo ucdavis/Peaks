@@ -1,5 +1,4 @@
 import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
-import * as React from 'react';
 import { ISpace } from '../../models/Spaces';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 

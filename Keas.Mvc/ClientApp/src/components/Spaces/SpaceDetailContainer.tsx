@@ -1,5 +1,4 @@
 import { TagIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { ISpace } from '../../models/Spaces';
 
 interface IProps {

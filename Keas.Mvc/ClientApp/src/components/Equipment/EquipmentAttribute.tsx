@@ -1,5 +1,4 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { IEquipmentAttribute } from '../../models/Equipment';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 

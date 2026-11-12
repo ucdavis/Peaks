@@ -1,6 +1,5 @@
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon, PlusIcon, UserIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Button } from 'reactstrap';
@@ -178,7 +177,7 @@ const CreatePerson = (props: IProps) => {
             onClick={createSelected}
             disabled={!validState || submitting}
           >
-            Add {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+            Save {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

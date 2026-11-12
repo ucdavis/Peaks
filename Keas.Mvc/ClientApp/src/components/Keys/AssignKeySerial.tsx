@@ -2,7 +2,6 @@ import { AssetActions } from '../Shared/AssetSummary';
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
-import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button, Form } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
@@ -263,7 +262,7 @@ const AssignKeySerial = (props: IProps) => {
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          {keySerial?.keySerialAssignment ? 'Save changes' : 'Assign'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+          {!keySerial?.id ? 'Save' : keySerial.keySerialAssignment ? 'Save changes' : 'Assign'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

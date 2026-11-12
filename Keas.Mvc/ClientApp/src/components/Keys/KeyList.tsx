@@ -1,5 +1,4 @@
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { UncontrolledTooltip } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import KeyListItem from './KeyListItem';

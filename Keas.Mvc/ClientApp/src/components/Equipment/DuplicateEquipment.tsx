@@ -231,7 +231,7 @@ const DuplicateEquipment = (props: IProps) => {
           {submitting
             ? <ArrowPathIcon className='hero-icon size-5 animate-spin' aria-hidden='true' />
             : <DocumentDuplicateIcon className='hero-icon size-5' aria-hidden='true' />}
-          {submitting ? 'Saving…' : equipment.id ? 'Save assignment' : 'Save as new equipment'}
+          {submitting ? 'Saving…' : equipment.id ? 'Save assignment' : 'Save'}
         </Button>
       </ModalFooter>
     </Modal>

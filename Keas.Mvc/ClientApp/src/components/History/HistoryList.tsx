@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { IHistory } from '../../models/Shared';
 import HistoryListItem from './HistoryListItem';
 
