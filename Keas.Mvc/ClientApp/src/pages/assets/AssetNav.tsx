@@ -1,9 +1,20 @@
 import * as React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { Context } from '../../Context';
 import { PermissionsUtil } from '../../util/permissions';
 
 const tabClassName = 'flex-1 shrink-0 whitespace-nowrap border-b-4 border-transparent px-3 py-5 text-center font-semibold text-base-content transition-colors first:rounded-tl-sm last:rounded-tr-sm hover:text-[color-mix(in_oklab,var(--asset-color)_80%,black)] [&.active]:border-[var(--asset-color)] [&.active]:bg-[color-mix(in_oklab,var(--asset-color)_10%,transparent)] [&.active]:text-[var(--asset-color)]';
+
+const AssetPageTitle = () => {
+  const { assetSection } = useParams<{ assetSection: string }>();
+  React.useEffect(() => {
+    const previousTitle = document.title;
+    const titles = { people: 'People', equipment: 'Equipment', access: 'Access', keys: 'Keys', spaces: 'Spaces' };
+    document.title = `${titles[assetSection] || 'Team Assets'} - PEAKS`;
+    return () => { document.title = previousTitle; };
+  }, [assetSection]);
+  return null;
+};
 
 export default class AssetNav extends React.Component<
   React.PropsWithChildren<{}>
@@ -13,6 +24,7 @@ export default class AssetNav extends React.Component<
   public render() {
     return (
       <div>
+        <AssetPageTitle />
         <nav aria-label='Team assets' className='mb-4 flex overflow-x-auto rounded-sm bg-base-100 shadow-sm'>
           {PermissionsUtil.canViewPeople(this.context.permissions) && (
             <NavLink

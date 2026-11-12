@@ -168,7 +168,7 @@ const AssociateSpace = (props: IProps) => {
         {renderCreateKey()}
       </ModalBody>
       <ModalFooter>
-        <span className='text-danger'>{error}</span>
+        <span className='text-sm text-error' role='alert'>{error}</span>
         <Button
           color='asset'
           onClick={assignSelected}
