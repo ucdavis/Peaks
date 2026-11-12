@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, cleanup, act, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router';
 import { Context } from '../../Context';
@@ -42,7 +41,7 @@ afterEach(() => {
 
 describe('Workstation Container', () => {
   const contextObject = {
-    fetch: (url: any, index: any) => {},
+    fetch: (_url: any, _index: any) => {},
     permissions: ['DepartmentalAdmin', 'Admin'],
     team: { id: 1, name: 'Team', slug: 'team' },
     tags: []

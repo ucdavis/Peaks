@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import EquipmentTableContainer from './EquipmentTableContainer';
 import { fakeEquipment } from '../specs/mockData/Equipment';

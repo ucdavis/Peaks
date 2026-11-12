@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useContext, useState } from 'react';
 import { Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
@@ -21,7 +20,7 @@ const SearchKeys = (props: IProps) => {
 
   const { defaultKeyInfo } = props;
 
-  const renderItem = (option: IKeyInfo, propsData, index) => {
+  const renderItem = (option: IKeyInfo, propsData) => {
     return (
       <div>
         <div>

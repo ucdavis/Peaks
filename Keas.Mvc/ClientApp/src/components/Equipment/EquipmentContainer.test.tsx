@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { render, cleanup, act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router';
 import { toast } from 'react-toastify';
@@ -358,7 +357,7 @@ afterEach(() => {
 
 describe('Equipment Container', () => {
   const contextObject = {
-    fetch: (url: any, index: any) => {},
+    fetch: (_url: any, _index: any) => {},
     permissions: ['DepartmentalAdmin', 'Admin'],
     team: { id: 1, name: 'Team', slug: 'team' },
     tags: []

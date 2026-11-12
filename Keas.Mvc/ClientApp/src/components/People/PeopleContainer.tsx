@@ -1,5 +1,4 @@
 import { UsersIcon } from '@heroicons/react/24/solid';
-import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import { toast } from 'react-toastify';
@@ -48,7 +47,7 @@ const PeopleContainer = props => {
     fetchPeople();
   }, [context]);
 
-  const renderTableView = (createModal: boolean) => {
+  const renderTableView = () => {
     let filteredPeople = people;
     if (tagFilters.length > 0) {
       filteredPeople = filteredPeople.filter(x =>
@@ -102,7 +101,7 @@ const PeopleContainer = props => {
   // managing counts for assigned or revoked
   const assetInUseUpdated = (
     type: string,
-    spaceId: number,
+    _spaceId: number,
     personId: number,
     count: number
   ) => {
@@ -311,7 +310,7 @@ const PeopleContainer = props => {
       </div>
       <div className='card-body gap-4 p-5 sm:p-6'>
         {(!personAction || personAction === 'create') &&
-          renderTableView(personAction === 'create')}
+          renderTableView()}
       </div>
     </div>
   );

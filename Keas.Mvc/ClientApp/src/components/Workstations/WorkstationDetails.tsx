@@ -1,8 +1,6 @@
 import { Modal, ModalBody, ModalHeading } from '../Shared/AppModal';
-import * as React from 'react';
 import { useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IWorkstation } from '../../models/Workstations';
 import HistoryContainer from '../History/HistoryContainer';

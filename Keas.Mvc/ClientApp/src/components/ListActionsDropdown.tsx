@@ -1,5 +1,4 @@
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useState } from 'react';
 import {
   Dropdown,

@@ -1,6 +1,5 @@
 import { KeyIcon } from '@heroicons/react/24/solid';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import {
   useHistory,

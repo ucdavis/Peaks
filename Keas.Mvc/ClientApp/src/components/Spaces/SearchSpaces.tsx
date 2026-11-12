@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useContext, useState } from 'react';
 import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
@@ -18,7 +17,7 @@ const SearchSpaces = (props: IProps) => {
   const [spaces, setSpaces] = useState<ISpace[]>([]);
   const context = useContext(Context);
 
-  const renderItem = (option, propsData, index) => {
+  const renderItem = (option, propsData) => {
     return (
       <div>
         <div>

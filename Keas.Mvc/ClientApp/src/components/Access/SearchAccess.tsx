@@ -1,5 +1,4 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useState } from 'react';
 import { Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
@@ -32,7 +31,7 @@ const SearchAccess = (props: IProps) => {
             placeholder='Search for access by name or by serial number'
             labelKey='name'
             allowNew={false}
-            renderMenuItemChildren={(option: any, propsData, index) => (
+            renderMenuItemChildren={(option: any, propsData) => (
               <div>
                 <Highlighter key='name' search={propsData.text}>
                   {option.name}

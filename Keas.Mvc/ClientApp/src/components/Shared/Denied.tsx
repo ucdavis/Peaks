@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 interface IProps {

@@ -2,7 +2,6 @@ import {
   ArrowLeftIcon,
   MagnifyingGlassIcon
 } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext } from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { Context } from '../../Context';

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { IDocument } from '../../models/Document';
 import { DateUtil } from '../../util/dates';
 

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import EquipmentManagedSystemInfo from './EquipmentManagedSystemInfo';
 import EquipmentManagedSystemSearchId from './EquipmentManagedSystemSearchId';
 

@@ -6,7 +6,6 @@ import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon
 } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useTable, flexRender } from '@tanstack/react-table';
 import { ColumnFilterHeaders } from './Filtering';
 import { peaksFeatures, PeaksColumn, PeaksInitialState } from './tableFeatures';

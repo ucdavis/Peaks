@@ -1,6 +1,5 @@
 import { DocumentTextIcon } from '@heroicons/react/24/solid';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { IPerson } from '../../models/People';
 import { PermissionsUtil } from '../../util/permissions';
 import { Context } from '../../Context';

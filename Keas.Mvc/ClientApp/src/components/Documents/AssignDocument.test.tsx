@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Context } from '../../Context';
 import { AppContext } from '../../models/Shared';

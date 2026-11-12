@@ -1,5 +1,4 @@
 import { InformationCircleIcon, PlusIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IEquipmentAttribute } from '../../models/Equipment';
 import EquipmentAttribute from './EquipmentAttribute';

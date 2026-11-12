@@ -1,5 +1,4 @@
 import { ArrowLeftIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { RouteChildrenProps } from 'react-router';
@@ -36,18 +35,18 @@ const KeyDetailContainer = (props: IProps) => {
   }
 
   const serialInUseUpdated = (
-    type: string,
-    spaceId: number,
-    personId: number,
+    _type: string,
+    _spaceId: number,
+    _personId: number,
     count: number
   ) => {
     props.serialInUseUpdated(props.selectedKeyInfo.id, count);
   };
 
   const serialTotalUpdated = (
-    type: string,
-    spaceId: number,
-    personId: number,
+    _type: string,
+    _spaceId: number,
+    _personId: number,
     count: number
   ) => {
     props.serialTotalUpdated(props.selectedKeyInfo.id, count);

@@ -1,5 +1,4 @@
 import { addWeeks, isAfter, isBefore, isSameDay, startOfDay } from 'date-fns';
-import * as React from 'react';
 import { DateUtil } from './dates';
 
 export interface IFilterOption {
@@ -92,7 +91,7 @@ export class ReactTableExpirationUtil {
   };
 
   // custom filter function for expirations
-  public static filterFunction(row: any, id, filterValue) {
+  public static filterFunction(row: any, _id, filterValue) {
     if (filterValue === 'all') {
       return true;
     }
@@ -234,7 +233,7 @@ export class ReactTableNumberOfAssignmentsUtil {
   // custom filter function for number of assignments
   public static filterFunction = (
     row: any,
-    id,
+    _id,
     filterValue: [string, string]
   ) => {
     if (filterValue?.[0] === '<' && !!filterValue?.[1]) {
@@ -278,7 +277,7 @@ export class ReactTableKeySerialUtil {
     );
   };
 
-  public static filterFunction = (row: any, id, filterValue) => {
+  public static filterFunction = (row: any, _id, filterValue) => {
     if (filterValue === 'all') {
       return true;
     }
@@ -327,7 +326,7 @@ export class ReactTableKeyStatusUtil {
     );
   };
 
-  public static filterFunction = (row: any, id, filterValue) => {
+  public static filterFunction = (row: any, _id, filterValue) => {
     if (filterValue === 'all') {
       return true;
     }

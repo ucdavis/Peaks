@@ -1,5 +1,4 @@
 import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
-import * as React from 'react';
 import { IEquipment } from '../../models/Equipment';
 import { DateUtil } from '../../util/dates';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';

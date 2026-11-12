@@ -1,6 +1,5 @@
 import { BuildingOffice2Icon } from '@heroicons/react/24/solid';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import {
   useHistory,
@@ -235,7 +234,7 @@ const SpacesContainer = (props: IProps) => {
   const assetInUseUpdated = (
     type: string,
     spaceId: number,
-    personId: number,
+    _personId: number,
     count: number
   ) => {
     // this is called when we are assigning or revoking an asset
@@ -253,7 +252,7 @@ const SpacesContainer = (props: IProps) => {
   const assetTotalUpdated = (
     type: string,
     spaceId: number,
-    personId: number,
+    _personId: number,
     count: number
   ) => {
     // this is called when we are either changing the room on an asset, or creating a workstation
@@ -275,9 +274,8 @@ const SpacesContainer = (props: IProps) => {
   };
 
   const assetEdited = async (
-    type: string,
-    spaceId: number,
-    personId: number
+    _type: string,
+    spaceId: number
   ) => {
     const index = spaces.findIndex(x => x.id === spaceId);
     if (index > -1) {

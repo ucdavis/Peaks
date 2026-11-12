@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import AccessAssignmentListItem from './AccessListItem';
 

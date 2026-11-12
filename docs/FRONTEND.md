@@ -33,6 +33,12 @@ profiles and leave `Vite__UseDevServer` unset or set it to `false`.
 
 ## Assets and tests
 
+### Link previews
+
+The shared layout uses `wwwroot/images/thumbnail.jpg` (1200 × 630) for Open Graph
+and large-image Twitter cards. It builds absolute page and image URLs from the
+request, including the application PathBase. The footer year is rendered by Razor.
+
 ### Icons
 
 Icons use the outline set from `@heroicons/react/24/outline`. React components

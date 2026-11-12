@@ -1,6 +1,5 @@
 import { DisplayField } from '../Shared/AssetSummary';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import * as React from 'react';
 import { useContext, useState } from 'react';
 import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
@@ -60,7 +59,7 @@ const SearchKeySerials = (props: IProps) => {
     );
   };
 
-  const renderItem = (option: IKeySerial, props, index) => {
+  const renderItem = (option: IKeySerial, props) => {
     return (
       <div className={!!option.keySerialAssignment ? 'opacity-40' : ''}>
         <div>
