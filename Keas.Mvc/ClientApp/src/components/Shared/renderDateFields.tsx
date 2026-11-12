@@ -17,7 +17,7 @@ export function renderDateFields() {
       const value = date ? `${String(date.getFullYear()).padStart(4, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}` : '';
       return <>
         <input type='hidden' name={name} value={valid ? value : 'incomplete-date'} />
-        <AssignDate label={label} date={date} isRequired={isRequired} onChangeDate={setDate} onValidityChange={setValid} />
+        <AssignDate label={label} date={date} isRequired={isRequired} showToday onChangeDate={setDate} onValidityChange={setValid} />
       </>;
     };
     createRoot(container).render(<DateField />);

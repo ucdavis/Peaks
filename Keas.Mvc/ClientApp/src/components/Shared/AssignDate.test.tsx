@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import AssignDate from './AssignDate';
 
 // jsdom has no canvas; input sizing has a supported no-context fallback.
@@ -64,6 +65,136 @@ it('reports a cleared optional date as valid after closing the calendar', () => 
   expect(screen.getByRole('spinbutton', { name: 'Month' })).not.toBeRequired();
   expect(container.querySelector('form').checkValidity()).toBe(true);
   expect(onValidityChange).toHaveBeenLastCalledWith(true);
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+});
+
+it.each(['complete', 'partial'])('clears an optional %s date without submitting the form', state => {
+  const onChangeDate = vi.fn();
+  const onValidityChange = vi.fn();
+  const onSubmit = vi.fn(event => event.preventDefault());
+  const Field = () => {
+    const [date, setDate] = React.useState(state === 'complete' ? new Date(2026, 10, 6) : null);
+    return <form onSubmit={onSubmit}>
+      <AssignDate date={date} isRequired={false} onChangeDate={value => {
+        setDate(value);
+        onChangeDate(value);
+      }} onValidityChange={onValidityChange} />
+    </form>;
+  };
+  const { container } = render(<Field />);
+  if (state === 'partial') {
+    userEvent.type(screen.getByRole('spinbutton', { name: 'Month' }), '11');
+    expect(container.querySelector('form').checkValidity()).toBe(false);
+  }
+
+  userEvent.click(screen.getByRole('button', { name: 'Clear date' }));
+
+  for (const name of ['Month', 'Day', 'Year']) {
+    expect(screen.getByRole('spinbutton', { name })).toHaveValue(null);
+  }
+  expect(onChangeDate).toHaveBeenLastCalledWith(null);
+  expect(onValidityChange).toHaveBeenLastCalledWith(true);
+  expect(container.querySelector('form').checkValidity()).toBe(true);
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  expect(onSubmit).not.toHaveBeenCalled();
+});
+
+it.each([false, true])('requires an explicit Today opt-in when isRequired is %s', isRequired => {
+  render(<AssignDate date={new Date(2026, 10, 6)} isRequired={isRequired} onChangeDate={vi.fn()} />);
+  expect(screen.queryByRole('button', { name: 'Clear date' }) !== null).toBe(!isRequired);
+  userEvent.click(screen.getByRole('button', { name: 'Toggle calendar' }));
+  expect(screen.queryByRole('button', { name: 'Today' })).not.toBeInTheDocument();
+});
+
+it.each([false, true])('selects local midnight with Today and closes the calendar when isRequired is %s', isRequired => {
+  vi.useFakeTimers({ toFake: ['Date'] });
+  try {
+    vi.setSystemTime(new Date(2026, 10, 12, 15, 42, 31));
+    const onChangeDate = vi.fn();
+    const onValidityChange = vi.fn();
+    const onSubmit = vi.fn(event => event.preventDefault());
+    const Field = () => {
+      const [date, setDate] = React.useState<Date>(null);
+      return <form onSubmit={onSubmit}>
+        <AssignDate date={date} isRequired={isRequired} showToday onChangeDate={value => {
+          setDate(value);
+          onChangeDate(value);
+        }} onValidityChange={onValidityChange} />
+      </form>;
+    };
+    const { container } = render(<Field />);
+    expect(screen.queryByRole('button', { name: 'Today' })).not.toBeInTheDocument();
+    userEvent.type(screen.getByRole('spinbutton', { name: 'Month' }), '11');
+    expect(container.querySelector('form').checkValidity()).toBe(false);
+
+    userEvent.click(screen.getByRole('button', { name: 'Today' }));
+
+    expect(onChangeDate).toHaveBeenLastCalledWith(new Date(2026, 10, 12));
+    expect(screen.getByRole('spinbutton', { name: 'Month' })).toHaveValue(11);
+    expect(screen.getByRole('spinbutton', { name: 'Day' })).toHaveValue(12);
+    expect(screen.getByRole('spinbutton', { name: 'Year' })).toHaveValue(2026);
+    expect(screen.getByRole('button', { name: 'Toggle calendar' })).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('button', { name: 'Today' })).not.toBeInTheDocument();
+    expect(onValidityChange).toHaveBeenLastCalledWith(true);
+    expect(container.querySelector('form').checkValidity()).toBe(true);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(onSubmit).not.toHaveBeenCalled();
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+it('does not offer Clear or Today for a disabled date', () => {
+  render(<AssignDate date={new Date(2026, 10, 6)} isRequired={false} disabled showToday onChangeDate={vi.fn()} />);
+  expect(screen.queryByRole('button', { name: 'Clear date' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Today' })).not.toBeInTheDocument();
+});
+
+it('allows keyboard activation of Today to restore an unfinished edit of today', () => {
+  vi.useFakeTimers({ toFake: ['Date'] });
+  try {
+    vi.setSystemTime(new Date(2026, 10, 12, 15));
+    const Field = () => {
+      const [date, setDate] = React.useState(new Date(2026, 10, 12));
+      return <form><AssignDate date={date} isRequired showToday onChangeDate={setDate} /></form>;
+    };
+    const { container } = render(<Field />);
+    const year = screen.getByRole('spinbutton', { name: 'Year' });
+    userEvent.click(year);
+    fireEvent.change(year, { target: { value: '202' } });
+    expect(container.querySelector('form').checkValidity()).toBe(false);
+
+    const today = screen.getByRole('button', { name: 'Today' });
+    act(() => today.focus());
+    expect(today).toHaveFocus();
+    userEvent.keyboard('{Enter}');
+
+    expect(screen.getByRole('spinbutton', { name: 'Year' })).toHaveValue(2026);
+    expect(container.querySelector('form').checkValidity()).toBe(true);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Toggle calendar' })).toHaveAttribute('aria-expanded', 'false');
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+it('revalidates a restored date after clearing its day and clicking outside', () => {
+  const onValidityChange = vi.fn();
+  const { container } = render(<form>
+    <AssignDate date={new Date(2026, 10, 6)} isRequired={false} onChangeDate={vi.fn()} onValidityChange={onValidityChange} />
+    <button type='button'>Outside</button>
+  </form>);
+  const day = screen.getByRole('spinbutton', { name: 'Day' });
+  userEvent.click(day);
+  userEvent.type(day, '{backspace}', { skipClick: true });
+  expect(onValidityChange).toHaveBeenLastCalledWith(false);
+  expect(container.querySelector('form').checkValidity()).toBe(false);
+
+  userEvent.click(screen.getByRole('button', { name: 'Outside' }));
+
+  expect(screen.getByRole('spinbutton', { name: 'Day' })).toHaveValue(6);
+  expect(onValidityChange).toHaveBeenLastCalledWith(true);
+  expect(container.querySelector('form').checkValidity()).toBe(true);
   expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
 
