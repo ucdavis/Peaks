@@ -19,13 +19,17 @@
 
                                 <h2 class="m-0 text-lg font-semibold">Filters</h2>
                                   <div class="space-y-2">
-                                      <label asp-for="StartDate" class="block text-sm font-semibold"></label>
-                                      <input id="start" asp-for="StartDate" class="input w-full" />
+                                      <div data-date-field data-label="Start date">
+                                          <label asp-for="StartDate" class="block text-sm font-semibold"></label>
+                                          <input asp-for="StartDate" class="input w-full" />
+                                      </div>
                                       <span asp-validation-for="StartDate" class="text-sm text-error"></span>
                                   </div>
                                    <div class="space-y-2">
-                                      <label asp-for="EndDate" class="block text-sm font-semibold"></label>
-                                      <input id="end" asp-for="EndDate" class="input w-full" />
+                                      <div data-date-field data-label="End date">
+                                          <label asp-for="EndDate" class="block text-sm font-semibold"></label>
+                                          <input asp-for="EndDate" class="input w-full" />
+                                      </div>
                                       <span asp-validation-for="EndDate" class="text-sm text-error"></span>
                                   </div>
                                   <div class="space-y-2">
@@ -75,14 +79,6 @@
 
 
     <script type="text/javascript">
-        $('#start').datepicker({
-            uiLibrary: 'bootstrap4',
-            format: 'yyyy-mm-dd'
-        });
-        $('#end').datepicker({
-            uiLibrary: 'bootstrap4',
-            format: 'yyyy-mm-dd'
-        });
         $('.dataTable').DataTable({
             "columnDefs": [
                 { "type": "date", "targets": [3] },

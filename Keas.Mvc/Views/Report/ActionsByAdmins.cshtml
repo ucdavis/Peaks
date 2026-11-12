@@ -17,13 +17,17 @@
                             <h2 class="m-0 text-lg font-semibold">Filters</h2>
                             <div class="space-y-2">
                                 <div class="space-y-2">
-                                    <label asp-for="Start" class="block text-sm font-semibold"></label>
-                                    <input id="start" asp-for="Start" class="input w-full" />
+                                    <div data-date-field data-label="Start date">
+                                        <label asp-for="Start" class="block text-sm font-semibold"></label>
+                                        <input asp-for="Start" class="input w-full" />
+                                    </div>
                                     <span asp-validation-for="Start" class="text-sm text-error"></span>
                                 </div>
                                 <div class="space-y-2">
-                                    <label asp-for="End" class="block text-sm font-semibold"></label>
-                                    <input id="end" asp-for="End" class="input w-full" />
+                                    <div data-date-field data-label="End date">
+                                        <label asp-for="End" class="block text-sm font-semibold"></label>
+                                        <input asp-for="End" class="input w-full" />
+                                    </div>
                                     <span asp-validation-for="End" class="text-sm text-error"></span>
                                 </div>
                                 <div class="space-y-2">

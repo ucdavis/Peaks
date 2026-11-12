@@ -206,13 +206,6 @@ body {
     color: #fff !important;
   }
 
-  /* Date-picker positioning. */
-  .gj-datepicker-bootstrap [role=right-icon] button .gj-icon,
-  .gj-datepicker-bootstrap [role=right-icon] button .material-icons {
-    top: 8px !important;
-  }
-
-
   /* Each asset takes a turn bouncing and pulsing in its own color. */
   .peaks-loader-icon {
     display: inline-flex;
@@ -311,6 +304,19 @@ body {
     max-width: calc(100vw - 2.5rem);
     margin-block: 0.5rem;
     z-index: 30;
+  }
+
+  .peaks-calendar-host {
+    position: absolute;
+    width: 20rem;
+    max-width: calc(100vw - 2.5rem);
+    overflow-y: auto;
+    z-index: 30;
+  }
+
+  .peaks-calendar-host .react-date-picker__calendar {
+    margin: 0;
+    max-width: 100%;
   }
 
   .peaks-date-picker .react-calendar {

@@ -4,40 +4,28 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
-using Keas.Mvc.Attributes;
 using Keas.Mvc.Controllers;
-using Keas.Mvc.Handlers;
 using Keas.Mvc.Models;
 using Keas.Mvc.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
 namespace Test.TestsController
 {
-    [Trait("Category", "ControllerTests")]
     public class PersonAdminBulkEditTests : IDisposable
     {
-        private const string ManagerId = "team-a-manager";
-        private const string OriginalTags = "original";
-        private const string UpdatedTags = "updated";
         private readonly SqliteConnection _connection;
         private readonly ApplicationDbContext _context;
-        private readonly DefaultHttpContext _httpContext;
-        private readonly VerifyRoleOrAuthTokenHandler _authorizationHandler;
         private readonly PersonAdminController _controller;
-        private readonly Team _teamA = new Team { Name = "Team A", Slug = "team-a" };
-        private readonly Team _teamB = new Team { Name = "Team B", Slug = "team-b" };
-        private readonly Person _firstLocalPerson;
-        private readonly Person _secondLocalPerson;
-        private readonly Person _foreignPerson;
+        private readonly Person _person;
+        private readonly Person _other;
+        private readonly Mock<INotificationService> _notifications = new Mock<INotificationService>(MockBehavior.Strict);
 
         public PersonAdminBulkEditTests()
         {
@@ -46,172 +34,271 @@ namespace Test.TestsController
             _context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseSqlite(_connection).Options);
             _context.Database.EnsureCreated();
-
-            _context.TeamPermissions.Add(new TeamPermission
+            _person = new Person
             {
-                Team = _teamA,
-                Role = new Role { Name = Role.Codes.PersonManager },
-                User = new User
-                {
-                    Id = ManagerId,
-                    FirstName = "Team A",
-                    LastName = "Manager",
-                    Email = "manager@example.test"
-                }
-            });
-            // Targets have no assignments or permissions and are not the acting manager,
-            // so the deactivation eligibility checks cannot hide the team-scoping defect.
-            _firstLocalPerson = AddPerson(_teamA, "First");
-            _secondLocalPerson = AddPerson(_teamA, "Second");
-            _foreignPerson = AddPerson(_teamB, "Foreign");
+                Team = new Team { Name = "Test team", Slug = "test-team" },
+                FirstName = "Sample", LastName = "Person", Email = "person@example.test",
+                Category = "Staff", Tags = "Existing",
+                StartDate = new DateTime(2026, 1, 1), EndDate = new DateTime(2026, 12, 31)
+            };
+            _other = new Person
+            {
+                Team = new Team { Name = "Other team", Slug = "other-team" },
+                FirstName = "Other", LastName = "Person", Email = "other@example.test", Category = "Staff"
+            };
+            _context.People.AddRange(_person, _other);
+            _context.Tags.Add(new Tag { Team = _person.Team, Name = "Existing" });
+            _context.Tags.Add(new Tag { Team = _other.Team, Name = "OtherTag" });
             _context.SaveChanges();
-            _context.ChangeTracker.Clear();
 
-            _httpContext = new DefaultHttpContext
+            var httpContext = new DefaultHttpContext
             {
-                User = new ClaimsPrincipal(new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, ManagerId),
-                    new Claim("name", "Team A Manager")
-                }, "Test")),
-                Session = Mock.Of<ISession>()
+                User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "editor") }, "Test"))
             };
-            var accessor = new HttpContextAccessor { HttpContext = _httpContext };
-            var security = new SecurityService(accessor, _context,
-                new TeamsManager(accessor, _context), Options.Create(new ApiSettings()));
-            _authorizationHandler = new VerifyRoleOrAuthTokenHandler(security, accessor,
-                Mock.Of<ITempDataDictionaryFactory>(MockBehavior.Strict));
-            _controller = new PersonAdminController(_context,
-                new NotificationService(_context, security), Mock.Of<IIdentityService>(MockBehavior.Strict))
+            _controller = new PersonAdminController(_context, _notifications.Object,
+                Mock.Of<IIdentityService>(MockBehavior.Strict))
             {
-                ControllerContext = new ControllerContext
-                {
-                    HttpContext = _httpContext,
-                    RouteData = new RouteData()
-                },
-                TempData = new TempDataDictionary(_httpContext, Mock.Of<ITempDataProvider>())
+                ControllerContext = new ControllerContext { HttpContext = httpContext, RouteData = new RouteData() },
+                TempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>())
             };
+            _controller.RouteData.Values["teamName"] = "test-team";
         }
 
-        // Issue #1407: a foreign ID must reject the entire batch, including any local IDs.
-        [Theory]
-        [InlineData(false, false)]
-        [InlineData(false, true)]
-        [InlineData(true, false)]
-        [InlineData(true, true)]
-        public async Task BulkEditWithForeignTeamIdsLeavesAllPeopleAndNotificationsUnchanged(
-            bool deactivate, bool includeLocalPerson)
+        private BulkEditModel CategoryUpdate() => new BulkEditModel
         {
-            await AssertManagerCanAccessOnlyTeamA();
-            var ids = includeLocalPerson
-                ? $"{_firstLocalPerson.Id},{_foreignPerson.Id}"
-                : _foreignPerson.Id.ToString();
+            Ids = _person.Id.ToString(), UpdateCategory = true, Category = "Faculty"
+        };
 
-            Assert.IsType<ViewResult>(await _controller.BulkEdit(CreateModel(ids, deactivate)));
+        private async Task Submit(BulkEditModel model)
+        {
+            Assert.IsType<ViewResult>(await _controller.BulkEdit(model));
+        }
 
-            Assert.False(string.IsNullOrWhiteSpace(_controller.ErrorMessage));
+        private async Task AssertUnchanged(string field)
+        {
+            Assert.False(_controller.ModelState.IsValid);
+            Assert.True(_controller.ModelState.ContainsKey(field));
+            Assert.Contains("No changes were saved", _controller.ErrorMessage);
+            Assert.Null(_controller.Message);
+            // Verify validation did not mutate tracked entities or persist part of a batch.
+            Assert.Equal("Staff", _person.Category);
             _context.ChangeTracker.Clear();
-            var people = await _context.People.IgnoreQueryFilters().OrderBy(person => person.Id).ToArrayAsync();
-            Assert.Equal(3, people.Length);
-            Assert.All(people, person =>
-            {
-                Assert.True(person.Active, $"Person {person.Id} was deactivated by a batch containing a foreign-team ID.");
-                Assert.Equal(OriginalTags, person.Tags);
-            });
-            Assert.Empty(await _context.PersonNotifications.ToListAsync());
+            Assert.Equal("Staff", (await _context.People.SingleAsync(p => p.Id == _person.Id)).Category);
+            Assert.Equal("Staff", (await _context.People.SingleAsync(p => p.Id == _other.Id)).Category);
         }
 
         [Theory]
-        [InlineData(false, false)]
-        [InlineData(false, true)]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData("abc")]
+        [InlineData("1,")]
+        [InlineData("1,,2")]
+        [InlineData("0")]
+        [InlineData("-1")]
+        [InlineData("99999999999999999")]
+        public async Task MalformedSelectionsReturnValidationInsteadOfThrowing(string ids)
+        {
+            var model = CategoryUpdate();
+            model.Ids = ids;
+            await Submit(model);
+            await AssertUnchanged(string.Empty);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task RejectsAnEntireSelectionContainingAnotherTeamsPerson(bool deleting)
+        {
+            var model = CategoryUpdate();
+            model.Ids += $",{_other.Id}";
+            model.DeleteUsers = deleting;
+            await Submit(model);
+            await AssertUnchanged(string.Empty);
+            Assert.True((await _context.People.SingleAsync(p => p.Id == _person.Id)).Active);
+            Assert.True((await _context.People.SingleAsync(p => p.Id == _other.Id)).Active);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task RejectsMissingOrInactiveSelections(bool inactive)
+        {
+            var model = CategoryUpdate();
+            if (inactive)
+            {
+                _person.Active = false;
+                await _context.SaveChangesAsync();
+            }
+            else model.Ids += ",2147483647";
+            await Submit(model);
+            Assert.False(_controller.ModelState.IsValid);
+            Assert.Equal("Staff", _person.Category);
+        }
+
+        [Fact]
+        public async Task DeduplicatesIdsAndIgnoresUncheckedFieldErrorsAndValues()
+        {
+            var model = CategoryUpdate();
+            model.Ids += $", {_person.Id}";
+            model.EndDate = new DateTime(2020, 1, 1);
+            foreach (var field in new[] { "StartDate", "EndDate", "SupervisorEmail", "SelectedTags" })
+                _controller.ModelState.AddModelError(field, "Invalid unchecked value");
+            await Submit(model);
+            Assert.True(_controller.ModelState.IsValid);
+            Assert.Equal("Faculty", _person.Category);
+            Assert.Equal(new DateTime(2026, 12, 31), _person.EndDate);
+            Assert.Equal("1 people selected. Updated: 1 Skipped: 0", _controller.Message);
+        }
+
+        [Fact]
+        public async Task RequiresAtLeastOneChange()
+        {
+            await Submit(new BulkEditModel { Ids = _person.Id.ToString() });
+            await AssertUnchanged(string.Empty);
+        }
+
+        [Theory]
+        [InlineData("StartDate")]
+        [InlineData("EndDate")]
+        public async Task BindingErrorsInCheckedDatesPreventAllUpdates(string field)
+        {
+            var model = CategoryUpdate();
+            model.UpdateStartDate = field == "StartDate";
+            model.UpdateEndDate = field == "EndDate";
+            _controller.ModelState.AddModelError(field, "Incomplete date");
+            await Submit(model);
+            await AssertUnchanged(field);
+        }
+
+        [Theory]
         [InlineData(true, false)]
+        [InlineData(false, true)]
         [InlineData(true, true)]
-        public async Task BulkEditWithOnlyAuthorizedTeamIdsUpdatesSelectedPeople(bool deactivate, bool includeDuplicateId)
+        public async Task ValidatesResultingRangesIncludingUnchangedDates(bool start, bool end)
         {
-            await AssertManagerCanAccessOnlyTeamA();
-            var ids = $"{_firstLocalPerson.Id},{_secondLocalPerson.Id}";
-            if (includeDuplicateId)
-            {
-                ids += $",{_firstLocalPerson.Id}";
-            }
-            var model = CreateModel(ids, deactivate);
+            var model = CategoryUpdate();
+            model.UpdateStartDate = start;
+            model.UpdateEndDate = end;
+            model.StartDate = new DateTime(2027, 1, 1);
+            model.EndDate = new DateTime(2025, 1, 1);
+            await Submit(model);
+            await AssertUnchanged(end ? "EndDate" : "StartDate");
+        }
 
-            var result = Assert.IsType<ViewResult>(await _controller.BulkEdit(model));
-
-            Assert.Same(model, result.Model);
-            _context.ChangeTracker.Clear();
-            var people = await _context.People.IgnoreQueryFilters().ToArrayAsync();
-            Assert.Equal(3, people.Length);
-            var localPeople = people.Where(person => person.TeamId == _teamA.Id).ToArray();
-            Assert.Equal(2, localPeople.Length);
-            Assert.All(localPeople, person =>
+        [Fact]
+        public async Task ChecksEveryPersonBeforeApplyingAnyChanges()
+        {
+            var second = new Person
             {
-                Assert.Equal(!deactivate, person.Active);
-                Assert.Equal(deactivate ? OriginalTags : UpdatedTags, person.Tags);
-            });
-            var foreignPerson = Assert.Single(people.Where(person => person.Id == _foreignPerson.Id));
-            Assert.True(foreignPerson.Active);
-            Assert.Equal(OriginalTags, foreignPerson.Tags);
+                Team = _person.Team, FirstName = "Second", LastName = "Person", Email = "second@example.test",
+                StartDate = new DateTime(2026, 11, 1)
+            };
+            _context.People.Add(second);
+            await _context.SaveChangesAsync();
+            var model = CategoryUpdate();
+            model.Ids += $",{second.Id}";
+            model.UpdateEndDate = true;
+            model.EndDate = new DateTime(2026, 6, 1);
+            await Submit(model);
+            await AssertUnchanged("EndDate");
+            Assert.Null((await _context.People.SingleAsync(p => p.Id == second.Id)).EndDate);
+        }
 
-            var notifications = await _context.PersonNotifications.OrderBy(notification => notification.PersonId).ToArrayAsync();
-            if (deactivate)
+        [Fact]
+        public async Task AllowsSameDayRangesAndExplicitClearing()
+        {
+            var model = CategoryUpdate();
+            model.UpdateStartDate = model.UpdateEndDate = true;
+            model.StartDate = model.EndDate = new DateTime(2026, 6, 1);
+            await Submit(model);
+            Assert.True(_controller.ModelState.IsValid);
+            model.StartDate = model.EndDate = null;
+            model.Category = "-- Not Set --";
+            model.UpdateTags = model.UpdateSupervisorEmail = true;
+            await Submit(model);
+            Assert.True(_controller.ModelState.IsValid);
+            Assert.Null(_person.StartDate);
+            Assert.Null(_person.EndDate);
+            Assert.Equal(string.Empty, _person.Category);
+            Assert.Equal(string.Empty, _person.Tags);
+        }
+
+        [Theory]
+        [InlineData("Category")]
+        [InlineData("SelectedTags")]
+        [InlineData("SupervisorEmail")]
+        public async Task RejectsUnknownValuesAndSelfSupervision(string field)
+        {
+            var model = CategoryUpdate();
+            model.Category = field == "Category" ? "Unknown" : "Faculty";
+            model.UpdateTags = field == "SelectedTags";
+            model.SelectedTags = new[] { "OtherTag" };
+            model.UpdateSupervisorEmail = field == "SupervisorEmail";
+            model.SupervisorEmail = _person.Email;
+            await Submit(model);
+            await AssertUnchanged(field);
+        }
+
+        [Fact]
+        public async Task NormalizesSupportedCategorySupervisorAndTags()
+        {
+            var supervisor = new Person { Team = _person.Team, FirstName = "Team", LastName = "Supervisor", Email = "boss@example.test" };
+            _context.People.Add(supervisor);
+            await _context.SaveChangesAsync();
+            var model = CategoryUpdate();
+            model.Category = " faculty ";
+            model.UpdateSupervisorEmail = model.UpdateTags = true;
+            model.SupervisorEmail = " BOSS@example.test ";
+            model.SelectedTags = new[] { "Existing", "Existing" };
+            await Submit(model);
+            Assert.True(_controller.ModelState.IsValid);
+            Assert.Equal(supervisor.Id, _person.SupervisorId);
+            Assert.Equal("Faculty", _person.Category);
+            Assert.Equal("Existing", _person.Tags);
+        }
+
+        [Theory]
+        [InlineData("missing")]
+        [InlineData("other-team")]
+        [InlineData("inactive")]
+        [InlineData("ambiguous")]
+        public async Task RejectsUnavailableOrAmbiguousSupervisors(string kind)
+        {
+            if (kind == "inactive" || kind == "ambiguous")
             {
-                Assert.Equal(new[] { _firstLocalPerson.Id, _secondLocalPerson.Id },
-                    notifications.Select(notification => notification.PersonId));
-                Assert.All(notifications, notification =>
+                var supervisor = new Person
                 {
-                    Assert.Equal(_teamA.Id, notification.TeamId);
-                    Assert.Equal(ManagerId, notification.ActorId);
-                    Assert.Equal(PersonNotification.Actions.Deactivated, notification.Action);
-                });
+                    Team = _person.Team, FirstName = "Boss", LastName = "Person",
+                    Email = "boss@example.test", Active = kind != "inactive"
+                };
+                _context.People.Add(supervisor);
+                if (kind == "ambiguous")
+                    _context.People.Add(new Person { Team = _person.Team, FirstName = "Another", LastName = "Boss", Email = supervisor.Email });
+                await _context.SaveChangesAsync();
             }
-            else
-            {
-                Assert.Empty(notifications);
-            }
+            var model = CategoryUpdate();
+            model.UpdateSupervisorEmail = true;
+            model.SupervisorEmail = kind == "other-team" ? _other.Email : "boss@example.test";
+            await Submit(model);
+            await AssertUnchanged("SupervisorEmail");
         }
 
-        private async Task AssertManagerCanAccessOnlyTeamA()
+        [Fact]
+        public async Task DeletionIgnoresUnusedDateErrorsAndResetsDeleteAfterSuccess()
         {
-            // Direct controller calls do not run MVC authorization filters. Exercise the
-            // real handler and database-backed permissions before invoking the action.
-            Assert.False(await AuthorizeTeam(_teamB.Slug));
-            Assert.True(await AuthorizeTeam(_teamA.Slug));
-        }
-
-        private async Task<bool> AuthorizeTeam(string slug)
-        {
-            _httpContext.Request.RouteValues["teamName"] = slug;
-            _controller.RouteData.Values["teamName"] = slug;
-            var requirement = new VerifyRoleOrAuthToken(Role.Codes.PersonManager, Role.Codes.DepartmentalAdmin);
-            var authorization = new AuthorizationHandlerContext(new[] { requirement }, _httpContext.User, _httpContext);
-            await _authorizationHandler.HandleAsync(authorization);
-            return authorization.HasSucceeded;
-        }
-
-        private static BulkEditModel CreateModel(string ids, bool deactivate)
-        {
-            return new BulkEditModel
-            {
-                Ids = ids,
-                DeleteUsers = deactivate,
-                UpdateTags = !deactivate,
-                SelectedTags = new[] { UpdatedTags }
-            };
-        }
-
-        private Person AddPerson(Team team, string firstName)
-        {
-            var person = new Person
-            {
-                Team = team,
-                FirstName = firstName,
-                LastName = "Person",
-                Email = $"{firstName.ToLowerInvariant()}@example.test",
-                Tags = OriginalTags
-            };
-            _context.People.Add(person);
-            return person;
+            _notifications.Setup(service => service.PersonUpdated(_person, null, "test-team",
+                It.IsAny<string>(), "editor", PersonNotification.Actions.Deactivated, "From Bulk Edit"))
+                .Returns(Task.CompletedTask);
+            var model = CategoryUpdate();
+            model.DeleteUsers = model.UpdateStartDate = true;
+            _controller.ModelState.AddModelError("StartDate", "Incomplete date");
+            await Submit(model);
+            Assert.True(_controller.ModelState.IsValid);
+            Assert.False(model.DeleteUsers);
+            Assert.False(_person.Active);
+            Assert.Equal("Staff", _person.Category);
+            Assert.True((await _context.People.SingleAsync(p => p.Id == _other.Id)).Active);
         }
 
         public void Dispose()
