@@ -1,4 +1,5 @@
 .git
+.local
 **/bin
 **/obj
 **/node_modules

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "peaks",
+  "version": "0.1.4",
+  "description": "Read fictional PEAKS equipment and assignments through the local Docker sandbox.",
+  "author": {
+    "name": "UC Davis"
+  },
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "PEAKS",
+        "shortDescription": "Sandbox equipment and loans",
+        "longDescription": "Explore fictional Sandbox Team equipment, find a person's Apple devices, and check assignment due dates through authenticated local MCP tools.",
+        "developerName": "UC Davis",
+        "category": "Productivity",
+        "capabilities": [],
+        "defaultPrompt": [
+          "What equipment expires this week?",
+          "What Apple equipment does Javier Morales have?",
+          "What equipment is unassigned?"
+        ]
+      }
+    }
+  }
+}

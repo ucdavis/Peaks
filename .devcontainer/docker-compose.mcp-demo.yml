@@ -1,0 +1,32 @@
+# Overlay on docker-compose.sandbox.yml. Local use only; the base sandbox stays unchanged.
+services:
+  certificates:
+    image: busybox:1.37
+    user: root
+    volumes:
+      - ../.local/mcp:/source:ro
+      - sandbox-mcp-certs:/certs
+    command: ["sh", "-c", "cp /source/localhost.pfx /certs/localhost.pfx && chown 1654:1654 /certs/localhost.pfx && chmod 600 /certs/localhost.pfx"]
+  initialize:
+    environment:
+      PEAKS_MCP_DEMO: "1"
+  app:
+    environment:
+      PEAKS_SANDBOX: "1"
+      McpDemo__Enabled: "true"
+      McpDemo__Issuer: https://localhost:${MCP_DEMO_HTTPS_PORT:-5446}/
+      ASPNETCORE_URLS: http://+:8080;https://+:8443
+      ASPNETCORE_HTTPS_PORT: ${MCP_DEMO_HTTPS_PORT:-5446}
+      Kestrel__Certificates__Default__Path: /certs/localhost.pfx
+      Kestrel__Certificates__Default__Password: peaks-local-demo
+      ELASTIC_APM_ENABLED: "false"
+      Stackify__ElasticUrl: ""
+    ports:
+      - "127.0.0.1:${MCP_DEMO_HTTPS_PORT:-5446}:8443"
+    volumes:
+      - sandbox-mcp-certs:/certs:ro
+    depends_on:
+      certificates:
+        condition: service_completed_successfully
+volumes:
+  sandbox-mcp-certs:

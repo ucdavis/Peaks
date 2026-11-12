@@ -55,6 +55,7 @@ namespace Keas.Mvc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddPeaksMcpDemo(Configuration, _environment);
             services.AddHttpContextAccessor();
 
             services.AddHostedService<ViteDevelopmentServer>();
@@ -235,6 +236,7 @@ namespace Keas.Mvc
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHostApplicationLifetime appLifetime)
         {
+            app.UsePeaksMcpDemoBoundary();
             // app.UseAllElasticApm(Configuration);
 
             appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
@@ -260,19 +262,24 @@ namespace Keas.Mvc
             app.UseRouting();
             app.UseSession();
             app.UseAuthentication();
+            app.UsePeaksMcpAuthentication();
             // Identity containing ApiKey does not get assigned to user if middleware is applied prior to authentication,
             // but it needs to come before authorization to make it available to authorization logic.
-            app.UseMiddleware<ApiKeyMiddleware>();
+            app.UseWhen(context => !context.Request.Path.StartsWithSegments("/mcp") && !context.Request.Path.StartsWithSegments("/oauth"),
+                branch => branch.UseMiddleware<ApiKeyMiddleware>());
             app.UseAuthorization();
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Peaks API v1"));
 
             app.UseMiddleware<LogIdentityMiddleware>();
-            app.UseSerilogRequestLogging();
+            app.UseWhen(context => !context.Request.Path.StartsWithSegments("/oauth") && !context.Request.Path.StartsWithSegments("/login") &&
+                !context.Request.Path.StartsWithSegments("/mcp") && !context.Request.Path.StartsWithSegments("/.well-known"),
+                branch => branch.UseSerilogRequestLogging());
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapPeaksMcpDemo();
                 // Preserve pre-.NET 10 browser redirects to login; XHRs still receive 401/403.
                 endpoints.MapControllers().AllowCookieRedirect(); // map attribute routes for SwaggerGen
 

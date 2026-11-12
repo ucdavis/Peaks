@@ -309,6 +309,7 @@ __pycache__/
 **/Properties/serviceDependencies.*
 
 # Generated Vite assets and frontend test output
+.local/
 Keas.Mvc/wwwroot/vite/
 Keas.Mvc/ClientApp/coverage/
 Keas.Mvc/ClientApp/test-results/

@@ -45,6 +45,8 @@ public static class SandboxSeed
             context.People.Add(new Person { TeamId = team.Id, UserId = "sandbox-admin", FirstName = "Sandbox", LastName = "Admin", Email = "sandbox-admin@example.test" });
         await context.SaveChangesAsync();
         await SeedDemoDataAsync(context, team);
+        if (Environment.GetEnvironmentVariable("PEAKS_MCP_DEMO") == "1")
+            await SeedMcpDemoAsync(context, team);
         await transaction.CommitAsync();
         Console.WriteLine("Sandbox fixtures ready. Users: sandbox-admin and sandbox-basic. Team: sandbox. Demo people, assets and assignments are ready.");
     }
@@ -198,5 +200,24 @@ public static class SandboxSeed
             ExpiresAt = today.AddDays((scenario % 4) switch { 0 => 90, 1 => -14, 2 => 7, _ => 180 }),
             IsConfirmed = confirmed, ConfirmedAt = confirmed ? today.AddDays(-58) : null
         };
+    }
+
+    private static async Task SeedMcpDemoAsync(ApplicationDbContext context, Team team)
+    {
+        var today = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTimeOffset.UtcNow, "America/Los_Angeles").Date;
+        var sunday = today.AddDays(6 - (((int)today.DayOfWeek + 6) % 7));
+        foreach (var fixture in new[] { ("MCP-DEMO-01", "sandbox-person-02", "Apple", "MacBook Air", today),
+            ("MCP-DEMO-02", "sandbox-person-01", "Dell", "Field laptop", sunday),
+            ("MCP-DEMO-03", "sandbox-person-02", "Apple", "iPad Pro", sunday) })
+        {
+            if (await context.Equipment.IgnoreQueryFilters().AnyAsync(x => x.TeamId == team.Id && x.SerialNumber == fixture.Item1)) continue;
+            var person = await context.People.SingleAsync(x => x.TeamId == team.Id && x.UserId == fixture.Item2);
+            context.Equipment.Add(new Equipment { Team = team, Name = "Demo " + fixture.Item4, Make = fixture.Item3,
+                Model = fixture.Item4, Type = "Device", SerialNumber = fixture.Item1,
+                Assignment = new EquipmentAssignment { Person = person, RequestedById = "sandbox-admin", RequestedByName = "Sandbox Admin",
+                    RequestedAt = today.AddDays(-14), ApprovedAt = today.AddDays(-13), ConfirmedAt = today.AddDays(-12),
+                    IsConfirmed = true, ExpiresAt = fixture.Item5 } });
+        }
+        await context.SaveChangesAsync();
     }
 }
