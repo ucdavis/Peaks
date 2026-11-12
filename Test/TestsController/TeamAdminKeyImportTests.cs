@@ -213,6 +213,32 @@ namespace Test.TestsController
             Assert.Equal(assignment.Id, serial.KeySerialAssignmentId);
         }
 
+        [Theory]
+        [InlineData("", true)]
+        [InlineData("", false)]
+        [InlineData("2020-06-15", true)]
+        [InlineData("2020-06-15", false)]
+        [InlineData("1900-06-15", true)]
+        [InlineData("1900-06-15", false)]
+        public async Task InvalidDueDateLeavesExistingIssuedDateUnchanged(string dateIssued, bool missingDueDate)
+        {
+            var person = await PrepareAssignment(true);
+            var assignment = await _context.KeySerialAssignments.SingleAsync();
+            var originalRequestedAt = assignment.RequestedAt;
+            var dateDue = missingDueDate
+                ? ""
+                : DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            var result = Assert.Single(await Import(LegacyHeader + "\r\n"
+                + Row("001", kerbUser: person.UserId, dateIssued: dateIssued, dateDue: dateDue)));
+
+            Assert.Contains("DateDue value not supplied or not in the future.", Assert.Single(result.ErrorMessage));
+            Assert.Equal(originalRequestedAt, assignment.RequestedAt);
+            _context.ChangeTracker.Clear();
+            var persistedAssignment = await _context.KeySerialAssignments.SingleAsync();
+            Assert.Equal(originalRequestedAt, persistedAssignment.RequestedAt);
+        }
+
         private async Task<Person> PrepareAssignment(bool existingAssignment)
         {
             _context.Users.Add(new User

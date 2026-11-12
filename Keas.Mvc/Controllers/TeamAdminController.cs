@@ -767,13 +767,6 @@ namespace Keas.Mvc.Controllers
                                         }
                                         else
                                         {
-                                            assignment.RequestedAt = r.DateIssued.HasValue && r.DateIssued < DateTime.Now ? r.DateIssued.Value.ToUniversalTime() : DateTime.Now.ToUniversalTime();
-                                            if (assignment.RequestedAt <= MinAssignmentDate)
-                                            {
-                                                //Force to a minimum data
-                                                assignment.RequestedAt = MinAssignmentDate;
-                                            }
-
                                             if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
                                             {
                                                 assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();
@@ -786,6 +779,13 @@ namespace Keas.Mvc.Controllers
 
                                             if (import)
                                             {
+                                                assignment.RequestedAt = r.DateIssued.HasValue && r.DateIssued < DateTime.Now ? r.DateIssued.Value.ToUniversalTime() : DateTime.Now.ToUniversalTime();
+                                                if (assignment.RequestedAt <= MinAssignmentDate)
+                                                {
+                                                    //Force to a minimum data
+                                                    assignment.RequestedAt = MinAssignmentDate;
+                                                }
+
                                                 assignment.PersonId = person.Id;
                                                 assignment.KeySerialId = serial.Id;
                                                 assignment.RequestedById = userIdentity;
