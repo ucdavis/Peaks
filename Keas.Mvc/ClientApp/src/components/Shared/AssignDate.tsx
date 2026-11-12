@@ -2,7 +2,7 @@ import { AssetSummary } from './AssetSummary';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import type { CalendarProps } from 'react-calendar';
-import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
+import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { FormGroup } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
 import { DateUtil } from '../../util/dates';
@@ -16,13 +16,16 @@ interface IProps {
   error?: IValidationError;
   label?: string;
   disabled?: boolean;
+  showToday?: boolean;
   onValidityChange?: (valid: boolean) => void;
 }
 
 const AssignDate = (props: IProps) => {
   const anchor = React.useRef<HTMLDivElement>(null);
+  const calendarPopup = React.useRef<HTMLDivElement>(null);
   const [calendarHost, setCalendarHost] = React.useState<HTMLDivElement>(null);
-  const [calendarOpen, setCalendarOpen] = React.useState(false);
+  const [calendarOpen, setCalendarOpen] = React.useState<boolean>();
+  const [pickerVersion, setPickerVersion] = React.useState(0);
   const [calendarView, setCalendarView] = React.useState<CalendarProps['view']>('month');
   const [dateError, setDateError] = React.useState('');
   const dateInputs = () => Array.from(anchor.current?.querySelectorAll<HTMLInputElement>('input[type="number"]') || []);
@@ -37,13 +40,38 @@ const AssignDate = (props: IProps) => {
     setDateError(partial ? message : inputs.some(input => !input.validity.valid) ? 'Enter a valid date (MM/DD/YYYY).' : '');
     props.onValidityChange?.(!partial && inputs.every(input => input.validity.valid));
   };
-  const resetValidation = () => {
+  const resetValidation = (date = props.date) => {
     dateInputs().forEach(input => input.setCustomValidity(''));
     setDateError('');
-    props.onValidityChange?.(!props.isRequired || !!props.date);
+    props.onValidityChange?.(!props.isRequired || !!date);
+  };
+  const changeDate = (date: Date) => {
+    // Clear must also discard unfinished segments when the value is already null.
+    // Keyboard clearing leaves every segment empty and does not need a remount.
+    if (date === null && !props.date && dateInputs().some(input => input.value !== '')) {
+      setPickerVersion(version => version + 1);
+    }
+    resetValidation(date);
+    props.onChangeDate(date);
+  };
+  const changeCalendarOpen = (open: boolean) => {
+    setCalendarOpen(open);
+    // The picker restores a complete value on visibility changes, but preserves
+    // unfinished segments when there is no value. Keep validation in sync.
+    if (props.date || dateInputs().every(input => input.value === '')) resetValidation();
+  };
+  const selectToday = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    changeDate(today);
+    setCalendarView('month');
+    setCalendarOpen(false);
   };
   // Calendar selections and external changes replace all three typed segments.
   React.useEffect(resetValidation, [props.date, props.disabled]);
+  React.useLayoutEffect(() => {
+    if (pickerVersion) anchor.current?.querySelector<HTMLButtonElement>('[aria-label="Clear date"]')?.focus();
+  }, [pickerVersion]);
   const largerPeriod = { month: 'year', year: 'decade', decade: 'century', century: 'century' }[calendarView];
   React.useEffect(() => {
     if (props.disabled) {
@@ -53,7 +81,8 @@ const AssignDate = (props: IProps) => {
   }, [props.disabled]);
 
   React.useLayoutEffect(() => {
-    if (!calendarOpen || !calendarHost || !anchor.current) return;
+    if (!calendarOpen || !calendarHost || !calendarPopup.current || !anchor.current) return;
+    const popup = calendarPopup.current;
     const positionCalendar = () => {
       const rect = anchor.current.getBoundingClientRect();
       const modal = anchor.current.closest('.modal');
@@ -62,11 +91,11 @@ const AssignDate = (props: IProps) => {
       const bottomBound = Math.min(window.innerHeight - 8, bounds?.bottom ?? window.innerHeight);
       const below = Math.max(0, bottomBound - rect.bottom - 8);
       const above = Math.max(0, rect.top - topBound - 8);
-      const height = calendarHost.scrollHeight;
+      const height = popup.scrollHeight;
       const openBelow = height <= below || below >= above;
       const available = openBelow ? below : above;
-      const left = Math.max(8, Math.min(rect.left, window.innerWidth - calendarHost.offsetWidth - 8));
-      Object.assign(calendarHost.style, {
+      const left = Math.max(8, Math.min(rect.left, window.innerWidth - popup.offsetWidth - 8));
+      Object.assign(popup.style, {
         left: `${left - rect.left}px`,
         top: `${openBelow ? rect.height + 8 : -Math.min(height, available) - 8}px`,
         maxHeight: `${available}px`
@@ -92,9 +121,11 @@ const AssignDate = (props: IProps) => {
         </legend>
         <div ref={anchor} className='peaks-date-picker relative' onChange={validateDate}>
         <DatePicker
+          key={pickerVersion}
           portalContainer={calendarHost}
-          onCalendarOpen={() => setCalendarOpen(true)}
-          onCalendarClose={() => setCalendarOpen(false)}
+          isOpen={calendarOpen}
+          onCalendarOpen={() => changeCalendarOpen(true)}
+          onCalendarClose={() => changeCalendarOpen(false)}
           className={`peaks-date-picker ${dateError || props.error?.path === 'date' ? 'peaks-date-picker--error' : ''}`}
           calendarIcon={<CalendarDaysIcon className='size-5' aria-hidden='true' />}
           calendarProps={{
@@ -116,15 +147,21 @@ const AssignDate = (props: IProps) => {
           calendarAriaLabel='Toggle calendar'
           required={props.isRequired}
           maxDate={maxPickerDate}
-          clearIcon={null}
+          clearAriaLabel='Clear date'
+          clearIcon={props.isRequired ? null : <XMarkIcon className='size-5' aria-hidden='true' />}
           value={props.date}
-          onChange={date => {
-            resetValidation();
-            props.onChangeDate(date as Date);
-          }}
+          onChange={date => changeDate(date as Date)}
           onInvalidChange={validateDate}
         />
-        <div ref={setCalendarHost} className='peaks-calendar-host' />
+        <div ref={calendarPopup} className={`peaks-calendar-host ${props.showToday ? '[&_.react-calendar]:rounded-b-none' : ''}`}>
+          <div ref={setCalendarHost} />
+          {calendarOpen && props.showToday && <div className='rounded-b-2xl border border-t-0 border-main-border bg-base-100 p-2'
+            onMouseDown={event => event.stopPropagation()}
+            onTouchStart={event => event.stopPropagation()}
+            onFocus={event => event.stopPropagation()}>
+            <button type='button' className='btn btn-ghost btn-sm w-full' onClick={selectToday}>Today</button>
+          </div>}
+        </div>
         </div>
         {dateError && <div className='text-sm text-error' role='alert'>{dateError}</div>}
         {props.error && props.error.path === 'date' && (

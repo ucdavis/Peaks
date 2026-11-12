@@ -1,4 +1,5 @@
 import { act, fireEvent, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderDateFields } from './renderDateFields';
 
 it('submits shared picker edits using the original MVC field name and date format', () => {
@@ -152,4 +153,68 @@ it('rejects partial dates instead of submitting an empty MVC date', () => {
   }
   expect(form.checkValidity()).toBe(true);
   expect(new FormData(form).get('StartDate')).toBe('');
+});
+
+it.each(['', '2026-11-06'])('submits a valid blank after explicitly clearing an unfinished date initialized to "%s"', initialDate => {
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+  document.body.innerHTML = `<form><div data-date-field><input name="StartDate" type="date" value="${initialDate}" /></div></form>`;
+  act(() => renderDateFields());
+  const form = document.querySelector('form');
+  userEvent.click(screen.getByRole('spinbutton', { name: 'Month' }));
+  fireEvent.change(screen.getByRole('spinbutton', { name: 'Year' }), { target: { value: '202' } });
+  expect(new FormData(form).get('StartDate')).toBe('incomplete-date');
+
+  userEvent.click(screen.getByRole('button', { name: 'Clear date' }));
+
+  expect(form.checkValidity()).toBe(true);
+  expect(new FormData(form).get('StartDate')).toBe('');
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Clear date' })).toHaveFocus();
+  for (const name of ['Month', 'Day', 'Year']) {
+    expect(screen.getByRole('spinbutton', { name })).toHaveValue(null);
+  }
+});
+
+it('submits today from the report shortcut after an incomplete required date', () => {
+  vi.useFakeTimers({ toFake: ['Date'] });
+  try {
+    vi.setSystemTime(new Date(2026, 10, 12, 23, 30));
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+    document.body.innerHTML = '<form><div data-date-field><input name="Start" type="date" required /></div></form>';
+    act(() => renderDateFields());
+    const form = document.querySelector('form');
+    userEvent.click(screen.getByRole('spinbutton', { name: 'Month' }));
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Month' }), { target: { value: '11' } });
+    expect(new FormData(form).get('Start')).toBe('incomplete-date');
+
+    userEvent.click(screen.getByRole('button', { name: 'Today' }));
+
+    expect(form.checkValidity()).toBe(true);
+    expect(new FormData(form).get('Start')).toBe('2026-11-12');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Clear date' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Toggle calendar' })).toHaveAttribute('aria-expanded', 'false');
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+it('can submit the restored date when the submit button closes an unfinished edit', () => {
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+  document.body.innerHTML = '<form><div data-date-field><input name="StartDate" type="date" value="2026-11-06" /></div><button type="submit">Submit</button></form>';
+  act(() => renderDateFields());
+  const form = document.querySelector('form');
+  const onSubmit = vi.fn((event: Event) => event.preventDefault());
+  form.addEventListener('submit', onSubmit);
+  const day = screen.getByRole('spinbutton', { name: 'Day' });
+  userEvent.click(day);
+  userEvent.type(day, '{backspace}', { skipClick: true });
+  expect(form.checkValidity()).toBe(false);
+
+  userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+  expect(onSubmit).toHaveBeenCalledOnce();
+  expect(form.checkValidity()).toBe(true);
+  expect(new FormData(form).get('StartDate')).toBe('2026-11-06');
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
