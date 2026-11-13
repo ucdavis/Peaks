@@ -28,7 +28,8 @@ export const fakePeople: IPersonInfo[] = [
     equipmentCount: 1,
     accessCount: 1,
     keyCount: 1,
-    workstationCount: 0
+    workstationCount: 0,
+    teamPermissionCount: 0
   },
   {
     person: {
@@ -57,7 +58,8 @@ export const fakePeople: IPersonInfo[] = [
     equipmentCount: 3,
     accessCount: 4,
     keyCount: 4,
-    workstationCount: 2
+    workstationCount: 2,
+    teamPermissionCount: 0
   },
   {
     person: {
@@ -86,7 +88,8 @@ export const fakePeople: IPersonInfo[] = [
     equipmentCount: 3,
     accessCount: 4,
     keyCount: 4,
-    workstationCount: 2
+    workstationCount: 2,
+    teamPermissionCount: 0
   },
   {
     person: {
@@ -115,6 +118,7 @@ export const fakePeople: IPersonInfo[] = [
     equipmentCount: 3,
     accessCount: 4,
     keyCount: 4,
-    workstationCount: 2
+    workstationCount: 2,
+    teamPermissionCount: 0
   }
 ];
