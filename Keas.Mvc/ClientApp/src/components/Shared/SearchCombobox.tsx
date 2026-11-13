@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { useDropdownDismiss } from './useDropdownDismiss';
 
 interface Props {
   id: string;
@@ -37,6 +38,8 @@ export const SearchCombobox = (props: Props) => {
   const [active, setActive] = useState(-1);
   const [pending, setPending] = useState(false);
   const input = useRef<HTMLInputElement>(null);
+  const dismiss = useCallback(() => { setOpen(false); setActive(-1); }, []);
+  const container = useDropdownDismiss(open && !props.disabled, dismiss);
   const search = useRef(props.onSearch);
   search.current = props.onSearch;
   // Serialize searches so an older response never overwrites a newer response.
@@ -78,10 +81,21 @@ export const SearchCombobox = (props: Props) => {
     commit(props.multiple ? [...selected, option] : [option]);
     setQuery(''); setActive(-1); input.current?.focus(); setOpen(false);
   };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault(); setOpen(true);
+      setActive(event.key === 'ArrowDown' ? Math.min(activeIndex + 1, choices.length - 1)
+        : activeIndex <= 0 ? choices.length - 1 : activeIndex - 1);
+    } else if (event.key === 'Enter' && expanded && choices.length) {
+      event.preventDefault(); choose(choices[activeIndex >= 0 ? activeIndex : 0]);
+    } else if (event.key === 'Escape' && open) {
+      event.preventDefault(); event.stopPropagation(); setOpen(false); setActive(-1);
+    } else if (event.key === 'Backspace' && !query && props.multiple && selected.length) {
+      commit(selected.slice(0, -1));
+    }
+  };
   return (
-    <div className='relative w-full min-w-0' onBlur={event => {
-      if (!event.currentTarget.contains(event.relatedTarget as Node)) { setOpen(false); setActive(-1); }
-    }}>
+    <div ref={container} className='relative w-full min-w-0'>
       <div className={`input flex h-auto min-h-10 w-full flex-wrap items-center gap-2 py-2 ${props.isInvalid ? 'input-error' : ''} ${props.disabled ? 'bg-base-200 opacity-60' : ''}`}>
         {props.multiple && selected.map((option, index) => (
           <span key={`${label(option)}-${index}`} className='badge badge-asset badge-soft h-auto max-w-full gap-1 py-1'>
@@ -105,19 +119,7 @@ export const SearchCombobox = (props: Props) => {
             if (!props.multiple && selected.length) commit([]);
             setQuery(event.target.value); setOpen(true); setActive(-1);
           }}
-          onKeyDown={event => {
-            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-              event.preventDefault(); setOpen(true);
-              setActive(event.key === 'ArrowDown' ? Math.min(activeIndex + 1, choices.length - 1)
-                : activeIndex <= 0 ? choices.length - 1 : activeIndex - 1);
-            } else if (event.key === 'Enter' && expanded && choices.length) {
-              event.preventDefault(); choose(choices[activeIndex >= 0 ? activeIndex : 0]);
-            } else if (event.key === 'Escape' && open) {
-              event.preventDefault(); event.stopPropagation(); setOpen(false); setActive(-1);
-            } else if (event.key === 'Backspace' && !query && props.multiple && selected.length) {
-              commit(selected.slice(0, -1));
-            }
-          }} />
+          onKeyDown={handleKeyDown} />
         {loading && <span role='status' aria-label='Searching' className='loading loading-spinner loading-xs' />}
         {props.clearButton && selected.length > 0 && !props.disabled && (
           <button type='button' className='btn btn-ghost btn-square btn-xs shrink-0' aria-label='Clear selection'
@@ -127,11 +129,12 @@ export const SearchCombobox = (props: Props) => {
         )}
       </div>
       {expanded && <ul id={`${props.id}-options`} role='listbox'
-        className='menu absolute inset-x-0 top-full z-50 mt-1 max-h-64 flex-nowrap overflow-y-auto rounded-box border border-base-content/15 bg-base-100 p-1 shadow-lg'>
+        tabIndex={-1} onKeyDown={handleKeyDown}
+        className='dropdown-scroll menu absolute start-0 top-full z-50 mt-1 max-h-64 w-full max-w-[calc(100vw-2rem)] flex-nowrap overflow-y-auto rounded-box border border-base-content/15 bg-base-100 p-1 shadow-lg'>
         {choices.map((option, index) => (
           <li key={index} role='option' id={`${props.id}-option-${index}`} aria-selected={index === activeIndex}
             onMouseDown={event => event.preventDefault()} onMouseMove={() => setActive(index)} onClick={() => choose(option)}>
-            <div className={`block break-words ${index === activeIndex ? 'bg-base-200' : ''}`}>
+            <div className={`block break-words hover:bg-base-300 active:bg-base-content/15 ${index === activeIndex ? 'bg-base-300' : ''}`}>
               {option.customOption ? `${props.newSelectionPrefix || 'Add: '}${label(option)}`
                 : props.renderMenuItemChildren ? props.renderMenuItemChildren(option, { text: query }, index) : label(option)}
             </div>

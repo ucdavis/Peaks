@@ -40,7 +40,7 @@ describe('DaisyUI search combobox', () => {
     expect((screen.getByRole('combobox') as HTMLInputElement).value).toBe('ABC');
   });
 
-  it('closes suggestions on Escape and blur, and disables selection', () => {
+  it('closes suggestions on Escape and outside focus, and disables selection', () => {
     const change = vi.fn();
     const view = render(<SearchCombobox id='tags' options={['Dell']} onChange={change} />);
     const input = screen.getByRole('combobox');
@@ -48,7 +48,7 @@ describe('DaisyUI search combobox', () => {
     fireEvent.keyDown(input, { key: 'Escape' });
     expect(screen.queryByRole('listbox')).toBeNull();
     fireEvent.focus(input);
-    fireEvent.blur(input);
+    fireEvent.focusIn(document.body);
     expect(screen.queryByRole('listbox')).toBeNull();
     view.rerender(<SearchCombobox id='tags' options={['Dell']} onChange={change} disabled />);
     expect((input as HTMLInputElement).disabled).toBe(true);

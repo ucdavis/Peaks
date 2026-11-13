@@ -198,7 +198,7 @@
                                                              aria-hidden="true"></hero-icon>
                                         </summary>
                                         <div
-                                            class="relative z-50 mt-1 max-h-[60vh] w-full overflow-y-auto rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:left-0 lg:top-full lg:mt-2 lg:w-80">
+                                            class="dropdown-scroll relative z-50 mt-1 max-h-[60vh] w-full overflow-y-auto rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:left-0 lg:top-full lg:mt-2 lg:w-80">
                                             @if ((await AuthorizationService.AuthorizeAsync(User,
                                         AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
                                             {
@@ -263,7 +263,7 @@
                                                        aria-hidden="true"></hero-icon>
                                         </summary>
                                         <div
-                                            class="relative z-50 mt-1 max-h-[60vh] w-full overflow-y-auto rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-80">
+                                            class="dropdown-scroll relative z-50 mt-1 max-h-[60vh] w-full overflow-y-auto rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-80">
                                             @foreach (var teamItem in await TeamsManager.GetMyTeams())
                                             {
                                                 <a class="flex items-center py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary"
