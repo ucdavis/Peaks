@@ -342,7 +342,7 @@ const EquipmentEditValues = (props: IProps) => {
         </div>
 
         <FormGroup className='space-y-2'>
-          <Label for='tags'>Tags</Label>
+          <Label for='searchTagsEquipmentEditValues'>Tags</Label>
           <SearchDefinedOptions
             definedOptions={props.tags}
             disabled={props.disableEditing}

@@ -99,21 +99,23 @@
 </head>
 
 <body class="flex min-h-screen flex-col bg-base-200 font-sans text-base-content">
-    @if (Configuration["Environment:ShowTestBanner"] == "Yes")
-    {
-        <div role="alert" class="shrink-0 bg-error text-error-content">
-            <div class="content-wrapper flex items-center justify-center gap-3 py-3 text-center sm:py-4">
-                <hero-icon name="exclamation-triangle" class="size-7 shrink-0 sm:size-8" aria-hidden="true"></hero-icon>
-                <p class="m-0 text-base font-semibold leading-snug sm:text-lg">
-                    <strong class="block text-lg font-bold uppercase tracking-wide sm:inline sm:text-xl">Test site</strong>
-                    <span class="block sm:ml-3 sm:inline">Beta testing. Data will not be retained.</span>
-                </p>
-            </div>
-        </div>
-    }
     <div class="flex-1">
-        <header class="bg-base-100 py-4">
-            <div class="content-wrapper">
+        <header class="bg-base-100">
+            <a href="#main-content"
+               class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[1200] focus:rounded-md focus:bg-primary focus:px-4 focus:py-3 focus:font-semibold focus:text-primary-content focus:outline-2 focus:outline-offset-2 focus:outline-primary">Skip to main content</a>
+            @if (Configuration["Environment:ShowTestBanner"] == "Yes")
+            {
+                <div role="alert" class="shrink-0 bg-error text-error-content">
+                    <div class="content-wrapper flex items-center justify-center gap-3 py-3 text-center sm:py-4">
+                        <hero-icon name="exclamation-triangle" class="size-7 shrink-0 sm:size-8" aria-hidden="true"></hero-icon>
+                        <p class="m-0 text-base font-semibold leading-normal sm:text-lg">
+                            <strong class="block text-lg font-bold uppercase tracking-wide sm:inline sm:text-xl">Test site</strong>
+                            <span class="block sm:ml-3 sm:inline">Beta testing. Data will not be retained.</span>
+                        </p>
+                    </div>
+                </div>
+            }
+            <div class="content-wrapper py-4">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div class="min-w-0">
 
@@ -121,15 +123,16 @@
                            asp-area="" asp-controller="Home" asp-action="Index">
                             <img class="h-10 w-auto shrink-0" src="~/media/peaks.svg" alt="" width="40" height="40">
                             <div class="min-w-0">
-                                <h1 class="text-xl font-bold">PEAKS</h1>
-                                <p class="text-sm text-base-content/70">People, Equipment, Access, Keys and Space</p>
+                                <h1 class="text-xl font-bold leading-normal">PEAKS</h1>
+                                <p class="text-sm leading-normal text-base-content/70">People, Equipment, Access, Keys and Space</p>
                             </div>
                         </a>
 
 
                     </div>
                     <div class="shrink-0">
-                        <a target="blank" href="https://ucdavis.edu">
+                        <a target="_blank" rel="noopener noreferrer" href="https://ucdavis.edu"
+                           class="inline-flex min-h-11 items-center justify-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                             <img class="mx-auto w-28 max-w-full opacity-80 sm:w-32" src="~/media/ucdavisbluelogo.svg"
                                  asp-append-version="true" alt="UC Davis Logo">
                         </a>
@@ -147,8 +150,7 @@
             <div class="content-wrapper">
                 <button
                     class="my-2 inline-flex items-center gap-2 rounded-md pe-4 py-2 text-lg font-semibold text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
-                    type="button" data-navigation-toggle aria-controls="navbarText" aria-expanded="false"
-                    aria-label="Toggle navigation">
+                    type="button" data-navigation-toggle aria-controls="navbarText" aria-expanded="false">
                     <hero-icon name="bars-3" class="size-5" aria-hidden="true"></hero-icon>
                     <span class="text-lg font-semibold text-base-content">Menu</span>
                 </button>
@@ -303,37 +305,37 @@
                         </div>
                     </div>
                 </nav>
-                @if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"] as string))
-                {
-                    <div class="content-wrapper">
-                        <div class="alert alert-error">
-                            <button type="button" class="float-right cursor-pointer" data-dismiss-message
-                                    aria-label="Dismiss message">
-                                <hero-icon name="x-mark" class="size-5"></hero-icon>
-                            </button> @TempData["ErrorMessage"]
+                <main id="main-content" tabindex="-1" class="content-wrapper mt-8">
+                    @if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"] as string))
+                    {
+                        <div class="mb-4">
+                            <div class="alert alert-error">
+                                <button type="button" class="btn btn-ghost btn-square min-h-11 min-w-11 float-right" data-dismiss-message
+                                        aria-label="Dismiss message">
+                                    <hero-icon name="x-mark" class="size-5"></hero-icon>
+                                </button> @TempData["ErrorMessage"]
+                            </div>
                         </div>
-                    </div>
-                }
-                @if (!string.IsNullOrWhiteSpace(TempData["Message"] as string))
-                {
-                    <div class="content-wrapper">
-                        <div class="alert alert-info">
-                            <button type="button" class="float-right cursor-pointer" data-dismiss-message
-                                    aria-label="Dismiss message">
-                                <hero-icon name="x-mark" class="size-5"></hero-icon>
-                            </button> @TempData["Message"]
+                    }
+                    @if (!string.IsNullOrWhiteSpace(TempData["Message"] as string))
+                    {
+                        <div class="mb-4">
+                            <div class="alert alert-info">
+                                <button type="button" class="btn btn-ghost btn-square min-h-11 min-w-11 float-right" data-dismiss-message
+                                        aria-label="Dismiss message">
+                                    <hero-icon name="x-mark" class="size-5"></hero-icon>
+                                </button> @TempData["Message"]
+                            </div>
                         </div>
-                    </div>
-                }
+                    }
 
-                <main role="main" class="content-wrapper mt-8">
                     @* Inject React *@
                     <div id="root"></div>
 
                     @RenderBody()
                 </main>
             </div>
-            <footer class="content-wrapper mt-8 shrink-0 py-6 text-sm text-base-content/60">
+            <footer class="content-wrapper mt-8 shrink-0 py-6 text-sm leading-normal text-base-content/60">
                 <p>Copyright &copy; @DateTime.Now.Year The Regents of the University of California, Davis campus.
                     All rights reserved.</p>
                 </footer>

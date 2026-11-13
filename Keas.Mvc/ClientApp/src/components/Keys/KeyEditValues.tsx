@@ -125,7 +125,7 @@ const KeyEditValues = (props: IProps) => {
         </FormFeedback>
       </FormGroup>
       <FormGroup>
-        <Label>Tags</Label>
+        <Label for='searchTagsKeyEditValues'>Tags</Label>
         <SearchDefinedOptions
           definedOptions={props.searchableTags}
           disabled={props.disableEditing}
