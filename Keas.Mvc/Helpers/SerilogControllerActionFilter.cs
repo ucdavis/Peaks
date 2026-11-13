@@ -32,7 +32,8 @@ namespace Keas.Mvc.Helpers
             _diagnosticContext.Set("Scheme", request.Scheme);
 
             // Only set it if available. You're not sending sensitive data in a querystring right?!
-            if (request.QueryString.HasValue)
+            if (request.QueryString.HasValue && !request.Path.StartsWithSegments("/oauth") &&
+                !request.Path.StartsWithSegments("/login") && !request.Path.StartsWithSegments("/mcp"))
             {
                 _diagnosticContext.Set("QueryString", request.QueryString.Value);
             }

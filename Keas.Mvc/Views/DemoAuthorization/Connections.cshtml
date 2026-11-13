@@ -1,0 +1,13 @@
+@model Keas.Mvc.Controllers.DemoConnections
+@{ Layout = null; }
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>PEAKS connections</title>
+<style>body{font:18px system-ui;background:#f3f5f8;color:#172b4d}main{max-width:750px;margin:6vh auto;background:white;padding:32px;border-top:8px solid #ffbf00}article{border-top:1px solid #ddd;padding:16px 0}button{font:inherit;padding:8px 16px;cursor:pointer}</style></head>
+<body><main><h1>PEAKS MCP connections</h1><p>Signed in as <strong>@Model.User</strong>. Read-only access to the Sandbox Team.</p>
+@if (Model.Connections.Count == 0) { <p>No active connections. Connect the PEAKS plugin from Codex to get started.</p> }
+@foreach (var connection in Model.Connections) {
+<article><h2>@connection.Client</h2><p>Consent expires @connection.Expires?.ToString("u")</p>
+<form method="post" action="/oauth/connections/@connection.Id/revoke">@Html.AntiForgeryToken()<button type="submit">Revoke access</button></form></article>
+}
+<p><a href="/sandbox/equipment">Open sandbox inventory</a> · <a href="/logout">Sign out / switch user</a></p>
+<p>Demo prompts: What equipment expires this week? What Apple equipment does Javier Morales have?</p></main></body></html>
