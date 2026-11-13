@@ -82,7 +82,7 @@ const WorkstationEditValues = (props: IProps) => {
         </FormGroup>
 
         <FormGroup>
-          <Label for='tags'>Tags</Label>
+          <Label for='searchTagsWorkstationEditValues'>Tags</Label>
           <SearchDefinedOptions
             definedOptions={props.tags}
             disabled={props.disableEditing}

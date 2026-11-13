@@ -13,7 +13,7 @@
 <div class="space-y-8 pb-8">
     <header class="space-y-2">
         @await Html.PartialAsync("_ActiveTeamEyebrow")
-        <h1 class="m-0 text-3xl font-semibold text-base-content">Welcome to PEAKS, @User.GetNameClaim()</h1>
+        <h1 class="m-0 text-3xl font-semibold leading-normal text-base-content">Welcome to PEAKS, @User.GetNameClaim()</h1>
         <p class="m-0 text-lg text-base-content/70">View your assignments and manage your team's assets.</p>
     </header>
 
@@ -65,7 +65,7 @@
     }
 
     <section aria-labelledby="quick-actions-heading" class="space-y-4">
-        <h2 id="quick-actions-heading" class="mb-2 text-2xl font-semibold text-base-content">Quick Actions</h2>
+        <h2 id="quick-actions-heading" class="mb-2 text-2xl font-semibold leading-normal text-base-content">Quick Actions</h2>
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             <a asp-controller="Confirm" asp-action="MyStuff"
                class="group block rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -74,7 +74,7 @@
                     <hero-icon name="arrow-right"
                                class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
                 </div>
-                <h3 class="m-0 text-xl font-semibold">MyStuff</h3>
+                <h3 class="m-0 text-xl font-semibold leading-normal">MyStuff</h3>
                 <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">View your assigned keys, equipment, access,
                     workstations, and documents.</p>
                 </a>
@@ -87,7 +87,7 @@
                             <hero-icon name="arrow-right"
                                        class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
                         </div>
-                        <h3 class="m-0 text-xl font-semibold">Administer Team</h3>
+                        <h3 class="m-0 text-xl font-semibold leading-normal">Administer Team</h3>
                         <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">Manage your team's settings, permissions,
                             and imports.</p>
                         </a>
@@ -101,7 +101,7 @@
                                 <hero-icon name="arrow-right"
                                            class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
                             </div>
-                            <h3 class="m-0 text-xl font-semibold">Team Assets</h3>
+                            <h3 class="m-0 text-xl font-semibold leading-normal">Team Assets</h3>
                             <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">Browse your team's people and their asset
                                 assignments.</p>
                             </a>
@@ -121,7 +121,7 @@
                 AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.SpaceMasterAccess)).Succeeded;
 
                     <section aria-labelledby="browse-assets-heading" class="space-y-4">
-                        <h2 id="browse-assets-heading" class="m-0 text-2xl font-semibold text-base-content">Browse Assets</h2>
+                        <h2 id="browse-assets-heading" class="m-0 text-2xl font-semibold leading-normal text-base-content">Browse Assets</h2>
                         <ul class="m-0 max-w-2xl list-none divide-y divide-main-border p-0">
                             <li class="people-color">
                                 <a href="/@teamSlug/people"

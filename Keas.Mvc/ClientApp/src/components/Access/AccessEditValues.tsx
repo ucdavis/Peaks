@@ -83,7 +83,7 @@ const AccessEditValues = (props: IProps) => {
           </FormFeedback>
         </FormGroup>
         <FormGroup>
-          <Label>Tags</Label>
+          <Label for='searchTags'>Tags</Label>
           <SearchDefinedOptions
             definedOptions={props.tags}
             disabled={props.disableEditing}
