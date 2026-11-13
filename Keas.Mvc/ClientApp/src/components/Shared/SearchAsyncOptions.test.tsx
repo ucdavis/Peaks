@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import SearchAsyncOptions from './SearchAsyncOptions';
 
-it('searches asynchronously, selects a server result and hides the menu on blur after rerender', async () => {
+it('searches asynchronously, selects a server result and hides the menu on outside focus after rerender', async () => {
   const onSearch = vi.fn();
   const onChange = vi.fn();
   const props = {
@@ -32,7 +32,7 @@ it('searches asynchronously, selects a server result and hides the menu on blur 
   await waitFor(() => expect(onSearch).toHaveBeenCalledWith('San'));
   rerender(<SearchAsyncOptions {...props} options={[person]} />);
   expect(await screen.findByRole('option')).toBeVisible();
-  fireEvent.blur(input);
+  fireEvent.focusIn(document.body);
   await waitFor(() =>
     expect(screen.queryByRole('option')).not.toBeInTheDocument()
   );

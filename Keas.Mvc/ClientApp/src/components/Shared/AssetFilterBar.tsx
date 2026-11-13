@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useDropdownDismiss } from './useDropdownDismiss';
 
 export interface AssetFilterCategory {
   id: string;
@@ -20,6 +21,11 @@ export const AssetFilterBar = ({
   const [query, setQuery] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const [active, setActive] = React.useState(-1);
+  const dismiss = React.useCallback(() => {
+    setOpen(false);
+    setActive(-1);
+  }, []);
+  const container = useDropdownDismiss(open, dismiss);
   const term = query.trim();
   const suggestions = categories.flatMap(category => {
     const matches = Array.from(new Set(category.options))
@@ -53,8 +59,29 @@ export const AssetFilterBar = ({
     option.category.onChange([...option.category.selected, option.value]);
     setQuery('');
     setActive(-1);
-    setOpen(false);
     input.current?.focus();
+    setOpen(false);
+  };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      setOpen(true);
+      if (suggestions.length)
+        setActive(index =>
+          event.key === 'ArrowDown'
+            ? (index + 1) % suggestions.length
+            : index <= 0
+            ? suggestions.length - 1
+            : index - 1
+        );
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (open && active >= 0) add(active);
+    } else if (event.key === 'Escape') {
+      if (open) event.stopPropagation();
+      setOpen(false);
+      setActive(-1);
+    }
   };
 
   React.useEffect(() => {
@@ -68,13 +95,8 @@ export const AssetFilterBar = ({
     <div className='mb-5 space-y-3'>
       <div className='flex items-center gap-3'>
         <div
+          ref={container}
           className='relative min-w-0 flex-1'
-          onBlur={event => {
-            if (!event.currentTarget.contains(event.relatedTarget)) {
-              setOpen(false);
-              setActive(-1);
-            }
-          }}
         >
           <label className='input flex w-full items-center gap-3'>
             <MagnifyingGlassIcon
@@ -106,35 +128,17 @@ export const AssetFilterBar = ({
                 setOpen(true);
                 setActive(-1);
               }}
-              onKeyDown={event => {
-                if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                  event.preventDefault();
-                  setOpen(true);
-                  if (suggestions.length)
-                    setActive(index =>
-                      event.key === 'ArrowDown'
-                        ? (index + 1) % suggestions.length
-                        : index <= 0
-                        ? suggestions.length - 1
-                        : index - 1
-                    );
-                } else if (event.key === 'Enter') {
-                  event.preventDefault();
-                  if (open && active >= 0) add(active);
-                } else if (event.key === 'Escape') {
-                  if (open) event.stopPropagation();
-                  setOpen(false);
-                  setActive(-1);
-                }
-              }}
+              onKeyDown={handleKeyDown}
             />
           </label>
           {open && (
             <div
               id={`${id}-suggestions`}
               role='listbox'
+              tabIndex={-1}
+              onKeyDown={handleKeyDown}
               aria-label='Filter suggestions'
-              className='absolute inset-x-0 top-full z-30 mt-2 max-h-80 overflow-y-auto rounded-box border border-main-border bg-base-100 p-2 shadow-lg'
+              className='dropdown-scroll absolute start-0 top-full z-30 mt-2 max-h-80 w-full max-w-[calc(100vw-2rem)] overflow-y-auto rounded-box border border-main-border bg-base-100 p-2 shadow-lg'
             >
               {suggestions.length === 0 && (
                 <p className='m-0 px-3 py-4 text-sm text-base-content/60'>
@@ -164,10 +168,10 @@ export const AssetFilterBar = ({
                         id={`${id}-option-${option.index}`}
                         role='option'
                         aria-selected={active === option.index}
-                        className={`cursor-pointer rounded-sm px-3 py-2 text-sm break-words ${
+                        className={`cursor-pointer rounded-sm px-3 py-2 text-sm break-words active:bg-base-content/15 ${
                           active === option.index
-                            ? 'bg-base-200'
-                            : 'hover:bg-base-200'
+                            ? 'bg-base-300'
+                            : 'hover:bg-base-300'
                         }`}
                         onMouseDown={event => event.preventDefault()}
                         onClick={() => add(option.index)}
