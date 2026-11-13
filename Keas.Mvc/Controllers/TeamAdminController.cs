@@ -722,20 +722,11 @@ namespace Keas.Mvc.Controllers
                                         {
 
                                             assignment = new KeySerialAssignment();
-                                            if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
+                                            assignment.RequestedAt = r.DateIssued.HasValue && r.DateIssued < DateTime.Now ? r.DateIssued.Value.ToUniversalTime() : DateTime.Now.ToUniversalTime();
+                                            if (assignment.RequestedAt <= MinAssignmentDate)
                                             {
-                                                assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
-                                                if (assignment.RequestedAt <= MinAssignmentDate)
-                                                {
-                                                    //Force to a minimum data
-                                                    assignment.RequestedAt = MinAssignmentDate;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                ModelState.AddModelError("DateIssued",
-                                                    "DateIssued value not supplied or not in the past.");
-                                                import = false;
+                                                //Force to a minimum data
+                                                assignment.RequestedAt = MinAssignmentDate;
                                             }
 
                                             if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
@@ -776,22 +767,6 @@ namespace Keas.Mvc.Controllers
                                         }
                                         else
                                         {
-                                            if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
-                                            {
-                                                assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
-                                                if (assignment.RequestedAt <= MinAssignmentDate)
-                                                {
-                                                    //Force to a minimum data
-                                                    assignment.RequestedAt = MinAssignmentDate;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                ModelState.AddModelError("DateIssued",
-                                                    "DateIssued value not supplied or not in the past.");
-                                                import = false;
-                                            }
-
                                             if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
                                             {
                                                 assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();
@@ -804,6 +779,13 @@ namespace Keas.Mvc.Controllers
 
                                             if (import)
                                             {
+                                                assignment.RequestedAt = r.DateIssued.HasValue && r.DateIssued < DateTime.Now ? r.DateIssued.Value.ToUniversalTime() : DateTime.Now.ToUniversalTime();
+                                                if (assignment.RequestedAt <= MinAssignmentDate)
+                                                {
+                                                    //Force to a minimum data
+                                                    assignment.RequestedAt = MinAssignmentDate;
+                                                }
+
                                                 assignment.PersonId = person.Id;
                                                 assignment.KeySerialId = serial.Id;
                                                 assignment.RequestedById = userIdentity;
