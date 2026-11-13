@@ -89,7 +89,7 @@ export const SearchCombobox = (props: Props) => {
     } else if (event.key === 'Enter' && expanded && choices.length) {
       event.preventDefault(); choose(choices[activeIndex >= 0 ? activeIndex : 0]);
     } else if (event.key === 'Escape' && open) {
-      event.preventDefault(); event.stopPropagation(); setOpen(false); setActive(-1);
+      event.preventDefault(); event.stopPropagation(); input.current?.focus(); setOpen(false); setActive(-1);
     } else if (event.key === 'Backspace' && !query && props.multiple && selected.length) {
       commit(selected.slice(0, -1));
     }

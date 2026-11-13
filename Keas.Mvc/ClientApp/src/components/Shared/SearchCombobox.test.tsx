@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { describe, expect, it, vi, afterEach } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { SearchCombobox } from './SearchCombobox';
 
 afterEach(cleanup);
@@ -53,6 +53,27 @@ describe('DaisyUI search combobox', () => {
     view.rerender(<SearchCombobox id='tags' options={['Dell']} onChange={change} disabled />);
     expect((input as HTMLInputElement).disabled).toBe(true);
     expect(change).not.toHaveBeenCalled();
+  });
+
+  it('returns focus from the listbox to the input on Escape and resets the active option', () => {
+    const change = vi.fn();
+    render(<SearchCombobox id='tags' options={['Laptop', 'Desktop']} onChange={change} />);
+    const input = screen.getByRole('combobox');
+    act(() => input.focus());
+    const list = screen.getByRole('listbox');
+    act(() => list.focus());
+    expect(list).toHaveFocus();
+    fireEvent.keyDown(list, { key: 'ArrowDown' });
+    fireEvent.keyDown(list, { key: 'ArrowDown' });
+    fireEvent.keyDown(list, { key: 'Escape' });
+    expect(input).toHaveFocus();
+    expect(input).toHaveAttribute('aria-expanded', 'false');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    expect(change).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    expect(screen.getByRole('option', { name: 'Laptop' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('debounces remote searches, honors minimum length, and displays results', async () => {
