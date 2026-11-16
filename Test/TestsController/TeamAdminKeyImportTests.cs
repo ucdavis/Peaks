@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
@@ -30,6 +31,7 @@ namespace Test.TestsController
         private readonly ApplicationDbContext _context;
         private readonly TeamAdminController _controller;
         private readonly Team _team;
+        private readonly Mock<IIdentityService> _identityService = new Mock<IIdentityService>(MockBehavior.Strict);
 
         public TeamAdminKeyImportTests()
         {
@@ -51,7 +53,7 @@ namespace Test.TestsController
                 }, "Test"))
             };
             _controller = new TeamAdminController(_context,
-                Mock.Of<IIdentityService>(MockBehavior.Strict),
+                _identityService.Object,
                 Mock.Of<IUserService>(MockBehavior.Strict),
                 Mock.Of<IFinancialService>(MockBehavior.Strict),
                 Mock.Of<INotificationService>(MockBehavior.Strict))
@@ -149,6 +151,136 @@ namespace Test.TestsController
             Assert.Empty(await _context.Keys.ToListAsync());
         }
 
+        [Theory]
+        [InlineData(false, false)]
+        [InlineData(false, true)]
+        [InlineData(true, false)]
+        [InlineData(true, true)]
+        public async Task MissingOrFutureIssuedDateUsesImportTime(bool existingAssignment, bool futureIssuedDate)
+        {
+            var person = await PrepareAssignment(existingAssignment);
+            var dateIssued = futureIssuedDate
+                ? DateTime.Today.AddDays(30).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+                : "";
+            var dateDue = DateTime.Today.AddDays(90);
+            var beforeImport = DateTime.UtcNow;
+
+            var result = Assert.Single(await Import(LegacyHeader + "\r\n"
+                + Row("001", kerbUser: person.UserId, dateIssued: dateIssued,
+                    dateDue: dateDue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))));
+            var afterImport = DateTime.UtcNow;
+
+            Assert.True(result.Success);
+            Assert.Empty(result.ErrorMessage);
+            _context.ChangeTracker.Clear();
+            var assignment = await _context.KeySerialAssignments.SingleAsync();
+            var serial = await _context.KeySerials.SingleAsync();
+            Assert.InRange(assignment.RequestedAt, beforeImport, afterImport);
+            Assert.Equal(dateDue.ToUniversalTime(), assignment.ExpiresAt);
+            Assert.Equal(person.Id, assignment.PersonId);
+            Assert.Equal(serial.Id, assignment.KeySerialId);
+            Assert.Equal(assignment.Id, serial.KeySerialAssignmentId);
+        }
+
+        [Theory]
+        [InlineData(false, 2020)]
+        [InlineData(true, 2020)]
+        [InlineData(false, 1900)]
+        [InlineData(true, 1900)]
+        public async Task PastIssuedDateIsPreservedWithTheExistingMinimum(bool existingAssignment, int issuedYear)
+        {
+            var person = await PrepareAssignment(existingAssignment);
+            var dateIssued = new DateTime(issuedYear, 6, 15);
+            var expectedIssued = issuedYear == 1900
+                ? new DateTime(1970, 1, 1)
+                : dateIssued.ToUniversalTime();
+            var dateDue = DateTime.Today.AddDays(90);
+
+            var result = Assert.Single(await Import(LegacyHeader + "\r\n"
+                + Row("001", kerbUser: person.UserId,
+                    dateIssued: dateIssued.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                    dateDue: dateDue.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))));
+
+            Assert.True(result.Success);
+            Assert.Empty(result.ErrorMessage);
+            _context.ChangeTracker.Clear();
+            var assignment = await _context.KeySerialAssignments.SingleAsync();
+            var serial = await _context.KeySerials.SingleAsync();
+            Assert.Equal(expectedIssued, assignment.RequestedAt);
+            Assert.Equal(dateDue.ToUniversalTime(), assignment.ExpiresAt);
+            Assert.Equal(person.Id, assignment.PersonId);
+            Assert.Equal(serial.Id, assignment.KeySerialId);
+            Assert.Equal(assignment.Id, serial.KeySerialAssignmentId);
+        }
+
+        [Theory]
+        [InlineData("", true)]
+        [InlineData("", false)]
+        [InlineData("2020-06-15", true)]
+        [InlineData("2020-06-15", false)]
+        [InlineData("1900-06-15", true)]
+        [InlineData("1900-06-15", false)]
+        public async Task InvalidDueDateLeavesExistingIssuedDateUnchanged(string dateIssued, bool missingDueDate)
+        {
+            var person = await PrepareAssignment(true);
+            var assignment = await _context.KeySerialAssignments.SingleAsync();
+            var originalRequestedAt = assignment.RequestedAt;
+            var dateDue = missingDueDate
+                ? ""
+                : DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            var result = Assert.Single(await Import(LegacyHeader + "\r\n"
+                + Row("001", kerbUser: person.UserId, dateIssued: dateIssued, dateDue: dateDue)));
+
+            Assert.Contains("DateDue value not supplied or not in the future.", Assert.Single(result.ErrorMessage));
+            Assert.Equal(originalRequestedAt, assignment.RequestedAt);
+            _context.ChangeTracker.Clear();
+            var persistedAssignment = await _context.KeySerialAssignments.SingleAsync();
+            Assert.Equal(originalRequestedAt, persistedAssignment.RequestedAt);
+        }
+
+        private async Task<Person> PrepareAssignment(bool existingAssignment)
+        {
+            _context.Users.Add(new User
+            {
+                Id = "test-importer", FirstName = "Test", LastName = "Importer", Email = "importer@example.com"
+            });
+            var person = new Person
+            {
+                Team = _team,
+                FirstName = "Test", LastName = "Assignee", Email = "assignee@example.com",
+                User = new User
+                {
+                    Id = "test-assignee", FirstName = "Test", LastName = "Assignee", Email = "assignee@example.com"
+                }
+            };
+            _context.People.Add(person);
+            await _context.SaveChangesAsync();
+            _identityService.Setup(service => service.GetOrCreatePersonFromKerberos(
+                    person.UserId, _team.Id, It.IsAny<Team>(), "Test Importer", "test-importer", "CSV Import -- Keys"))
+                .ReturnsAsync((person, 0));
+
+            if (existingAssignment)
+            {
+                var serial = new KeySerial
+                {
+                    Key = new Key { Name = "Existing key", Code = "TEST", Team = _team },
+                    Team = _team, Number = "001", Name = "001"
+                };
+                var assignment = new KeySerialAssignment
+                {
+                    KeySerial = serial, Person = person, RequestedById = "test-importer",
+                    RequestedAt = new DateTime(2000, 1, 1), ExpiresAt = DateTime.UtcNow.AddDays(7)
+                };
+                _context.KeySerialAssignments.Add(assignment);
+                await _context.SaveChangesAsync();
+                serial.KeySerialAssignmentId = assignment.Id;
+                await _context.SaveChangesAsync();
+            }
+
+            return person;
+        }
+
         private async Task<List<KeyImportResults>> Import(string csv)
         {
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(csv));
@@ -157,11 +289,12 @@ namespace Test.TestsController
             return Assert.IsType<List<KeyImportResults>>(result.Model);
         }
 
-        private static string Row(string serialNumber, string serialTags = null)
+        private static string Row(string serialNumber, string serialTags = null, string kerbUser = "",
+            string dateIssued = "", string dateDue = "")
         {
             var fields = new List<string>
             {
-                "Test key", "TEST", "", "key-only", serialNumber, "", "", "", "Active", ""
+                "Test key", "TEST", "", "key-only", serialNumber, kerbUser, dateIssued, dateDue, "Active", ""
             };
             if (serialTags != null)
             {
