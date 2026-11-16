@@ -60,7 +60,7 @@
                         <td class="font-semibold">@item.AccountName</td><td>@item.AccountId</td><td>@item.ApiBasePath</td>
                         <td class="text-right"><form asp-action="SelectAccount" method="post">
                             <input name="AccountId" type="hidden" value="@item.AccountId" />
-                            <button type="submit" class="btn btn-sm btn-outline" aria-label="Select @item.AccountName">Select account</button>
+                            <button type="submit" class="btn btn-sm btn-outline" aria-label="Select account @item.AccountName">Select account</button>
                         </form></td>
                     </tr>
                 }

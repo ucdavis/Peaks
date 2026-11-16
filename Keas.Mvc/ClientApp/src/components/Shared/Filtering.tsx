@@ -24,7 +24,7 @@ export const ColumnFilterHeaders = <T extends object>({
     {headerGroups.map(group => (
       <tr className='asset-table-filters' key={group.id}>
         {group.headers.map(header => (
-          <th key={header.id}>
+          <td key={header.id}>
             <div
               aria-label={`Filter ${
                 typeof header.column.columnDef.header === 'string'
@@ -39,7 +39,7 @@ export const ColumnFilterHeaders = <T extends object>({
                   )
                 : null}
             </div>
-          </th>
+          </td>
         ))}
       </tr>
     ))}

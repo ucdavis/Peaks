@@ -1,6 +1,6 @@
 import { AssetSummary } from '../Shared/AssetSummary';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { useContext, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -21,6 +21,7 @@ interface IProps {
 // TODO: need a way to clear out selected person
 // Assign a person via search lookup, unless a person is already provided
 const AssignPerson = (props: IProps) => {
+  const inputId = useId();
   const context = useContext(Context);
   const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
   const [people, setPeople] = useState<IPerson[]>([]);
@@ -33,9 +34,9 @@ const AssignPerson = (props: IProps) => {
     return (
       <div>
         <FormGroup className='space-y-2'>
-          <Label for='searchPeople' className='block text-sm font-semibold'>{props.label}</Label>
+          <Label for={inputId} className='block text-sm font-semibold'>{props.label}</Label>
           <SearchCombobox
-            id='searchPeople' // for accessibility
+            id={inputId}
             isInvalid={isInvalid}
             disabled={props.disabled}
             isLoading={isSearchLoading}

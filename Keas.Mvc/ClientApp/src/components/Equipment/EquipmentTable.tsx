@@ -68,7 +68,7 @@ const EquipmentTable = (props: IProps) => {
             onClick={() => props.showDetails(data.row.original)}
           />
         ),
-        header: ' '
+        header: 'Details'
       },
       {
         header: 'Serial Number',

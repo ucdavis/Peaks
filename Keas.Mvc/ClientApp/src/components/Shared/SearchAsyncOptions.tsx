@@ -1,7 +1,9 @@
+import { InputHTMLAttributes } from 'react';
 import { SearchCombobox } from './SearchCombobox';
 
 interface IProps {
   id: string;
+  inputProps?: InputHTMLAttributes<HTMLInputElement>;
   isLoading: boolean;
   minLength: number;
   placeholder: string;
@@ -23,6 +25,7 @@ const SearchAsyncOptions = (props: IProps) => {
   return (
     <SearchCombobox
       id={props.id} // for accessibility
+      inputProps={props.inputProps}
       isLoading={props.isLoading}
       minLength={props.minLength}
       placeholder={props.placeholder}

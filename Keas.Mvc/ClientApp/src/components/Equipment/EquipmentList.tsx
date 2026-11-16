@@ -36,7 +36,7 @@ const EquipmentList = (props: IProps) => {
       <table className='table'>
         <thead>
           <tr>
-            <th />
+            <th scope='col'>Details</th>
             <th>Serial</th>
             <th>Name</th>
             <th>Assigned To</th>

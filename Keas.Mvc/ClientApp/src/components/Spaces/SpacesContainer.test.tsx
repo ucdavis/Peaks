@@ -67,7 +67,7 @@ describe('Space Container', () => {
     });
 
     const headerRecord = container.querySelector('.table-row').textContent;
-    expect(headerRecord).toBe(' RoomRoom NameKeysEquipmentWorkstations ');
+    expect(headerRecord).toBe('DetailsRoomRoom NameKeysEquipmentWorkstations (In Use / Total)');
   });
 
   it('Shows spaces list', async () => {

@@ -66,7 +66,7 @@ describe('Key Container', () => {
     });
 
     const headerRecord = container.querySelector('.table-row').textContent;
-    expect(headerRecord).toBe(' Key NameKey CodeSerials SpacesActions');
+    expect(headerRecord).toBe('DetailsKey NameKey CodeSerials (In Use / Total)SpacesActions');
   });
 
   it('Shows Add Button', async () => {

@@ -1,6 +1,6 @@
 import { DisplayField } from '../Shared/AssetSummary';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { useContext, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
@@ -18,6 +18,7 @@ interface IProps {
 
 // Search for existing workstation then send selection back to parent
 const SearchWorkstations = (props: IProps) => {
+  const inputId = useId();
   const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
   const [workstations, setWorkstations] = useState<IWorkstation[]>([]);
   const context = useContext(Context);
@@ -25,10 +26,10 @@ const SearchWorkstations = (props: IProps) => {
   const renderSelectWorkstation = () => {
     return (
       <div>
-        <label>Pick a workstation to assign</label>
+        <label htmlFor={inputId}>Pick a workstation to assign</label>
         <div>
           <SearchCombobox
-            id='searchWorkstations' // for accessibility
+            id={inputId}
             isLoading={isSearchLoading}
             minLength={3}
             placeholder='Search for workstation by name or room'

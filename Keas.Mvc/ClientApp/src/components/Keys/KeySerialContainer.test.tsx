@@ -68,7 +68,7 @@ describe('Key Serial Container', () => {
     const headerRecord = document.querySelector('.table-row').textContent;
 
     expect(headerRecord).toBe(
-      ' Key Code and SNStatusAssignmentExpirationActions'
+      'DetailsKey Code and SNStatusAssignmentExpirationActions'
     );
   });
 

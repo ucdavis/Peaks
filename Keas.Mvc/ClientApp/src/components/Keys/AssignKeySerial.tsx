@@ -2,7 +2,7 @@ import { AssetActions } from '../Shared/AssetSummary';
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { Button, Form } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
@@ -35,6 +35,7 @@ interface IProps {
 }
 
 const AssignKeySerial = (props: IProps) => {
+  const keySearchId = useId();
   const assignment =
     props.selectedKeySerial && props.selectedKeySerial.keySerialAssignment;
   const [date, setDate] = useState<Date>(
@@ -209,8 +210,9 @@ const AssignKeySerial = (props: IProps) => {
                   </div>
                   {!keySerial.key && (
                     <div>
-                      <label>Choose a key to create a new serial for</label>
+                      <label htmlFor={keySearchId}>Choose a key to create a new serial for</label>
                       <SearchKeys
+                        id={keySearchId}
                         onSelect={selectKey}
                         onDeselect={deselectKey}
                         allowNew={false}

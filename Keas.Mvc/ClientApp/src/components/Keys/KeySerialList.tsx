@@ -39,7 +39,7 @@ const KeySerialList = (props: IProps) => {
     <table className='table'>
       <thead>
         <tr>
-          <th />
+          <th scope='col'>Details</th>
           <th>Key Code</th>
           <th>Serial Number</th>
           <th>Status</th>

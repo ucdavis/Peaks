@@ -57,6 +57,7 @@ const EquipmentAttributes = (props: IProps) => {
     <div>
       <label>Attributes</label> <span />{' '}
       <a
+        aria-label='About equipment attributes'
         href='https://computing.caes.ucdavis.edu/documentation/peaks/equipment-attribute-keys'
         target='blank'
         rel='noopener noreferrer'

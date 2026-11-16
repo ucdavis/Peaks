@@ -11,6 +11,7 @@ import AccessAssignmentTable from '../Access/AccessAssignmentTable';
 import EquipmentTable from '../Equipment/EquipmentTable';
 import KeySerialTable from '../Keys/KeySerialTable';
 import KeyTable from '../Keys/KeyTable';
+import KeyList from '../Keys/KeyList';
 import PeopleTable from '../People/PeopleTable';
 import SpacesTable from '../Spaces/SpacesTable';
 import { fakeAccesses } from '../specs/mockData/Access';
@@ -159,6 +160,38 @@ const shownIds = (
     });
   return details.mock.calls.map(([record]) => record.id);
 };
+
+it.each(tableCases)(
+  'names every column in $name without exposing filter cells as extra headers',
+  ({ element }) => {
+    const { container } = render(element(['Alpha'], vi.fn()));
+    expect(screen.getByRole('columnheader', { name: 'Details' }))
+      .toBeInTheDocument();
+    screen.getAllByRole('columnheader').forEach(header => {
+      expect(header).toHaveAccessibleName();
+    });
+    const filters = container.querySelector('.asset-table-filters');
+    expect(within(filters as HTMLElement).queryAllByRole('columnheader'))
+      .toHaveLength(0);
+  }
+);
+
+it.each([
+  ['keys', 'Serials (In Use / Total)'],
+  ['spaces', 'Workstations (In Use / Total)']
+])('exposes the %s count explanation without hover', (name, heading) => {
+  render(tableCases.find(table => table.name === name).element(['Alpha'], vi.fn()));
+  expect(screen.getByRole('columnheader', { name: heading })).toBeVisible();
+  expect(screen.getByText('(In Use / Total)')).toBeVisible();
+});
+
+it('exposes the nested key list count explanation without hover', () => {
+  render(<KeyList keysInfo={[]} />);
+  expect(screen.getByRole('columnheader', { name: 'Serials (In Use / Total)' }))
+    .toBeVisible();
+  expect(screen.getByText('(In Use / Total)')).toBeVisible();
+  expect(screen.getByRole('columnheader', { name: 'Details' })).toBeInTheDocument();
+});
 
 it.each(tableCases)(
   'preserves case, natural numbers and ties in $name',

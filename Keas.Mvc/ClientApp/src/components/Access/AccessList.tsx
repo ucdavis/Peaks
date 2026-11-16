@@ -34,7 +34,7 @@ const AccessAssignmentList = (props: IProps) => {
     <table className='table'>
       <thead>
         <tr>
-          <th />
+          <th scope='col'>Details</th>
           <th>Name</th>
           <th>Assigned?</th>
           <th>Number of Assignments</th>

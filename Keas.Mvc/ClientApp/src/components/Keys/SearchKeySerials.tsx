@@ -1,6 +1,6 @@
 import { DisplayField } from '../Shared/AssetSummary';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { useContext, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
@@ -18,6 +18,7 @@ interface IProps {
 
 // Search for existing key then send selection back to parent
 const SearchKeySerials = (props: IProps) => {
+  const inputId = useId();
   const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
   const [keySerials, setKeySerials] = useState<IKeySerial[]>([]);
   const context = useContext(Context);
@@ -31,10 +32,10 @@ const SearchKeySerials = (props: IProps) => {
   const renderSelectKey = () => {
     return (
       <div>
-        <label>Pick a key serial to assign</label>
+        <label htmlFor={inputId}>Pick a key serial to assign</label>
         <div>
           <SearchCombobox
-            id='searchKeySerials' // for accessibility
+            id={inputId}
             isInvalid={!props.selectedKey || !props.selectedKeySerial}
             isLoading={isSearchLoading}
             minLength={1}

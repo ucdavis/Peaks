@@ -38,7 +38,7 @@ const WorkstationList = (props: IProps) => {
       <table className='table'>
         <thead>
           <tr>
-            <th />
+            <th scope='col'>Details</th>
             <th>Name</th>
             <th>Space</th>
             <th>Assigned To</th>

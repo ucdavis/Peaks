@@ -7,6 +7,7 @@ import { ISpace } from '../../models/Spaces';
 import { fakeEquipment } from '../specs/mockData/Equipment';
 import { routes } from '../../pages/assets/routes';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
+import EquipmentManagedSystemSearchId from './EquipmentManagedSystemSearchId';
 
 let container: HTMLElement = null;
 
@@ -18,6 +19,41 @@ beforeEach(() => {
   // setup a DOM element as a render target
   container = document.createElement('div');
   document.body.appendChild(container);
+});
+
+describe('Managed-system search accessibility', () => {
+  it('labels the input and pending action while preserving result selection', async () => {
+    let resolveSearch: (value: unknown) => void;
+    const fetch = vi.fn(() => new Promise(resolve => { resolveSearch = resolve; }));
+    const select = vi.fn();
+    render(
+      <Context.Provider value={{ fetch, permissions: [], team: { id: 1, name: 'Team', slug: 'team' }, tags: [] }}>
+        <EquipmentManagedSystemSearchId addManagedSystemId={select} />
+      </Context.Provider>,
+      { container }
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Look Up' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Search by Computer Property' });
+    const property = within(dialog).getByRole('textbox', { name: 'Computer Property' });
+    expect(within(dialog).getByLabelText('Computer Property')).toBe(property);
+    fireEvent.change(property, { target: { value: 'Research' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Search!' }));
+
+    const pending = within(dialog).getByRole('button', { name: 'Searching…' });
+    expect(pending).toBeDisabled();
+    expect(pending).toHaveAttribute('aria-busy', 'true');
+    expect(fetch).toHaveBeenCalledExactlyOnceWith('/api/team/equipment/GetComputersBySearch?value=Research');
+
+    await act(async () => resolveSearch({ result: [{
+      hardware_u_bigfix_id: '123',
+      hardware_display_name: 'Research laptop',
+      hardware_u_device_name: 'LAB-01'
+    }] }));
+    expect(within(dialog).getByRole('button', { name: 'Search!' })).toBeEnabled();
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Research laptop (LAB-01)' }));
+    expect(select).toHaveBeenCalledExactlyOnceWith('systemManagementId', '123');
+  });
 });
 
 describe('Equipment duplication', () => {
@@ -126,7 +162,7 @@ describe('Equipment duplication', () => {
 
   const saveCopy = () => fireEvent.click(screen.getByRole('button', { name: 'Save' }));
   const selectOtherPerson = async (name: string) => {
-    fireEvent.change(screen.getByRole('combobox', { name: 'Search for person by name or email' }), { target: { value: name } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Assign to' }), { target: { value: name } });
     fireEvent.click(await screen.findByRole('option', { name: new RegExp(name) }));
   };
 
@@ -141,7 +177,7 @@ describe('Equipment duplication', () => {
     expect(screen.getByLabelText('Make')).toHaveValue(state.source.make);
     expect(screen.getByLabelText('Model')).toHaveValue(state.source.model);
     expect(screen.getByLabelText('Attribute value 1')).toHaveValue('5');
-    expect(screen.getByRole('combobox', { name: 'Search for person by name or email' })).toHaveValue('');
+    expect(screen.getByRole('combobox', { name: 'Assign to' })).toHaveValue('');
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'New laptop' } });
     fireEvent.change(screen.getByLabelText('Serial Number / Identifier'), { target: { value: 'NEW-SERIAL' } });
     fireEvent.change(screen.getByLabelText('Attribute value 1'), { target: { value: '6' } });
@@ -182,7 +218,7 @@ describe('Equipment duplication', () => {
 
   it('prevents Enter in a pending person search from submitting a new equipment record', async () => {
     const state = await setup();
-    const personSearch = screen.getByRole('combobox', { name: 'Search for person by name or email' });
+    const personSearch = screen.getByRole('combobox', { name: 'Assign to' });
     fireEvent.change(personSearch, { target: { value: 'Searching' } });
     expect(fireEvent.keyDown(personSearch, { key: 'Enter', code: 'Enter' })).toBe(false);
     expect(state.duplicate).not.toHaveBeenCalled();
@@ -228,7 +264,7 @@ describe('Equipment duplication', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('assignment could not be confirmed');
     expect(state.assetInUseUpdated).not.toHaveBeenCalled();
-    fireEvent.change(screen.getByRole('combobox', { name: 'Search for person by name or email' }), { target: { value: '' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Assign to' }), { target: { value: '' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save assignment' }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent(`already assigned to ${state.otherPerson.name}`);
@@ -263,7 +299,7 @@ describe('Equipment duplication', () => {
     saveCopy();
 
     expect(await screen.findByRole('alert')).toHaveTextContent('assignment could not be confirmed');
-    fireEvent.change(screen.getByRole('combobox', { name: 'Search for person by name or email' }), { target: { value: '' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Assign to' }), { target: { value: '' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save assignment' }));
 
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
@@ -283,7 +319,7 @@ describe('Equipment duplication', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('assignment could not be confirmed');
     state.details.mockRejectedValueOnce(new Error('Details unavailable'));
-    fireEvent.change(screen.getByRole('combobox', { name: 'Search for person by name or email' }), { target: { value: '' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Assign to' }), { target: { value: '' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save assignment' }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Unable to verify the saved assignment');
@@ -297,7 +333,7 @@ describe('Equipment duplication', () => {
 
   it('allows changing the person from a person page without adding the copy to the original person', async () => {
     const state = await setup({ view: 'person' });
-    expect(screen.getByRole('combobox', { name: 'Search for person by name or email' })).toHaveValue(`${state.person.name} (${state.person.email})`);
+    expect(screen.getByRole('combobox', { name: 'Assign to' })).toHaveValue(`${state.person.name} (${state.person.email})`);
     await selectOtherPerson(state.otherPerson.name);
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Other person copy' } });
     saveCopy();
@@ -311,7 +347,7 @@ describe('Equipment duplication', () => {
 
   it('allows clearing the person and saves unassigned outside that person’s list', async () => {
     const state = await setup({ view: 'person' });
-    fireEvent.change(screen.getByRole('combobox', { name: 'Search for person by name or email' }), { target: { value: '' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Assign to' }), { target: { value: '' } });
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Unassigned copy' } });
     saveCopy();
 
@@ -323,7 +359,7 @@ describe('Equipment duplication', () => {
 
   it('excludes a copy from the space page when its room is cleared', async () => {
     const state = await setup({ view: 'space' });
-    const spaceInput = screen.getByRole('combobox', { name: 'Search for space' });
+    const spaceInput = screen.getByRole('combobox', { name: 'Room' });
     fireEvent.click(within(spaceInput.parentElement).getByRole('button', { name: 'Clear selection' }));
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Roomless copy' } });
     saveCopy();
@@ -383,7 +419,7 @@ describe('Equipment Container', () => {
     });
 
     const headerRecord = container.querySelector('.table-row').textContent;
-    expect(headerRecord).toBe(' Serial NumberNameAssigned ToExpirationActions');
+    expect(headerRecord).toBe('DetailsSerial NumberNameAssigned ToExpirationActions');
   });
 
   it('Shows Add Button', async () => {

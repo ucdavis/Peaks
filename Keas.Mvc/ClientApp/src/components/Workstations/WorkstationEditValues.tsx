@@ -1,5 +1,6 @@
 import { AssetActions, AssetSummary, DisplayField } from '../Shared/AssetSummary';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import { useId } from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';
@@ -19,6 +20,7 @@ interface IProps {
 }
 
 const WorkstationEditValues = (props: IProps) => {
+  const formId = useId();
   if (!props.selectedWorkstation) {
     return null;
   }
@@ -49,8 +51,8 @@ const WorkstationEditValues = (props: IProps) => {
       </div>
       <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
         <FormGroup>
-          <Label for='name'>Name</Label>
-          <Input id='name' type='text' className='input w-full'
+          <Label for={`${formId}-name`}>Name</Label>
+          <Input id={`${formId}-name`} type='text' className='input w-full'
             value={props.selectedWorkstation.name || ''}
             onChange={e => props.changeProperty('name', e.target.value)}
             invalid={error && error.path === 'name'} />
@@ -61,14 +63,15 @@ const WorkstationEditValues = (props: IProps) => {
             ? `${props.selectedWorkstation.space.roomNumber} ${props.selectedWorkstation.space.bldgName}` : null}</DisplayField></dl>
         ) : (
           <FormGroup>
-            <Label for='searchSpaces'>Room</Label>
-            <SearchSpaces onSelect={space => props.changeProperty('space', space)}
+            <Label for={`${formId}-room`}>Room</Label>
+            <SearchSpaces id={`${formId}-room`} onSelect={space => props.changeProperty('space', space)}
               defaultSpace={props.space || props.selectedWorkstation.space} isRequired />
           </FormGroup>
         )}
         <FormGroup>
-          <Label for='notes'>Notes</Label>
+          <Label for={`${formId}-notes`}>Notes</Label>
           <Input
+            id={`${formId}-notes`}
             type='textarea'
             className='textarea min-h-28 w-full'
             readOnly={props.disableEditing}
@@ -82,7 +85,7 @@ const WorkstationEditValues = (props: IProps) => {
         </FormGroup>
 
         <FormGroup>
-          <Label for='searchTagsWorkstationEditValues'>Tags</Label>
+          <Label for={`${formId}-tags`}>Tags</Label>
           <SearchDefinedOptions
             definedOptions={props.tags}
             disabled={props.disableEditing}
@@ -93,7 +96,7 @@ const WorkstationEditValues = (props: IProps) => {
             }
             onSelect={e => props.changeProperty('tags', e.join(','))}
             placeholder='Search for Tags'
-            id='searchTagsWorkstationEditValues'
+            id={`${formId}-tags`}
           />
           <FormFeedback>
             {error && error.path === 'tags' && error.message}

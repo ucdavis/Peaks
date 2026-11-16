@@ -23,6 +23,7 @@ interface Props {
   newSelectionPrefix?: string;
   filterBy?: (option: any) => boolean;
   highlightOnlyResult?: boolean;
+  // Use an associated label, or supply aria-label/aria-labelledby here.
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   renderMenuItemChildren?: (option: any, props: { text: string }, index: number) => React.ReactNode;
 }
@@ -108,7 +109,7 @@ export const SearchCombobox = (props: Props) => {
         ))}
         <input {...props.inputProps} ref={input} id={props.inputProps?.id || props.id}
           className='min-w-16 flex-1 border-0 bg-transparent p-0 text-sm text-base-content outline-none disabled:cursor-not-allowed'
-          role='combobox' aria-label={props.inputProps?.['aria-label'] || props.placeholder}
+          role='combobox'
           aria-autocomplete='list' aria-expanded={expanded} aria-controls={`${props.id}-options`}
           aria-activedescendant={expanded && activeIndex >= 0 ? `${props.id}-option-${activeIndex}` : undefined}
           aria-invalid={props.isInvalid || undefined} aria-busy={loading || undefined}

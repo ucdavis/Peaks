@@ -1,6 +1,6 @@
 import { AssetSummary } from '../Shared/AssetSummary';
 import * as React from 'react';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IKey } from '../../models/Keys';
 import { IValidationError } from '../../models/Shared';
@@ -15,6 +15,7 @@ interface IProps {
 }
 
 const KeyEditValues = (props: IProps) => {
+  const formId = useId();
   const [name, setName] = useState<string>(props.selectedKey.name);
   const [code, setCode] = useState<string>(props.selectedKey.code);
   const [tags, setTags] = useState<string>(props.selectedKey.tags);
@@ -73,8 +74,9 @@ const KeyEditValues = (props: IProps) => {
   return (
     <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
       <FormGroup>
-        <Label for='Name'>Name</Label>
+        <Label for={`${formId}-name`}>Name</Label>
         <Input
+          id={`${formId}-name`}
           type='text'
           className='input w-full'
           readOnly={props.disableEditing}
@@ -90,8 +92,9 @@ const KeyEditValues = (props: IProps) => {
         </FormFeedback>
       </FormGroup>
       <FormGroup>
-        <Label for='code'>Code</Label>
+        <Label for={`${formId}-code`}>Code</Label>
         <Input
+          id={`${formId}-code`}
           type='text'
           className='input w-full'
           readOnly={props.disableEditing}
@@ -108,8 +111,9 @@ const KeyEditValues = (props: IProps) => {
         </FormFeedback>
       </FormGroup>
       <FormGroup>
-        <Label>Notes</Label>
+        <Label for={`${formId}-notes`}>Notes</Label>
         <Input
+          id={`${formId}-notes`}
           type='textarea'
           className='textarea min-h-28 w-full'
           readOnly={props.disableEditing}
@@ -125,14 +129,14 @@ const KeyEditValues = (props: IProps) => {
         </FormFeedback>
       </FormGroup>
       <FormGroup>
-        <Label for='searchTagsKeyEditValues'>Tags</Label>
+        <Label for={`${formId}-tags`}>Tags</Label>
         <SearchDefinedOptions
           definedOptions={props.searchableTags}
           disabled={props.disableEditing}
           selected={parsedTags}
           onSelect={onChangeTags}
           placeholder='Search for Tags'
-          id='searchTagsKeyEditValues'
+          id={`${formId}-tags`}
         />
         <FormFeedback>
           {error && error.path === 'tags' && error.message}

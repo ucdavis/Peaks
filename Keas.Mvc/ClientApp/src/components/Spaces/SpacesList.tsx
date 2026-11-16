@@ -33,7 +33,7 @@ const SpacesList = (props: IProps) => {
     <table className='table'>
       <thead>
         <tr>
-          <th />
+          <th scope='col'>Details</th>
           <th>Room</th>
           <th>Room Name</th>
           <th className='w-[10%]'>Actions</th>

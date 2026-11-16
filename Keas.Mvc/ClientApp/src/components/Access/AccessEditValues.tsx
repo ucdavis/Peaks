@@ -1,5 +1,6 @@
 import { AssetSummary } from '../Shared/AssetSummary';
 import { LinkIcon } from '@heroicons/react/24/outline';
+import { useId } from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IAccess } from '../../models/Access';
 import { IValidationError } from '../../models/Shared';
@@ -15,6 +16,7 @@ interface IProps {
 }
 
 const AccessEditValues = (props: IProps) => {
+  const formId = useId();
   if (!props.disableEditing && !props.onAccessUpdate) {
     throw new Error(
       'If the access is editable then a callback must be provided'
@@ -45,8 +47,9 @@ const AccessEditValues = (props: IProps) => {
       </div>
       <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
         <FormGroup>
-          <Label for='name'>Name</Label>
+          <Label for={`${formId}-name`}>Name</Label>
           <Input
+            id={`${formId}-name`}
             type='text'
             className='input w-full'
             readOnly={props.disableEditing}
@@ -65,8 +68,9 @@ const AccessEditValues = (props: IProps) => {
           </FormFeedback>
         </FormGroup>
         <FormGroup>
-          <Label>Notes</Label>
+          <Label for={`${formId}-notes`}>Notes</Label>
           <Input
+            id={`${formId}-notes`}
             type='textarea'
             className='textarea min-h-28 w-full'
             readOnly={props.disableEditing}
@@ -83,7 +87,7 @@ const AccessEditValues = (props: IProps) => {
           </FormFeedback>
         </FormGroup>
         <FormGroup>
-          <Label for='searchTags'>Tags</Label>
+          <Label for={`${formId}-tags`}>Tags</Label>
           <SearchDefinedOptions
             definedOptions={props.tags}
             disabled={props.disableEditing}
@@ -96,7 +100,7 @@ const AccessEditValues = (props: IProps) => {
               props.onAccessUpdate({ ...access, tags: e.join(',') });
             }}
             placeholder='Search for Tags'
-            id='searchTags'
+            id={`${formId}-tags`}
           />
           <FormFeedback>
             {error && error.path === 'tags' && error.message}

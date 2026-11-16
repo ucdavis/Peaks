@@ -8,9 +8,11 @@ import {
 import EquipmentTable from '../Equipment/EquipmentTable';
 import AccessTable from '../Access/AccessTable';
 import KeySerialTable from '../Keys/KeySerialTable';
+import SpacesTable from '../Spaces/SpacesTable';
 import { fakeEquipment } from '../specs/mockData/Equipment';
 import { fakeAccesses } from '../specs/mockData/Access';
 import { fakeKeySerials } from '../specs/mockData/KeySerial';
+import { fakeSpaces } from '../specs/mockData/Space';
 
 afterEach(() => {
   cleanup();
@@ -22,6 +24,23 @@ const names = (container: HTMLElement) =>
   Array.from(container.querySelectorAll('tbody tr')).map(
     row => row.children[2].textContent
   );
+
+it('names the workstation filter and preserves its assigned-space behavior', () => {
+  const { container } = render(
+    <SpacesTable
+      spaces={fakeSpaces.slice(0, 2)}
+      filtered={[]}
+      updateFilters={vi.fn()}
+      showDetails={vi.fn()}
+    />
+  );
+  const filter = screen.getByRole('combobox', { name: 'Filter workstations' });
+  fireEvent.change(filter, { target: { value: 'assigned' } });
+  expect(container.querySelectorAll('tbody tr')).toHaveLength(1);
+  expect(container.querySelector('tbody')).toHaveTextContent('Temporary Building 200');
+  fireEvent.change(filter, { target: { value: 'all' } });
+  expect(container.querySelectorAll('tbody tr')).toHaveLength(2);
+});
 
 it.each([
   ['expired', ['Past', 'Now']],

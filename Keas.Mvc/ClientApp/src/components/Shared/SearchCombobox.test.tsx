@@ -6,6 +6,28 @@ import { SearchCombobox } from './SearchCombobox';
 afterEach(cleanup);
 
 describe('DaisyUI search combobox', () => {
+  it('keeps the visible label as its name before and after keyboard selection', () => {
+    const change = vi.fn();
+    render(<>
+      <label htmlFor='room-search'>Room</label>
+      <SearchCombobox id='room-search' placeholder='Search for space' options={['Room 101']} onChange={change} />
+    </>);
+    const input = screen.getByRole('combobox', { name: 'Room' });
+    expect(screen.getByLabelText('Room')).toBe(input);
+    fireEvent.change(input, { target: { value: '101' } });
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(change).toHaveBeenCalledWith(['Room 101']);
+    expect(input).toHaveValue('Room 101');
+    expect(input).toHaveAccessibleName('Room');
+  });
+
+  it('preserves an explicit accessible name for a standalone search', () => {
+    render(<SearchCombobox id='standalone-search' options={[]} onChange={vi.fn()}
+      placeholder='Type a name' inputProps={{ 'aria-label': 'Find a person' }} />);
+    expect(screen.getByRole('combobox', { name: 'Find a person' })).toBeInTheDocument();
+  });
+
   it('filters suggestions and selects with the keyboard', () => {
     const change = vi.fn();
     render(<SearchCombobox id='tags' options={['Laptop', 'Desktop']} onChange={change} multiple placeholder='Tags' />);

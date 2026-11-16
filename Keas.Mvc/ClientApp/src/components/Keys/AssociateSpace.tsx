@@ -1,7 +1,7 @@
 import { DisplayField } from '../Shared/AssetSummary';
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { Button } from 'reactstrap';
 import { IKeyInfo } from '../../models/Keys';
 import { ISpace } from '../../models/Spaces';
@@ -20,6 +20,7 @@ interface IProps {
 }
 
 const AssociateSpace = (props: IProps) => {
+  const formId = useId();
   const [error, setError] = useState<string>('');
   const [selectedKeyInfo, setSelectedKeyInfo] = useState<IKeyInfo>(
     props.selectedKeyInfo
@@ -68,8 +69,8 @@ const AssociateSpace = (props: IProps) => {
       return <dl><DisplayField label='Space to associate with'>{`${selectedSpace.roomNumber} ${selectedSpace.bldgName}`}</DisplayField></dl>;
     }
     return <div className='space-y-2'>
-      <label className='block text-sm font-semibold'>Space to associate with:</label>
-      <SearchSpaces onSelect={onSelectSpace} />
+      <label htmlFor={`${formId}-space`} className='block text-sm font-semibold'>Space to associate with:</label>
+      <SearchSpaces id={`${formId}-space`} onSelect={onSelectSpace} />
     </div>;
   };
 
@@ -78,8 +79,8 @@ const AssociateSpace = (props: IProps) => {
       return <dl><DisplayField label='Key to associate with'>{`${selectedKeyInfo.key.name} - ${selectedKeyInfo.key.code}`}</DisplayField></dl>;
     }
     return <div className='space-y-2'>
-      <label className='block text-sm font-semibold'>Pick a key to associate</label>
-      <SearchKeys onSelect={onSelectedKeyInfo} onDeselect={onDeselected} allowNew={false} />
+      <label htmlFor={`${formId}-key`} className='block text-sm font-semibold'>Pick a key to associate</label>
+      <SearchKeys id={`${formId}-key`} onSelect={onSelectedKeyInfo} onDeselect={onDeselected} allowNew={false} />
     </div>;
   };
 

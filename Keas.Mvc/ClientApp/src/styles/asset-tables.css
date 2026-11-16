@@ -31,7 +31,7 @@
     white-space: nowrap;
   }
 
-  .asset-table .table .asset-table-filters th {
+  .asset-table .table .asset-table-filters td {
     padding-top: 0;
     padding-bottom: 0.75rem;
   }

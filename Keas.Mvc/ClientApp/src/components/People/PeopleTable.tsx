@@ -28,7 +28,7 @@ const PeopleTable = (props: IProps) => {
             onClick={() => props.showDetails(data.row.original)}
           />
         ),
-        header: ' '
+        header: 'Details'
       },
       {
         header: 'Name',
