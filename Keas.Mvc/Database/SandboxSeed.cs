@@ -210,7 +210,14 @@ public static class SandboxSeed
             ("MCP-DEMO-02", "sandbox-person-01", "Dell", "Field laptop", sunday),
             ("MCP-DEMO-03", "sandbox-person-02", "Apple", "iPad Pro", sunday) })
         {
-            if (await context.Equipment.IgnoreQueryFilters().AnyAsync(x => x.TeamId == team.Id && x.SerialNumber == fixture.Item1)) continue;
+            var existing = await context.Equipment.IgnoreQueryFilters().Include(x => x.Assignment)
+                .SingleOrDefaultAsync(x => x.TeamId == team.Id && x.SerialNumber == fixture.Item1);
+            if (existing != null)
+            {
+                if (Environment.GetEnvironmentVariable("PEAKS_MCP_REFRESH_DATES") == "1" && existing.Assignment != null)
+                    existing.Assignment.ExpiresAt = fixture.Item5;
+                continue;
+            }
             var person = await context.People.SingleAsync(x => x.TeamId == team.Id && x.UserId == fixture.Item2);
             context.Equipment.Add(new Equipment { Team = team, Name = "Demo " + fixture.Item4, Make = fixture.Item3,
                 Model = fixture.Item4, Type = "Device", SerialNumber = fixture.Item1,

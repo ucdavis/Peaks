@@ -196,6 +196,65 @@ public sealed class McpDemoTests
         Assert.Throws<InvalidOperationException>(() => DemoSettings.Read(config, host.Object));
     }
 
+    [Theory]
+    [InlineData(DemoSettings.ChatGptCallback)]
+    [InlineData("https://chatgpt.com/connector/oauth/demo-callback")]
+    public async Task PublicDiscoveryHostedCallbackAndPkceReachRealTools(string callback)
+    {
+        using var app = new DemoApp(allowNgrok: true, redirectUri: callback);
+        var discovery = await app.Json(await app.Get("/.well-known/oauth-authorization-server"));
+        Assert.Equal(app.Issuer, discovery.GetProperty("issuer").GetString());
+        Assert.Equal(app.Issuer + "oauth/register", discovery.GetProperty("registration_endpoint").GetString());
+        Assert.True(discovery.GetProperty("authorization_response_iss_parameter_supported").GetBoolean());
+        Assert.Equal(new[] { "none" }, discovery.GetProperty("token_endpoint_auth_methods_supported").EnumerateArray().Select(x => x.GetString()));
+        await app.Login("reader");
+        var token = await app.Exchange(await app.Consent());
+        var people = await app.Tool(token.GetProperty("access_token").GetString(), "search_people", new { name = "Javier" });
+        Assert.Equal(1, people.GetProperty("totalMatches").GetInt32());
+        foreach (var redirect in new[] { "https://chatgpt.com/connector/oauth/unconfigured", "https://chatgpt.com/evil",
+            "https://chatgpt.com.attacker.example/connector_platform_oauth_redirect", DemoSettings.ChatGptCallback + "?next=evil" })
+        {
+            var response = await app.Send(new HttpRequestMessage(HttpMethod.Post, "/oauth/register")
+                { Content = JsonContent.Create(new { redirect_uris = new[] { redirect } }) });
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+        var wrongHost = new HttpRequestMessage(HttpMethod.Get, "/.well-known/oauth-authorization-server");
+        wrongHost.Headers.Host = "localhost:5446";
+        Assert.Equal(HttpStatusCode.Forbidden, (await app.Send(wrongHost)).StatusCode);
+    }
+
+    [Fact]
+    public async Task LocalModeRejectsHostedCallback()
+    {
+        using var app = new DemoApp();
+        var response = await app.Send(new HttpRequestMessage(HttpMethod.Post, "/oauth/register")
+            { Content = JsonContent.Create(new { redirect_uris = new[] { DemoSettings.ChatGptCallback } }) });
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("https://demo.ngrok-free.app/", true, null, true)]
+    [InlineData("https://localhost:5446/", false, null, true)]
+    [InlineData("https://demo.ngrok-free.app/", false, null, false)]
+    [InlineData("http://demo.ngrok-free.app/", true, null, false)]
+    [InlineData("https://example.com/", true, null, false)]
+    [InlineData("https://demo.ngrok-free.app.evil.test/", true, null, false)]
+    [InlineData("https://demo.ngrok-free.app/mcp", true, null, false)]
+    [InlineData("https://demo.ngrok-free.app/", true, "https://chatgpt.com/connector/oauth/demo-callback", true)]
+    [InlineData("https://demo.ngrok-free.app/", true, "https://evil.test/callback", false)]
+    [InlineData("https://demo.ngrok-free.app/", true, "https://chatgpt.com/connector/oauth/id?x=1", false)]
+    public void PublicOriginAndCallbackRequireExplicitSandboxConfiguration(string issuer, bool allowNgrok, string callback, bool valid)
+    {
+        var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string> {
+            ["McpDemo:Enabled"] = "true", ["LocalLogin:Enabled"] = "true", ["PEAKS_SANDBOX"] = "1",
+            ["ConnectionStrings:DefaultConnection"] = "Server=sql;Database=PeaksSandbox",
+            ["McpDemo:Issuer"] = issuer, ["McpDemo:AllowNgrok"] = allowNgrok.ToString(),
+            ["McpDemo:ChatGptRedirectUri"] = callback, ["Kestrel:Certificates:Default:Path"] = "test.pfx" }).Build();
+        var host = new Mock<IHostEnvironment>(); host.SetupGet(x => x.EnvironmentName).Returns("Development");
+        if (valid) Assert.Equal(issuer, DemoSettings.Read(config, host.Object).Issuer.AbsoluteUri);
+        else Assert.Throws<InvalidOperationException>(() => DemoSettings.Read(config, host.Object));
+    }
+
     private sealed class FixedClock : TimeProvider
     {
         public override DateTimeOffset GetUtcNow() => new(2026, 11, 12, 18, 0, 0, TimeSpan.Zero);
@@ -210,9 +269,13 @@ public sealed class McpDemoTests
         private readonly HttpClient _client;
         private readonly CookieContainer _cookies = new();
         public TestServer Server { get; }
-        public string Resource => "https://localhost:5446/mcp";
-        public DemoApp(bool enabled = true)
+        public string Issuer { get; }
+        public string Resource => Issuer + "mcp";
+        private readonly string _redirectUri;
+        public DemoApp(bool enabled = true, bool allowNgrok = false, string redirectUri = null)
         {
+            Issuer = allowNgrok ? "https://demo.ngrok-free.app/" : "https://localhost:5446/";
+            _redirectUri = redirectUri ?? "http://127.0.0.1:5555/callback";
             _connection.Open();
             var options = new DbContextOptionsBuilder<ApplicationDbContext>().UseSqlite(_connection).Options;
             using (var db = new ApplicationDbContext(options))
@@ -245,7 +308,7 @@ public sealed class McpDemoTests
                     services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
                     if (enabled)
                     {
-                        var settings = new DemoSettings(new Uri("https://localhost:5446/"), _oauthFile, null, null);
+                        var settings = new DemoSettings(new Uri(Issuer), _oauthFile, null, null) { AllowNgrok = allowNgrok, ChatGptRedirectUri = redirectUri };
                         services.AddPeaksMcpDemo(settings);
                         services.AddScoped(provider => new DemoInventory(provider.GetRequiredService<ApplicationDbContext>(), new FixedClock(), settings));
                     }
@@ -255,7 +318,7 @@ public sealed class McpDemoTests
                     app.UsePeaksMcpDemoBoundary(); app.UseRouting(); app.UseSession(); app.UseAuthentication(); app.UsePeaksMcpAuthentication(); app.UseAuthorization();
                     app.UseEndpoints(endpoints => { endpoints.MapPeaksMcpDemo(); endpoints.MapControllers(); });
                 }));
-            _client = Server.CreateClient(); _client.BaseAddress = new Uri("https://localhost:5446");
+            _client = Server.CreateClient(); _client.BaseAddress = new Uri(Issuer);
         }
         public Task<HttpResponseMessage> Get(string path) => Send(new HttpRequestMessage(HttpMethod.Get, path));
         public Task<HttpResponseMessage> PostForm(string path, Dictionary<string, string> fields) => Send(new HttpRequestMessage(HttpMethod.Post, path) { Content = new FormUrlEncodedContent(fields) });
@@ -268,10 +331,10 @@ public sealed class McpDemoTests
         }
         public async Task<Authorization> Consent(bool allow = true)
         {
-            var registration = await Json(await Send(new HttpRequestMessage(HttpMethod.Post, "/oauth/register") { Content = JsonContent.Create(new { client_name = "Codex test", redirect_uris = new[] { "http://127.0.0.1:5555/callback" } }) }));
+            var registration = await Json(await Send(new HttpRequestMessage(HttpMethod.Post, "/oauth/register") { Content = JsonContent.Create(new { client_name = "Codex test", redirect_uris = new[] { _redirectUri } }) }));
             var clientId = registration.GetProperty("client_id").GetString();
             var verifier = WebEncoders.Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
-            var fields = new Dictionary<string, string> { ["client_id"] = clientId, ["response_type"] = "code", ["redirect_uri"] = "http://127.0.0.1:5555/callback",
+            var fields = new Dictionary<string, string> { ["client_id"] = clientId, ["response_type"] = "code", ["redirect_uri"] = _redirectUri,
                 ["scope"] = "peaks.inventory.read offline_access", ["resource"] = Resource, ["state"] = "test-state",
                 ["code_challenge"] = WebEncoders.Base64UrlEncode(SHA256.HashData(Encoding.ASCII.GetBytes(verifier))), ["code_challenge_method"] = "S256" };
             var response = await Get(QueryHelpers.AddQueryString("/oauth/authorize", fields));
@@ -287,10 +350,11 @@ public sealed class McpDemoTests
                 return null;
             }
             Assert.False(query.ContainsKey("error"));
+            Assert.Equal(Issuer, query["iss"].ToString());
             return new Authorization(clientId, query["code"], verifier);
         }
         public Dictionary<string, string> ExchangeFields(Authorization auth) => new() { ["grant_type"] = "authorization_code", ["client_id"] = auth.ClientId,
-            ["code"] = auth.Code, ["code_verifier"] = auth.Verifier, ["redirect_uri"] = "http://127.0.0.1:5555/callback", ["resource"] = Resource };
+            ["code"] = auth.Code, ["code_verifier"] = auth.Verifier, ["redirect_uri"] = _redirectUri, ["resource"] = Resource };
         public async Task<JsonElement> Exchange(Authorization auth) => await Json(await PostForm("/oauth/token", ExchangeFields(auth)));
         public async Task<JsonElement> Refresh(string client, string refresh) => await Json(await PostForm("/oauth/token", new() {
             ["grant_type"] = "refresh_token", ["client_id"] = client, ["refresh_token"] = refresh, ["resource"] = Resource }));

@@ -56,7 +56,6 @@ public static class DemoRegistration
                 options.Configure(o =>
                 {
                     o.CodeChallengeMethods.Clear(); o.CodeChallengeMethods.Add(CodeChallengeMethods.Sha256);
-                    o.ClientAuthenticationMethods.Clear(); o.ClientAuthenticationMethods.Add(ClientAuthenticationMethods.None);
                 });
                 options.UseAspNetCore().EnableAuthorizationEndpointPassthrough().EnableTokenEndpointPassthrough();
                 options.AddEventHandler<OpenIddictServerEvents.ValidateAuthorizationRequestContext>(builder => builder.UseInlineHandler(context =>
@@ -83,6 +82,12 @@ public static class DemoRegistration
                 options.AddAudiences(settings.Resource);
                 options.EnableTokenEntryValidation(); options.EnableAuthorizationEntryValidation();
             });
+        // ASP.NET Core adds client_secret_basic during configuration. This demo registers only public clients.
+        services.PostConfigure<OpenIddictServerOptions>(options =>
+        {
+            options.ClientAuthenticationMethods.Clear();
+            options.ClientAuthenticationMethods.Add(ClientAuthenticationMethods.None);
+        });
         services.AddAuthorization(options => options.AddPolicy(DemoSettings.Policy, policy => policy
             .AddAuthenticationSchemes(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)
             .RequireAuthenticatedUser().RequireAssertion(context => context.User.HasScope(DemoSettings.Scope))));

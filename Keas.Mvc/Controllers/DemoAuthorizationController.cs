@@ -32,14 +32,15 @@ public sealed class DemoAuthorizationController : Controller
     [HttpPost("oauth/register"), IgnoreAntiforgeryToken, RequestSizeLimit(8192)]
     public async Task<IActionResult> Register(CancellationToken ct)
     {
-        if (Services.GetService<DemoSettings>() == null) return NotFound();
+        var settings = Services.GetService<DemoSettings>();
+        if (settings == null) return NotFound();
         if (!Request.HasJsonContentType()) return StatusCode(415);
         try
         {
             using var document = await JsonDocument.ParseAsync(Request.Body, new JsonDocumentOptions { MaxDepth = 8 }, ct);
             var root = document.RootElement;
             var redirects = root.GetProperty("redirect_uris").EnumerateArray().Select(x => x.GetString()).ToArray();
-            if (redirects.Length < 1 || redirects.Length > 4 || redirects.Any(x => !ValidRedirect(x))) return BadRegistration();
+            if (redirects.Length < 1 || redirects.Length > 4 || redirects.Any(x => !ValidRedirect(x) && !settings.AllowsHostedRedirect(x))) return BadRegistration();
             if (root.TryGetProperty("token_endpoint_auth_method", out var method) && method.GetString() != "none") return BadRegistration();
             if (root.TryGetProperty("grant_types", out var grants) && grants.EnumerateArray().Any(x => x.GetString() != GrantTypes.AuthorizationCode && x.GetString() != GrantTypes.RefreshToken)) return BadRegistration();
             if (root.TryGetProperty("response_types", out var responses) && responses.EnumerateArray().Any(x => x.GetString() != ResponseTypes.Code)) return BadRegistration();

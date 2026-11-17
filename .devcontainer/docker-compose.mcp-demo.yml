@@ -1,4 +1,4 @@
-# Overlay on docker-compose.sandbox.yml. Local use only; the base sandbox stays unchanged.
+# Disposable demo overlay; the base sandbox stays unchanged.
 services:
   certificates:
     image: busybox:1.37
@@ -14,7 +14,9 @@ services:
     environment:
       PEAKS_SANDBOX: "1"
       McpDemo__Enabled: "true"
-      McpDemo__Issuer: https://localhost:${MCP_DEMO_HTTPS_PORT:-5446}/
+      McpDemo__Issuer: ${MCP_DEMO_ISSUER:-https://localhost:5446/}
+      McpDemo__AllowNgrok: ${MCP_DEMO_ALLOW_NGROK:-false}
+      McpDemo__ChatGptRedirectUri: ${MCP_DEMO_CHATGPT_REDIRECT_URI:-}
       ASPNETCORE_URLS: http://+:8080;https://+:8443
       ASPNETCORE_HTTPS_PORT: ${MCP_DEMO_HTTPS_PORT:-5446}
       Kestrel__Certificates__Default__Path: /certs/localhost.pfx
