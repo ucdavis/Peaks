@@ -74,3 +74,10 @@
   }
 
 }
+
+@layer utilities {
+  /* Keep paragraph links identifiable without relying on asset colors. */
+  :is(.people-color, .equipment-color, .access-color, .keys-color, .spaces-color, .documents-color, .history-color, .general-color) p a:not(.btn) {
+    text-decoration-line: underline;
+  }
+}

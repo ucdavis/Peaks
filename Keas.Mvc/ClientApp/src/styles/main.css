@@ -118,12 +118,14 @@ body {
   --color-warning-color: #cd9400;
   --color-neutral-color: #d1d5db;
 
-  --color-people: var(--color-ucd-doubledecker);
-  --color-equipment: #daaa00;
-  --color-access: var(--color-ucd-quad);
-  --color-keys: var(--color-ucd-tahoe);
-  --color-spaces: var(--color-ucd-pinot);
-  --color-documents: var(--color-ucd-poppy);
+  /* Coordinated asset colors: AA text contrast against white, base-300,
+   * and the 8–10% OKLab tints used by badges and table hover states. */
+  --color-people: #b33d59; /* rose */
+  --color-equipment: #536176; /* slate */
+  --color-access: #28765b; /* forest */
+  --color-keys: #286ba6; /* blue */
+  --color-spaces: #8052a0; /* violet */
+  --color-documents: #9f5228; /* burnt orange */
 }
 
 @plugin 'daisyui/theme' {
