@@ -63,6 +63,47 @@ See [frontend development](docs/FRONTEND.md) for test commands, asset publishing
 
 With Visual Studio, open `Keas.sln` and run `Keas.Mvc` after completing the dependency and secrets setup.
 
+## Optional Rosetta identity services
+
+`FeatureFlags:UseRosetta` defaults to `false` in both MVC and the LivedName job.
+With the flag disabled or absent, both continue using the existing IAM services
+and do not require Rosetta configuration. Enable it separately in each host's
+configuration to select the new services (environment variable:
+`FeatureFlags__UseRosetta=true`). MVC's manual name-update actions use the same flag.
+
+MVC's IAM `IdentityService` and `RosettaIdentityService` independently implement
+`IIdentityService`. Rosetta owns its person creation and reactivation workflow and
+does not inherit IAM behavior or require IAM authentication settings.
+
+Both hosts' `appsettings.json` files contain a `RosettaClient` section with development
+URLs, `[EXTERNAL]` credential placeholders, and the `read:public read:healthEmail` scope.
+When enabled, configure `RosettaClient:BaseUrl`, `RosettaClient:TokenUrl`,
+`RosettaClient:ClientId`, and `RosettaClient:ClientSecret` through the deployment's
+configuration provider. `RosettaClient:Scope` is optional. Keep credentials out of
+tracked settings files.
+
+Rosetta name synchronization uses GraphQL POST requests selecting only IAM ID,
+lived first and last names, pronouns, and campus email. Incremental updates page
+through recently changed people; full refreshes send batches of local IAM IDs.
+`LivedName:BatchSize` defaults to `50` in both hosts and must be greater than zero.
+Override it in configuration or with the `LivedName__BatchSize` environment variable.
+GraphQL errors fail the affected page before its records are applied.
+
+Department imports continue using paged GET requests. Department pages are reused
+for identity and title data without per-person remote lookups.
+
+Identity lookups prefer campus email, then the address matched by an email search,
+then Health email. The [Rosetta contract shipped with client 1.0.8](https://github.com/ucdavis/Rosetta-API-Client-DotNet/blob/640ea749ae9cf79f827e706d78dbc8f273f7a7d7/specs/rosetta-api.json#L8712)
+makes campus email optional and exposes Health email with `read:healthEmail` or
+`read:sensitive`. Kerberos lookups and department imports can use that Health
+address when campus email is absent. User validation still rejects missing or
+invalid email addresses and incomplete names or identity IDs.
+
+Incremental updates include a small overlap because Rosetta accepts relative time
+windows instead of the job's Pacific calendar date. Missing directory records or
+incomplete lived names do not clear existing user data. Department codes are
+resolved through Rosetta's UCPath department directory.
+
 ## Optional local development login
 
 To bypass CAS locally, enable the login screen with a personal user secret:
