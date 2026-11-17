@@ -116,6 +116,7 @@ const EquipmentTable = (props: IProps) => {
 
   return (
     <ReactTable
+      tableClassName='equipment-table'
       data={equipmentData}
       columns={columns}
       initialState={initialState}

@@ -14,11 +14,13 @@ import { ReactTableUtil } from '../../util/tableUtil';
 export const ReactTable = <T extends object>({
   columns,
   data,
-  initialState
+  initialState,
+  tableClassName = ''
 }: {
   columns: PeaksColumn<T>[];
   data: T[];
   initialState?: PeaksInitialState;
+  tableClassName?: string;
 }) => {
   const table = useTable({
     features: peaksFeatures,
@@ -53,7 +55,7 @@ export const ReactTable = <T extends object>({
   return (
     <div className='asset-table'>
       <div className='overflow-x-auto rounded-t-[calc(var(--radius-box)-1px)]'>
-        <table className='table'>
+        <table className={`table ${tableClassName}`}>
           <thead>
             {headerGroups.map(headerGroup => (
               <tr className='table-row' key={headerGroup.id}>
