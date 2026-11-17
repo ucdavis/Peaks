@@ -36,6 +36,8 @@ describe('Managed-system search accessibility', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Look Up' }));
     const dialog = await screen.findByRole('dialog', { name: 'Search by Computer Property' });
     const property = within(dialog).getByRole('textbox', { name: 'Computer Property' });
+    const status = within(dialog).getByRole('status');
+    expect(status).toBeEmptyDOMElement();
     expect(within(dialog).getByLabelText('Computer Property')).toBe(property);
     fireEvent.change(property, { target: { value: 'Research' } });
     fireEvent.click(within(dialog).getByRole('button', { name: 'Search!' }));
@@ -43,6 +45,7 @@ describe('Managed-system search accessibility', () => {
     const pending = within(dialog).getByRole('button', { name: 'Searching…' });
     expect(pending).toBeDisabled();
     expect(pending).toHaveAttribute('aria-busy', 'true');
+    expect(status).toHaveTextContent('Searching…');
     expect(fetch).toHaveBeenCalledExactlyOnceWith('/api/team/equipment/GetComputersBySearch?value=Research');
 
     await act(async () => resolveSearch({ result: [{
@@ -51,8 +54,15 @@ describe('Managed-system search accessibility', () => {
       hardware_u_device_name: 'LAB-01'
     }] }));
     expect(within(dialog).getByRole('button', { name: 'Search!' })).toBeEnabled();
+    expect(status).toHaveTextContent('1 computer found.');
     fireEvent.click(within(dialog).getByRole('button', { name: 'Research laptop (LAB-01)' }));
     expect(select).toHaveBeenCalledExactlyOnceWith('systemManagementId', '123');
+
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Search!' }));
+    expect(status).toHaveTextContent('Searching…');
+    await act(async () => resolveSearch({ result: [] }));
+    expect(within(dialog).getByRole('status')).toBe(status);
+    expect(status).toHaveTextContent('No results found for the search term.');
   });
 });
 

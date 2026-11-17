@@ -6,6 +6,20 @@ import { SearchCombobox } from './SearchCombobox';
 afterEach(cleanup);
 
 describe('DaisyUI search combobox', () => {
+  it('updates a persistent live region for matches, no matches, and dismissal', () => {
+    render(<SearchCombobox id='status-search' options={['Laptop', 'Desktop']} onChange={vi.fn()} />);
+    const status = screen.getByRole('status');
+    const input = screen.getByRole('combobox');
+    expect(status).toBeEmptyDOMElement();
+    fireEvent.change(input, { target: { value: 'lap' } });
+    expect(status).toHaveTextContent('1 option available.');
+    fireEvent.change(input, { target: { value: 'missing' } });
+    expect(screen.getByRole('status')).toBe(status);
+    expect(status).toHaveTextContent('No matches found');
+    fireEvent.keyDown(input, { key: 'Escape' });
+    expect(status).toBeEmptyDOMElement();
+  });
+
   it('keeps the visible label as its name before and after keyboard selection', () => {
     const change = vi.fn();
     render(<>
@@ -107,6 +121,7 @@ describe('DaisyUI search combobox', () => {
     expect(screen.queryByRole('listbox')).toBeNull();
     fireEvent.change(input, { target: { value: 'Ali' } });
     fireEvent.change(input, { target: { value: 'Alice' } });
+    expect(screen.getByRole('status')).toHaveTextContent('Searching…');
     await waitFor(() => expect(search).toHaveBeenCalledWith('Alice'));
     expect(search).toHaveBeenCalledTimes(1);
     view.rerender(<SearchCombobox id='people' options={[{ name: 'Alice' }]} onChange={change} onSearch={search} minLength={3} labelKey='name' filterBy={() => true} />);

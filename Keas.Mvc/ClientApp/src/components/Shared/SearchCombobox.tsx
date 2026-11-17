@@ -121,13 +121,18 @@ export const SearchCombobox = (props: Props) => {
             setQuery(event.target.value); setOpen(true); setActive(-1);
           }}
           onKeyDown={handleKeyDown} />
-        {loading && <span role='status' aria-label='Searching' className='loading loading-spinner loading-xs' />}
+        {loading && <span aria-hidden='true' className='loading loading-spinner loading-xs' />}
         {props.clearButton && selected.length > 0 && !props.disabled && (
           <button type='button' className='btn btn-ghost btn-square btn-xs shrink-0' aria-label='Clear selection'
             onClick={() => { commit([]); setQuery(''); input.current?.focus(); setOpen(false); }}>
             <XMarkIcon className='size-4' aria-hidden='true' />
           </button>
         )}
+      </div>
+      <div role='status' aria-atomic='true' className='sr-only'>
+        {expanded ? loading ? 'Searching…' : choices.length
+          ? `${choices.length} ${choices.length === 1 ? 'option' : 'options'} available.`
+          : props.emptyLabel ?? 'No matches found' : ''}
       </div>
       {expanded && <ul id={`${props.id}-options`} role='listbox'
         tabIndex={-1} onKeyDown={handleKeyDown}

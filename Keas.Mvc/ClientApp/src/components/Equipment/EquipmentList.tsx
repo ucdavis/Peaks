@@ -15,7 +15,7 @@ const EquipmentList = (props: IProps) => {
   const equipment =
     !props.equipment || props.equipment.length < 1 ? (
       <tr>
-        <td colSpan={5}>No Equipment Found</td>
+        <td colSpan={6}>No Equipment Found</td>
       </tr>
     ) : (
       props.equipment.map(x => (

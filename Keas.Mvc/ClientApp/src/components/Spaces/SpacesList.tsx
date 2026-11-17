@@ -23,7 +23,7 @@ const SpacesList = (props: IProps) => {
   const spacesList =
     !spaces || spaces.length < 1 ? (
       <tr>
-        <td colSpan={3}>No Spaces Found</td>
+        <td colSpan={4}>No Spaces Found</td>
       </tr>
     ) : (
       spaces.map(renderItem)

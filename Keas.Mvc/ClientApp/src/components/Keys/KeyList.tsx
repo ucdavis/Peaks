@@ -29,7 +29,7 @@ const KeyList = (props: IProps) => {
   const keys =
     !keysInfo || keysInfo.length < 1 ? (
       <tr>
-        <td colSpan={4}>No Keys Found</td>
+        <td colSpan={5}>No Keys Found</td>
       </tr>
     ) : (
       keysInfo.map(renderItem)

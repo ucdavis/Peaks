@@ -69,6 +69,13 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
           <FormFeedback>Computer property is required</FormFeedback>
         </FormGroup>
 
+        <div role='status' aria-atomic='true' className='sr-only'>
+          {isSearching ? 'Searching…' : isFetched
+            ? !isValidSearch ? 'No data to present.'
+              : listOfComputers?.length ? `${listOfComputers.length} ${listOfComputers.length === 1 ? 'computer' : 'computers'} found.`
+                : 'No results found for the search term.'
+            : ''}
+        </div>
         {renderNameTable()}
       </Form>
     );
