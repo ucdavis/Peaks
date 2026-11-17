@@ -111,6 +111,7 @@ namespace Keas.Mvc.Controllers.Api
                 accessCount = r.AccessCount,
                 keyCount = r.KeyCount,
                 workstationCount = r.WorkstationCount,
+                teamPermissionCount = r.TeamPermissionCount,
                 active = r.Active,
             });
 
