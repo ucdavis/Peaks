@@ -31,7 +31,7 @@ export const AssetSummary = ({ title, fields, tags, notes, actions, children }: 
     <dl className='grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3'>
       {fields.map(([label, value]) => <DisplayField key={label} label={label}>{value}</DisplayField>)}
     </dl>
-    {tags && <div className='flex flex-wrap gap-2' aria-label='Tags'>
+    {tags && <div className='flex flex-wrap gap-2' role='group' aria-label='Tags'>
       {tags.split(',').map(tag => tag.trim()).filter(Boolean).map((tag, index) =>
         <span key={`${tag}-${index}`} className='badge badge-asset badge-soft'>{tag}</span>)}
     </div>}

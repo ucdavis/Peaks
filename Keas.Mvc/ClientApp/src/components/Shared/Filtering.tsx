@@ -25,13 +25,7 @@ export const ColumnFilterHeaders = <T extends object>({
       <tr className='asset-table-filters' key={group.id}>
         {group.headers.map(header => (
           <td key={header.id}>
-            <div
-              aria-label={`Filter ${
-                typeof header.column.columnDef.header === 'string'
-                  ? header.column.columnDef.header
-                  : header.column.id
-              }`}
-            >
+            <div>
               {header.column.getCanFilter()
                 ? flexRender(
                     header.column.columnDef.meta?.Filter || DefaultColumnFilter,

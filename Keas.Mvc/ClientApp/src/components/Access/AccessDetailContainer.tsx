@@ -144,7 +144,7 @@ const AccessDetailContainer = (props: IProps) => {
           </div>
         </div>
         {tags.length > 0 && (
-          <div className='flex flex-wrap gap-2' aria-label='Access tags'>
+          <div className='flex flex-wrap gap-2' role='group' aria-label='Access tags'>
             {tags.map(tag => (
               <span
                 key={tag}

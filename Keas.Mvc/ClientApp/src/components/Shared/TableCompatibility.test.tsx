@@ -171,6 +171,10 @@ it.each(tableCases)(
       expect(header).toHaveAccessibleName();
     });
     const filters = container.querySelector('.asset-table-filters');
+    expect(filters.querySelector('div[aria-label]')).toBeNull();
+    filters.querySelectorAll('input, select').forEach(control => {
+      expect(control).toHaveAccessibleName();
+    });
     expect(within(filters as HTMLElement).queryAllByRole('columnheader'))
       .toHaveLength(0);
   }

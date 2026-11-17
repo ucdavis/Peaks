@@ -208,7 +208,7 @@ export const AssetFilterBar = ({
         narrow your results.
       </p>
       {chips.length > 0 && (
-        <div className='flex flex-wrap gap-2' aria-label='Active filters'>
+        <div className='flex flex-wrap gap-2' role='group' aria-label='Active filters'>
           {chips.map(({ category, value }) => (
             <span
               key={`${category.id}-${value}`}
