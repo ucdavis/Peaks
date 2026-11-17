@@ -29,7 +29,7 @@ const KeySerialList = (props: IProps) => {
   const serials =
     !keySerials || keySerials.length < 1 ? (
       <tr>
-        <td colSpan={6}>No Key Serials Found</td>
+        <td colSpan={7}>No Key Serials Found</td>
       </tr>
     ) : (
       keySerials.map(renderItem)
@@ -39,7 +39,7 @@ const KeySerialList = (props: IProps) => {
     <table className='table'>
       <thead>
         <tr>
-          <th />
+          <th scope='col'>Details</th>
           <th>Key Code</th>
           <th>Serial Number</th>
           <th>Status</th>

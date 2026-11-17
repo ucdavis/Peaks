@@ -136,8 +136,8 @@ describe.each(dropdowns)('$name scrolling', ({ renderDropdown }) => {
 
 it('closes the previous selector when another selector is opened', () => {
   render(<>
-    <SearchCombobox id='first-tags' placeholder='First tags' options={options} onChange={vi.fn()} />
-    <SearchCombobox id='second-tags' placeholder='Second tags' options={options} onChange={vi.fn()} />
+    <SearchCombobox id='first-tags' placeholder='First tags' inputProps={{ 'aria-label': 'First tags' }} options={options} onChange={vi.fn()} />
+    <SearchCombobox id='second-tags' placeholder='Second tags' inputProps={{ 'aria-label': 'Second tags' }} options={options} onChange={vi.fn()} />
   </>);
   const first = screen.getByRole('combobox', { name: 'First tags' });
   const second = screen.getByRole('combobox', { name: 'Second tags' });

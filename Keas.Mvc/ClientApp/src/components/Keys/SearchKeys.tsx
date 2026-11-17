@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
@@ -6,6 +6,8 @@ import { IKeyInfo } from '../../models/Keys';
 import SearchAsyncOptions from '../Shared/SearchAsyncOptions';
 
 interface IProps {
+  // Supply an id when associating a visible label outside this component.
+  id?: string;
   defaultKeyInfo?: IKeyInfo;
   onSelect: (keyInfo: IKeyInfo) => void;
   onDeselect: () => void;
@@ -14,6 +16,7 @@ interface IProps {
 
 // Search for existing key then send selection back to parent
 const SearchKeys = (props: IProps) => {
+  const inputId = useId();
   const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
   const [keysInfo, setKeysInfo] = useState<IKeyInfo[]>([]);
   const context = useContext(Context);
@@ -92,7 +95,8 @@ const SearchKeys = (props: IProps) => {
 
   return (
     <SearchAsyncOptions
-      id='searchKeys' // for accessibility
+      id={props.id || inputId}
+      inputProps={{ 'aria-label': props.id ? undefined : 'Search for key by name or by serial number' }}
       defaultSelected={defaultKeyInfo ? [defaultKeyInfo] : []}
       isLoading={isSearchLoading}
       minLength={2}

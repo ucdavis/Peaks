@@ -68,7 +68,7 @@ describe('Workstation Container', () => {
 
     const headerRecord = container.querySelector('thead').textContent;
 
-    expect(headerRecord).toBe('NameSpaceAssigned ToExpirationActions');
+    expect(headerRecord).toBe('DetailsNameSpaceAssigned ToExpirationActions');
   });
 
   it('Shows add button', async () => {

@@ -34,6 +34,7 @@ interface IProps {
 }
 
 const EquipmentEditValues = (props: IProps) => {
+  const formId = React.useId();
   const typeValue = props.selectedEquipment.type || 'Default';
   const listItems = !!props.equipmentTypes ? (
     props.equipmentTypes.map(x => (
@@ -123,9 +124,9 @@ const EquipmentEditValues = (props: IProps) => {
 
       <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&_.invalid-feedback]:text-sm [&_.invalid-feedback]:text-error'>
         <FormGroup className='space-y-2'>
-          <Label for='name'>Name</Label>
+          <Label for={`${formId}-name`}>Name</Label>
           <Input
-            id='name'
+            id={`${formId}-name`}
             type='text'
             className={`input w-full ${error?.path === 'name' ? 'input-error' : ''}`}
             readOnly={props.disableEditing}
@@ -140,9 +141,9 @@ const EquipmentEditValues = (props: IProps) => {
           </FormFeedback>
         </FormGroup>
         <FormGroup className='space-y-2'>
-          <Label for='type'>Type</Label>
+          <Label for={`${formId}-type`}>Type</Label>
           <Input
-            id='type'
+            id={`${formId}-type`}
             type='select'
             className={`select w-full ${error?.path === 'type' ? 'select-error' : ''}`}
             value={typeValue}
@@ -157,9 +158,9 @@ const EquipmentEditValues = (props: IProps) => {
           </FormFeedback>
         </FormGroup>
         <FormGroup className='space-y-2'>
-          <Label for='serialNumber'>Serial Number / Identifier</Label>
+          <Label for={`${formId}-serialNumber`}>Serial Number / Identifier</Label>
           <Input
-            id='serialNumber'
+            id={`${formId}-serialNumber`}
             type='text'
             className={`input w-full ${error?.path === 'serialNumber' ? 'input-error' : ''}`}
             readOnly={props.disableEditing}
@@ -187,8 +188,9 @@ const EquipmentEditValues = (props: IProps) => {
         ) && (
           <>
             <FormGroup className='space-y-2'>
-              <Label for='protectionLevel'>Protection Level</Label> <span />{' '}
+              <Label for={`${formId}-protectionLevel`}>Protection Level</Label> <span />{' '}
               <a
+                aria-label='About protection levels'
                 href='https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html'
                 target='_blank'
                 rel='noopener noreferrer'
@@ -196,7 +198,7 @@ const EquipmentEditValues = (props: IProps) => {
                 <InformationCircleIcon data-icon="information-circle" className='hero-icon size-5' />
               </a>
               <Input
-            id='protectionLevel'
+                id={`${formId}-protectionLevel`}
                 type='select'
                 className={`select w-full ${error?.path === 'protectionLevel' ? 'select-error' : ''}`}
                 value={props.selectedEquipment.protectionLevel || ''}
@@ -216,8 +218,9 @@ const EquipmentEditValues = (props: IProps) => {
               </FormFeedback>
             </FormGroup>
             <FormGroup className='space-y-2'>
-              <Label for='availabilityLevel'>Availability Level</Label> <span />{' '}
+              <Label for={`${formId}-availabilityLevel`}>Availability Level</Label> <span />{' '}
               <a
+                aria-label='About availability levels'
                 href='https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html'
                 target='_blank'
                 rel='noopener noreferrer'
@@ -225,7 +228,7 @@ const EquipmentEditValues = (props: IProps) => {
                 <InformationCircleIcon data-icon="information-circle" className='hero-icon size-5' />
               </a>
               <Input
-            id='availabilityLevel'
+                id={`${formId}-availabilityLevel`}
                 type='select'
                 className={`select w-full ${error?.path === 'availabilityLevel' ? 'select-error' : ''}`}
                 value={props.selectedEquipment.availabilityLevel || ''}
@@ -249,9 +252,9 @@ const EquipmentEditValues = (props: IProps) => {
 
         {shouldShowForType(props.selectedEquipment.type, 'Make') && (
           <FormGroup className='space-y-2'>
-            <Label for='make'>Make</Label>
+            <Label for={`${formId}-make`}>Make</Label>
             <Input
-            id='make'
+              id={`${formId}-make`}
               type='text'
               className={`input w-full ${error?.path === 'make' ? 'input-error' : ''}`}
               readOnly={props.disableEditing}
@@ -268,9 +271,9 @@ const EquipmentEditValues = (props: IProps) => {
         )}
         {shouldShowForType(props.selectedEquipment.type, 'Model') && (
           <FormGroup className='space-y-2'>
-            <Label for='model'>Model</Label>
+            <Label for={`${formId}-model`}>Model</Label>
             <Input
-            id='model'
+              id={`${formId}-model`}
               type='text'
               className={`input w-full ${error?.path === 'model' ? 'input-error' : ''}`}
               readOnly={props.disableEditing}
@@ -293,11 +296,13 @@ const EquipmentEditValues = (props: IProps) => {
         ) && (
           <FormGroup className='space-y-2'>
             <EquipmentManagedSystem
+              inputId={`${formId}-systemManagementId`}
               managedSystemId={props.selectedEquipment.systemManagementId}
               addManagedSystemId={props.changeProperty}
               disableEditing={props.disableEditing}
             />
             <Input
+              id={`${formId}-systemManagementId`}
               type='text'
               className={`input w-full ${error?.path === 'systemManagementId' ? 'input-error' : ''}`}
               readOnly={props.disableEditing}
@@ -317,9 +322,9 @@ const EquipmentEditValues = (props: IProps) => {
           </FormGroup>
         )}
         <FormGroup className='sm:col-span-2 lg:col-span-3'>
-          <Label for='notes'>Notes</Label>
+          <Label for={`${formId}-notes`}>Notes</Label>
           <Input
-            id='notes'
+            id={`${formId}-notes`}
             type='textarea'
             className={`textarea min-h-28 w-full ${error?.path === 'notes' ? 'textarea-error' : ''}`}
             readOnly={props.disableEditing}
@@ -342,7 +347,7 @@ const EquipmentEditValues = (props: IProps) => {
         </div>
 
         <FormGroup className='space-y-2'>
-          <Label for='searchTagsEquipmentEditValues'>Tags</Label>
+          <Label for={`${formId}-tags`}>Tags</Label>
           <SearchDefinedOptions
             definedOptions={props.tags}
             disabled={props.disableEditing}
@@ -353,7 +358,7 @@ const EquipmentEditValues = (props: IProps) => {
             }
             onSelect={e => props.changeProperty('tags', e.join(','))}
             placeholder='Search for Tags'
-            id='searchTagsEquipmentEditValues'
+            id={`${formId}-tags`}
           />
           <FormFeedback className='text-sm text-error'>
             {error && error.path === 'tags' && error.message}
@@ -363,8 +368,9 @@ const EquipmentEditValues = (props: IProps) => {
         {props.disableEditing && (
           // if we are looking at details, or if we are assigning
           <FormGroup className='space-y-2'>
-            <Label for='room'>Room</Label>
+            <Label for={`${formId}-room`}>Room</Label>
             <Input
+              id={`${formId}-room`}
               type='text'
               className='input w-full'
               readOnly={true}
@@ -379,8 +385,9 @@ const EquipmentEditValues = (props: IProps) => {
         {!props.disableEditing && (
           // if we are editing or creating
           <FormGroup className='space-y-2'>
-            <Label for='room'>Room</Label>
+            <Label for={`${formId}-room`}>Room</Label>
             <SearchSpaces
+              id={`${formId}-room`}
               onSelect={selectSpace}
               defaultSpace={
                 props.space ? props.space : props.selectedEquipment.space

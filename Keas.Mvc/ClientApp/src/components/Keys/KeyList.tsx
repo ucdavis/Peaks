@@ -1,5 +1,3 @@
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import { UncontrolledTooltip } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import KeyListItem from './KeyListItem';
 
@@ -31,7 +29,7 @@ const KeyList = (props: IProps) => {
   const keys =
     !keysInfo || keysInfo.length < 1 ? (
       <tr>
-        <td colSpan={4}>No Keys Found</td>
+        <td colSpan={5}>No Keys Found</td>
       </tr>
     ) : (
       keysInfo.map(renderItem)
@@ -41,15 +39,12 @@ const KeyList = (props: IProps) => {
     <table className='table'>
       <thead>
         <tr>
-          <th />
+          <th scope='col'>Details</th>
           <th>Key Name</th>
           <th>Key Code</th>
           <th>
             Serials{' '}
-            <InformationCircleIcon data-icon="information-circle" id='serialTooltip' className='hero-icon size-5 keys-anomaly' />
-            <UncontrolledTooltip placement='right' target='serialTooltip'>
-              In Use / Total
-            </UncontrolledTooltip>
+            <span className='text-sm font-normal'>(In Use / Total)</span>
           </th>
           <th className='w-[10%]'>Actions</th>
         </tr>

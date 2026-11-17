@@ -6,6 +6,42 @@ import { SearchCombobox } from './SearchCombobox';
 afterEach(cleanup);
 
 describe('DaisyUI search combobox', () => {
+  it('updates a persistent live region for matches, no matches, and dismissal', () => {
+    render(<SearchCombobox id='status-search' options={['Laptop', 'Desktop']} onChange={vi.fn()} />);
+    const status = screen.getByRole('status');
+    const input = screen.getByRole('combobox');
+    expect(status).toBeEmptyDOMElement();
+    fireEvent.change(input, { target: { value: 'lap' } });
+    expect(status).toHaveTextContent('1 option available.');
+    fireEvent.change(input, { target: { value: 'missing' } });
+    expect(screen.getByRole('status')).toBe(status);
+    expect(status).toHaveTextContent('No matches found');
+    fireEvent.keyDown(input, { key: 'Escape' });
+    expect(status).toBeEmptyDOMElement();
+  });
+
+  it('keeps the visible label as its name before and after keyboard selection', () => {
+    const change = vi.fn();
+    render(<>
+      <label htmlFor='room-search'>Room</label>
+      <SearchCombobox id='room-search' placeholder='Search for space' options={['Room 101']} onChange={change} />
+    </>);
+    const input = screen.getByRole('combobox', { name: 'Room' });
+    expect(screen.getByLabelText('Room')).toBe(input);
+    fireEvent.change(input, { target: { value: '101' } });
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(change).toHaveBeenCalledWith(['Room 101']);
+    expect(input).toHaveValue('Room 101');
+    expect(input).toHaveAccessibleName('Room');
+  });
+
+  it('preserves an explicit accessible name for a standalone search', () => {
+    render(<SearchCombobox id='standalone-search' options={[]} onChange={vi.fn()}
+      placeholder='Type a name' inputProps={{ 'aria-label': 'Find a person' }} />);
+    expect(screen.getByRole('combobox', { name: 'Find a person' })).toBeInTheDocument();
+  });
+
   it('filters suggestions and selects with the keyboard', () => {
     const change = vi.fn();
     render(<SearchCombobox id='tags' options={['Laptop', 'Desktop']} onChange={change} multiple placeholder='Tags' />);
@@ -85,6 +121,7 @@ describe('DaisyUI search combobox', () => {
     expect(screen.queryByRole('listbox')).toBeNull();
     fireEvent.change(input, { target: { value: 'Ali' } });
     fireEvent.change(input, { target: { value: 'Alice' } });
+    expect(screen.getByRole('status')).toHaveTextContent('Searching…');
     await waitFor(() => expect(search).toHaveBeenCalledWith('Alice'));
     expect(search).toHaveBeenCalledTimes(1);
     view.rerender(<SearchCombobox id='people' options={[{ name: 'Alice' }]} onChange={change} onSearch={search} minLength={3} labelKey='name' filterBy={() => true} />);

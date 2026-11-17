@@ -59,7 +59,7 @@ const KeySerialTable = (props: IProps) => {
             onClick={() => props.showDetails(data.row.original)}
           />
         ),
-        header: ' '
+        header: 'Details'
       },
       {
         header: 'Key Code and SN',

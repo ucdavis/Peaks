@@ -63,7 +63,7 @@ describe('Access Container', () => {
 
     const headerRecord = container.querySelector('.table-row').textContent;
     expect(headerRecord).toBe(
-      ' NameNumber of AssignmentsAssigned ToFirst ExpirationActions'
+      'DetailsNameNumber of AssignmentsAssigned ToFirst ExpirationActions'
     );
   });
 

@@ -15,7 +15,7 @@ const AccessAssignmentList = (props: IProps) => {
   const access =
     !props.accessAssignments || props.accessAssignments.length < 1 ? (
       <tr>
-        <td colSpan={5}>No Accesses Found</td>
+        <td colSpan={6}>No Accesses Found</td>
       </tr>
     ) : (
       props.accessAssignments.map(x => (
@@ -34,7 +34,7 @@ const AccessAssignmentList = (props: IProps) => {
     <table className='table'>
       <thead>
         <tr>
-          <th />
+          <th scope='col'>Details</th>
           <th>Name</th>
           <th>Assigned?</th>
           <th>Number of Assignments</th>

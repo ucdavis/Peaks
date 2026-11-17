@@ -117,7 +117,7 @@ const EquipmentDetails = (props: IProps) => {
             )}
           </dl>
           {tags.length > 0 && (
-            <div className='mt-5 flex flex-wrap gap-2' aria-label='Tags'>
+            <div className='mt-5 flex flex-wrap gap-2' role='group' aria-label='Tags'>
               {tags.map(tag => <span key={tag} className='badge badge-asset badge-soft'>{tag}</span>)}
             </div>
           )}

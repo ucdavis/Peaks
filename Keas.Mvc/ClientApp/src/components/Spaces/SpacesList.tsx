@@ -23,7 +23,7 @@ const SpacesList = (props: IProps) => {
   const spacesList =
     !spaces || spaces.length < 1 ? (
       <tr>
-        <td colSpan={3}>No Spaces Found</td>
+        <td colSpan={4}>No Spaces Found</td>
       </tr>
     ) : (
       spaces.map(renderItem)
@@ -33,7 +33,7 @@ const SpacesList = (props: IProps) => {
     <table className='table'>
       <thead>
         <tr>
-          <th />
+          <th scope='col'>Details</th>
           <th>Room</th>
           <th>Room Name</th>
           <th className='w-[10%]'>Actions</th>

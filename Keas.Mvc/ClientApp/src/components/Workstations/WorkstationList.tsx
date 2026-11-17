@@ -16,7 +16,7 @@ const WorkstationList = (props: IProps) => {
   const workstations =
     !props.workstations || props.workstations.length < 1 ? (
       <tr>
-        <td colSpan={5}>No Workstations Found</td>
+        <td colSpan={6}>No Workstations Found</td>
       </tr>
     ) : (
       props.workstations.map(x => (
@@ -38,7 +38,7 @@ const WorkstationList = (props: IProps) => {
       <table className='table'>
         <thead>
           <tr>
-            <th />
+            <th scope='col'>Details</th>
             <th>Name</th>
             <th>Space</th>
             <th>Assigned To</th>

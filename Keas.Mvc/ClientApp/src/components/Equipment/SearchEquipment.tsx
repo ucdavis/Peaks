@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { useContext, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
@@ -18,6 +18,7 @@ interface IProps {
 
 // Search for existing equipment then send selection back to parent
 const SearchEquipment = (props: IProps) => {
+  const inputId = useId();
   const [equipment, setEquipment] = useState<IEquipmentLabel[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
   const context = useContext(Context);
@@ -25,10 +26,10 @@ const SearchEquipment = (props: IProps) => {
   const renderSelectEquipment = () => {
     return (
       <div>
-        <label>Pick an equipment to assign</label>
+        <label htmlFor={inputId}>Pick an equipment to assign</label>
         <div>
           <SearchAsyncOptions
-            id='searchEquipment' // for accessibility
+            id={inputId}
             isLoading={isSearchLoading}
             minLength={3}
             placeholder='Search for equipment by name or by serial number'

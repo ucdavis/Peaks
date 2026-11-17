@@ -2,6 +2,7 @@ import EquipmentManagedSystemInfo from './EquipmentManagedSystemInfo';
 import EquipmentManagedSystemSearchId from './EquipmentManagedSystemSearchId';
 
 interface IProps {
+  inputId: string;
   managedSystemId: string;
   addManagedSystemId: (property: string, id: string) => void;
   disableEditing: boolean;
@@ -28,7 +29,7 @@ const EquipmentManagedSystem = (props: IProps) => {
   return (
     <>
       <div className='flex flex-wrap items-center gap-2'>
-        <span className="text-sm font-semibold">Managed System ID</span>
+        <label htmlFor={props.inputId} className="text-sm font-semibold">Managed System ID</label>
         <span />
         {renderManagedSystemInfoOrSearchId()}
       </div>

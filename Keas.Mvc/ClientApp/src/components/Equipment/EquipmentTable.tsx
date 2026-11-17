@@ -68,7 +68,7 @@ const EquipmentTable = (props: IProps) => {
             onClick={() => props.showDetails(data.row.original)}
           />
         ),
-        header: ' '
+        header: 'Details'
       },
       {
         header: 'Serial Number',
@@ -116,6 +116,7 @@ const EquipmentTable = (props: IProps) => {
 
   return (
     <ReactTable
+      tableClassName='equipment-table'
       data={equipmentData}
       columns={columns}
       initialState={initialState}

@@ -1,5 +1,5 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { useContext, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
@@ -15,6 +15,7 @@ interface IProps {
 
 // Search for existing access then send selection back to parent
 const SearchAccess = (props: IProps) => {
+  const inputId = useId();
   const [accesses, setAccesses] = useState<IAccess[]>([]);
   const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
   const context = useContext(Context);
@@ -22,10 +23,10 @@ const SearchAccess = (props: IProps) => {
   const renderSelectAccess = () => {
     return (
       <div>
-        <label>Pick an access to assign</label>
+        <label htmlFor={inputId}>Pick an access to assign</label>
         <div>
           <SearchAsyncOptions
-            id='searchAccesses' // for accessibility
+            id={inputId}
             isLoading={isSearchLoading}
             minLength={3}
             placeholder='Search for access by name or by serial number'

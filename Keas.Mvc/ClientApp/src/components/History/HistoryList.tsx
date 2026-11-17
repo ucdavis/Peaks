@@ -13,9 +13,6 @@ const HistoryList = (props: IProps) => {
   return (
     <div className='table'>
       <table className='table'>
-        <thead>
-          <tr />
-        </thead>
         <tbody>{histories}</tbody>
       </table>
     </div>

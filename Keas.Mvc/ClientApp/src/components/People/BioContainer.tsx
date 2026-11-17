@@ -31,8 +31,7 @@ const BioContainer = ({ person }: IProps) => {
     person.userId ||
     person.homePhone ||
     person.teamPhone ||
-    person.supervisor ||
-    person.isSupervisor;
+    person.supervisor;
   const tags = Array.from(
     new Set(
       (person.tags || '')
@@ -69,10 +68,10 @@ const BioContainer = ({ person }: IProps) => {
             </dl>
           </section>
         )}
-        {hasContact && (
+        {(hasContact || person.isSupervisor) && (
           <section className='flex min-w-0 flex-col gap-4' aria-label='Contact details'>
             <h3 className='m-0 text-base font-semibold'>Contact details</h3>
-            <dl className='m-0 grid gap-3'>
+            {hasContact && <dl className='m-0 grid gap-3'>
               {person.email && (
                 <Detail label='Email'>
                   <a
@@ -109,7 +108,7 @@ const BioContainer = ({ person }: IProps) => {
               {person.supervisor && (
                 <Detail label='Supervisor'>{person.supervisor.name}</Detail>
               )}
-            </dl>
+            </dl>}
             {person.isSupervisor && (
               <a
                 className='link link-hover inline-flex items-center gap-2 text-sm'

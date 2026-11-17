@@ -1,10 +1,12 @@
-import { useContext, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
 import { ISpace } from '../../models/Spaces';
 
 interface IProps {
+  // Supply an id when associating a visible label outside this component.
+  id?: string;
   onSelect: (space: ISpace) => void;
   defaultSpace?: ISpace;
   isRequired?: boolean;
@@ -13,6 +15,7 @@ interface IProps {
 // TODO: need a way to clear out selected space
 // Assign a space via search lookup, unless a space is already provided
 const SearchSpaces = (props: IProps) => {
+  const inputId = useId();
   const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
   const [spaces, setSpaces] = useState<ISpace[]>([]);
   const context = useContext(Context);
@@ -72,7 +75,8 @@ const SearchSpaces = (props: IProps) => {
 
   return (
     <SearchCombobox
-      id='searchSpaces' // for accessibility
+      id={props.id || inputId}
+      inputProps={{ 'aria-label': props.id ? undefined : 'Search for space' }}
       isInvalid={props.isRequired && !props.defaultSpace}
       clearButton={true}
       isLoading={isSearchLoading}

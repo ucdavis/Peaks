@@ -21,6 +21,7 @@ interface IProps {
 }
 
 const KeySerialEditValues = (props: IProps) => {
+  const formId = React.useId();
   const { keySerial, error } = props;
 
   const numberValue = keySerial ? keySerial.number : '';
@@ -92,8 +93,9 @@ const KeySerialEditValues = (props: IProps) => {
         <dl><DisplayField label='Key Name'>{props.keySerial.key.name ? props.keySerial.key.name : ''}</DisplayField></dl>
         <dl><DisplayField label='Key Code'>{props.keySerial.key.code}</DisplayField></dl>
         <FormGroup>
-          <Label for='number'>Key Serial Number</Label>
+          <Label for={`${formId}-number`}>Key Serial Number</Label>
           <Input
+            id={`${formId}-number`}
             type='text'
             className='input w-full'
             readOnly={props.disableEditing}
@@ -107,8 +109,9 @@ const KeySerialEditValues = (props: IProps) => {
           </FormFeedback>
         </FormGroup>
         <FormGroup>
-          <Label>Status</Label>
+          <Label for={`${formId}-status`}>Status</Label>
           <Input
+            id={`${formId}-status`}
             type='select'
             className='select w-full'
             value={statusValue}
@@ -123,8 +126,9 @@ const KeySerialEditValues = (props: IProps) => {
           </FormFeedback>
         </FormGroup>
         <FormGroup>
-          <Label>Notes</Label>
+          <Label for={`${formId}-notes`}>Notes</Label>
           <Input
+            id={`${formId}-notes`}
             type='textarea'
             className='textarea min-h-28 w-full'
             disabled={props.disableEditing}
@@ -137,7 +141,7 @@ const KeySerialEditValues = (props: IProps) => {
           </FormFeedback>
         </FormGroup>
         <FormGroup>
-          <Label for='searchTagsKeySerialEditValues'>Tags</Label>
+          <Label for={`${formId}-tags`}>Tags</Label>
           <SearchDefinedOptions
             definedOptions={props.searchableTags || []}
             disabled={false}
@@ -147,7 +151,7 @@ const KeySerialEditValues = (props: IProps) => {
               .filter(Boolean)}
             onSelect={tags => props.changeProperty('tags', tags.join(','))}
             placeholder='Search for Tags'
-            id='searchTagsKeySerialEditValues'
+            id={`${formId}-tags`}
             inputProps={{ 'aria-label': 'Tags' }}
             isInvalid={error && error.path === 'tags'}
           />

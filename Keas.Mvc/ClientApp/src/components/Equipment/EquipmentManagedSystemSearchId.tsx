@@ -1,6 +1,6 @@
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { useContext, useState } from 'react';
+import { useContext, useId, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Button, Form, FormFeedback, FormGroup, Input, Table } from 'reactstrap';
 import { Context } from '../../Context';
@@ -11,6 +11,7 @@ interface IProps {
 }
 
 const EquipmentManagedSystemSearchId = (props: IProps) => {
+  const propertyId = useId();
   const [isFetched, setIsFetched] = useState<boolean>(false);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [isValidSearch, setIsValidSearch] = useState<boolean>(true);
@@ -68,6 +69,13 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
           <FormFeedback>Computer property is required</FormFeedback>
         </FormGroup>
 
+        <div role='status' aria-atomic='true' className='sr-only'>
+          {isSearching ? 'Searching…' : isFetched
+            ? !isValidSearch ? 'No data to present.'
+              : listOfComputers?.length ? `${listOfComputers.length} ${listOfComputers.length === 1 ? 'computer' : 'computers'} found.`
+                : 'No results found for the search term.'
+            : ''}
+        </div>
         {renderNameTable()}
       </Form>
     );
@@ -76,11 +84,11 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
   const renderInputSearch = () => {
     return (
       <>
-        <label>Computer Property</label>
+        <label htmlFor={propertyId}>Computer Property</label>
         <Input
           type='text'
           name='property'
-          id='computer-name'
+          id={propertyId}
           placeholder='Enter a Computer Property'
           invalid={valueToBeSearched.length < 1}
           onKeyPress={e => {
@@ -146,14 +154,14 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
   const renderSearchButton = () => {
     if (isSearching) {
       return (
-        <Button color='asset' disabled={false}>
-          {' '}
-          <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-6 animate-spin' />
+        <Button color='asset' type='button' disabled aria-busy='true'>
+          <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-6 animate-spin' aria-hidden='true' />
+          Searching…
         </Button>
       );
     } else {
       return (
-        <Button color='asset' disabled={false} onClick={onSearch}>
+        <Button color='asset' type='button' onClick={onSearch}>
           Search!
         </Button>
       );

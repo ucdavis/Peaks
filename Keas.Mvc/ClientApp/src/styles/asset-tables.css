@@ -31,9 +31,31 @@
     white-space: nowrap;
   }
 
-  .asset-table .table .asset-table-filters th {
+  .asset-table .table .asset-table-filters td {
     padding-top: 0;
     padding-bottom: 0.75rem;
+  }
+
+  /* Keep filtering and pagination from resizing equipment columns. */
+  .asset-table .equipment-table {
+    table-layout: fixed;
+    min-width: 64rem;
+  }
+
+  .asset-table .equipment-table th:first-child {
+    width: 7rem;
+  }
+
+  .asset-table .equipment-table th:nth-child(5) {
+    width: 14rem;
+  }
+
+  .asset-table .equipment-table th:last-child {
+    width: 9rem;
+  }
+
+  .asset-table .equipment-table tbody td {
+    overflow-wrap: anywhere;
   }
 
   .asset-table .table tbody tr:nth-child(odd) {
