@@ -92,6 +92,8 @@ namespace Keas.Mvc
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 // .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning) // uncomment this to hide EF core general info logs
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                .MinimumLevel.Override("OpenIddict", LogEventLevel.Fatal)
+                .MinimumLevel.Override("ModelContextProtocol", LogEventLevel.Fatal)
                 .Enrich.WithElasticApmCorrelationInfo()
                 .Enrich.FromLogContext()
                 .Enrich.WithClientIp()

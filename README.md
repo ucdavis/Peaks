@@ -32,6 +32,105 @@ docker compose -f .devcontainer/docker-compose.sandbox.yml up --build -d --wait
 
 Open <http://localhost:5285/login> and enter `sandbox-admin`. Use a unique project name and ports for each worktree. See [sandbox setup, reset and tests](docs/SANDBOX.md), and [EF migration workflow](docs/database/README.md).
 
+## MCP presentation spike: ngrok and the custom-server form
+
+This DEMO branch exposes the fictional Docker sandbox through ngrok so the
+**Add custom MCP server** form can discover OAuth, open the PEAKS login page,
+and call inventory tools from **Try Now**. Login is `sandbox-admin`, with no
+password or Entra connection. Only use this with the disposable sandbox data.
+Anyone with the public URL can use that demo login.
+
+### One-command demo launcher
+
+From this checkout, run:
+
+```bash
+bash scripts/mcp-demo.sh demo
+```
+
+It starts Docker Desktop if needed, starts the **already-built** sandbox, starts
+or reuses the demo ngrok tunnel, configures the public issuer, refreshes the three
+demo loan dates, and checks public discovery and login. It prints the MCP URL and
+reset links. Leave the terminal open if it started ngrok; Ctrl+C stops that tunnel
+but preserves Docker and its data. An existing tunnel stays under its original
+process, and the launcher leaves it running.
+
+Build once ahead of the presentation with `bash scripts/mcp-demo.sh demo --build`.
+The normal command uses existing images with no build or image pull. Docker,
+Python 3, ngrok with saved authentication, and OpenSSL are required. Building also
+requires .NET 10 and a trusted development certificate. If another ngrok session
+owns port 4040, the launcher stops with an explanation instead of terminating it.
+
+Thirty minutes before presenting, run the launcher on the presentation network,
+check the printed URL against the Codex plugin, reconnect, and try both prompts.
+MCP grants last eight hours, so sign in fresh on demo day. For a read-only endpoint
+check at any point, run `bash scripts/mcp-demo.sh check`. That check cannot prove
+Codex still has a valid grant; the **Try Now** query is the final test.
+
+For a live Add/connect demonstration, rehearse it once, then revoke the rehearsal
+grant, remove the plugin and open the printed sign-out URL. Keep the public server
+URL ready to paste. Keep the laptop awake, Docker and ngrok running, and use the
+same network for rehearsal and the talk. If the tunnel gets a new URL, rerun the
+launcher and update/re-add the plugin. Save a short rehearsal recording as a backup
+for venue connectivity problems. Stop ngrok after the demo.
+
+### Individual startup and reset commands
+
+From this checkout, with Docker Desktop running, a trusted .NET development
+certificate, Python 3, OpenSSL, and ngrok installed and authenticated:
+
+```bash
+bash scripts/mcp-demo.sh start
+bash scripts/mcp-demo.sh tunnel
+```
+
+Leave the tunnel running. In another terminal in this checkout:
+
+```bash
+bash scripts/mcp-demo.sh public
+bash scripts/mcp-demo.sh refresh-dates
+```
+
+`public` reads the live ngrok URL and restarts only the demo app with that URL as
+its OAuth issuer. Paste the printed **Server URL**, including `/mcp`, into the
+form. Choose **OAuth** and **Dynamic Client Registration**, with scopes
+`peaks.inventory.read offline_access`. The token endpoint authentication method
+is `none`; you do not supply a client ID or secret. Create the PEAKS Demo plugin,
+connect, sign in as `sandbox-admin`, allow read access, then use **Try Now**.
+Ask “What equipment expires this week?” or “What Apple equipment does Javier Morales have?”
+
+If the form shows an individual callback such as
+`https://chatgpt.com/connector/oauth/...`, copy its complete value and run:
+
+```bash
+bash scripts/mcp-demo.sh public 'PASTE_THE_EXACT_CHATGPT_CALLBACK_URL_HERE'
+```
+
+The standard `https://chatgpt.com/connector_platform_oauth_redirect` callback is
+already allowed in ngrok mode. The command above allows one additional exact
+ChatGPT callback, not a wildcard. Later runs preserve that saved callback.
+
+To rehearse again, visit the printed `/oauth/connections` page and revoke the
+old grant, remove the plugin in Codex, visit `/logout` to clear the PEAKS browser
+login, then add the plugin again. Without the logout step, the browser can reuse
+its session. Removing a plugin alone is not proof that its server grant was
+revoked. A new plugin may show a different individual callback; rerun `public`
+with that exact URL if needed. Refreshing the dates changes only the three
+`MCP-DEMO-*` fixture loan dates, preserving other inventory and OAuth records.
+
+Stop the public tunnel with Ctrl+C in its terminal. `bash scripts/mcp-demo.sh stop`
+stops the Docker sandbox and retains its volumes; it does not stop ngrok.
+`bash scripts/mcp-demo.sh local` restores the localhost issuer for the original
+local Codex plugin. `start` otherwise keeps the last selected mode. If ngrok
+assigns a different address after a restart, rerun `public` and add the new URL
+in the plugin form. Existing grants are tied to the old issuer/resource.
+
+See [MCP demo setup, flow, safeguards and validation](docs/MCP-DEMO.md) for details.
+The public address and optional callback are stored in ignored
+`.local/mcp/mode.env`. Certificates, SQLite OAuth records and tokens must stay
+out of git. ngrok request inspection is disabled, and the tunnel verifies HTTPS
+to the local app without rewriting the public Host header.
+
 # Build and run
 
 Install the .NET SDK selected by [`global.json`](global.json). Use Node.js 22.18 or newer on Node 22 to match the [CI pipeline](azure-pipelines.yml), with npm 10 or newer as required by the [frontend package](Keas.Mvc/ClientApp/package.json).
