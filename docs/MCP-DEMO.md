@@ -44,7 +44,14 @@ chat still has the old tool list. This setup was verified with Codex CLI 0.154.0
 
 ## Connect through the custom-server form
 
-Run `start`, keep `tunnel` running in one terminal, then run `public` in another.
+Run `bash scripts/mcp-demo.sh demo` for the complete startup sequence, using the
+already-built sandbox images. Use `demo --build` once ahead of the presentation
+or after application changes. The launcher waits for Compose health and ngrok's
+explicit tunnel-ready event, reuses an existing demo tunnel, preserves the saved
+callback and refreshes the three demo loan dates. It leaves existing grants intact.
+Use `check` for a read-only public endpoint check; follow it with a real Codex query.
+
+Alternatively, run `start`, keep `tunnel` running in one terminal, then run `public` in another.
 The script obtains the URL from ngrok's local agent API and saves it in ignored
 `.local/mcp/mode.env`. `public` and `local` restart only the app container; neither
 removes data. The existing sandbox project and ports stay isolated from other apps.
@@ -200,7 +207,21 @@ Use `bash scripts/mcp-demo.sh status`, `logs`, and `stop` to manage this sandbox
   Both returned four Apple devices for Javier and 15 assignments due in the
   Pacific week November 16 through November 22. Revocation blocked both access
   tokens and the rotated refresh token. Rehearsal grants were revoked afterward.
-- The user created PEAKS Demo through the custom-server form and reached its
-  **Connect PEAKS Demo** screen. Browser OAuth completion, plugin removal/re-add,
-  and a natural-language **Try Now** turn remain unverified in Codex.
-  The live public rehearsals above used a protocol client.
+- The user confirmed that the real Codex connection and demo work after using
+  the custom-server form. PEAKS Demo tools then became available in this chat.
+  Direct calls through that installed MCP returned the current demo context,
+  resolved Javier Morales to person ID 3, and returned his four Apple devices.
+  A complete remove/re-add cycle in the Codex UI has not been separately observed.
+  The earlier public HTTP rehearsals above used a protocol client.
+
+The one-command launcher was exercised against the running sandbox and tunnel.
+It reused the existing ngrok process, synchronized the issuer, refreshed fixture
+dates and passed public endpoint checks. The installed PEAKS Demo MCP still
+returned the current context afterward. Four launcher tests cover the ngrok ready
+event, early process failure/cleanup, refusing an unrelated tunnel and detecting
+a stale issuer challenge. A new live ngrok session and Docker Desktop cold start
+were not exercised during this check, to preserve the connected demo URL.
+
+```bash
+python3 -m unittest discover -s scripts -p 'test_mcp_demo_launch.py' -v
+```

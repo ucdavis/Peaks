@@ -11,6 +11,18 @@ compose=(docker compose)
 if [[ -f .local/mcp/mode.env ]]; then compose+=(--env-file .local/mcp/mode.env); fi
 compose+=(-f .devcontainer/docker-compose.sandbox.yml -f .devcontainer/docker-compose.mcp-demo.yml)
 case "${1:-status}" in
+  demo)
+    shift
+    exec python3 scripts/mcp-demo-launch.py "$@"
+    ;;
+  check) exec python3 scripts/mcp-demo-launch.py --check ;;
+  resume)
+    if [[ ! -f .local/mcp/localhost.pfx ]]; then
+      printf 'Run bash scripts/mcp-demo.sh start once to build and prepare the certificate.\n' >&2
+      exit 1
+    fi
+    "${compose[@]}" up --no-build --pull never -d --wait --wait-timeout 240
+    ;;
   start)
     dotnet dev-certs https --check --trust
     mkdir -p .local/mcp
@@ -39,6 +51,9 @@ origin = matches[0]['public_url'].rstrip('/')
 if not re.fullmatch(r'https://[a-z0-9-]+\.(?:ngrok-free\.app|ngrok-free\.dev|ngrok\.app|ngrok\.dev)', origin):
     sys.exit('Expected an ngrok HTTPS origin.')
 callback = sys.argv[1]
+if not callback and pathlib.Path('.local/mcp/mode.env').exists():
+    saved = dict(line.split('=', 1) for line in pathlib.Path('.local/mcp/mode.env').read_text().splitlines() if '=' in line)
+    callback = saved.get('MCP_DEMO_CHATGPT_REDIRECT_URI', '')
 if callback and not re.fullmatch(r'https://chatgpt\.com/(?:connector_platform_oauth_redirect|connector/oauth/[A-Za-z0-9_-]+)', callback):
     sys.exit('Pass the exact ChatGPT callback URL from the form, without query parameters.')
 pathlib.Path('.local/mcp/mode.env').write_text(
@@ -68,5 +83,5 @@ PY
     if [[ -f .local/mcp/mode.env ]]; then cat .local/mcp/mode.env; fi
     ;;
   logs) "${compose[@]}" logs --tail=60 app ;;
-  *) printf 'Usage: %s {start|tunnel|public [exact-chatgpt-callback]|local|refresh-dates|connect|stop|status|logs}\n' "$0" >&2; exit 2 ;;
+  *) printf 'Usage: %s {demo [--build]|check|start|resume|tunnel|public [exact-chatgpt-callback]|local|refresh-dates|connect|stop|status|logs}\n' "$0" >&2; exit 2 ;;
 esac
