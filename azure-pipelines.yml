@@ -19,7 +19,7 @@ variables:
 stages:
   - stage: Build
     jobs:
-      - job:
+      - job: WindowsBuild
         steps:
           - task: NodeTool@0
             inputs:
@@ -77,6 +77,32 @@ stages:
             condition: succeededOrFailed()
             inputs:
               summaryFileLocation: "$(System.DefaultWorkingDirectory)/Keas.Mvc/ClientApp/coverage/cobertura-coverage.xml"
+
+      - job: AccessibilityPilot
+        displayName: "Authenticated accessibility pilot"
+        pool:
+          vmImage: "ubuntu-24.04"
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "22.x"
+          - bash: ./scripts/accessibility/run.sh
+            displayName: "Scan the seeded PEAKS sandbox"
+            env:
+              PILOT_INSTALL_SYSTEM_DEPS: "1"
+          - bash: |
+              for report in artifacts/accessibility/run-*/run.txt; do
+                if [[ -f "$report" ]]; then exit 0; fi
+              done
+              echo "Pilot incomplete during hosted setup"
+              mkdir -p artifacts/accessibility
+              echo "Pilot incomplete during hosted setup" > artifacts/accessibility/run.txt
+            displayName: "Record setup failure before the pilot report"
+            condition: failed()
+          - publish: $(System.DefaultWorkingDirectory)/artifacts/accessibility
+            artifact: peaks-accessibility
+            displayName: "Publish accessibility findings and coverage"
+            condition: succeededOrFailed()
 
   - stage: Publish
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
