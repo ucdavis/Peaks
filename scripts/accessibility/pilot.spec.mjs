@@ -66,6 +66,12 @@ test('assign equipment with the keyboard', async ({ page }) => {
       await expect(dialog.getByText('Brio Webcam - 56', { exact: true })).toBeVisible();
       await expect(date).toHaveCount(0);
     }, scope);
+    // Capture focus before fill() moves it to the person search.
+    report.focusAfterOpening = await dialog.evaluate(element => ({
+      insideDialog: element.contains(document.activeElement),
+      tag: document.activeElement.tagName,
+      label: document.activeElement.getAttribute('aria-label')
+    }));
 
     await scan(selected, async () => {
       await person.fill('Maya');
