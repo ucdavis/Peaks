@@ -23,6 +23,8 @@ The initialization seed runs on every Compose startup. Stable fixture identifier
 
 The SQL and HTTP ports bind only to `127.0.0.1`. The image includes no user secrets, host environment files, or database exports. External-service URLs point at an unreachable loopback port, and no mail/import jobs run. The sandbox does not exercise CAS, IAM/KFS, ServiceNow, DocuSign, or email delivery. There is no Mailpit adapter because Peaks sends email through SparkPost rather than the template's SMTP path.
 
+The [authenticated accessibility pilot](../scripts/accessibility/README.md) starts its own disposable sandbox, scans the five Team assets lists and the equipment assignment dialog, and records findings and coverage.
+
 ## Inspect, rebuild and stop
 
 ```bash
