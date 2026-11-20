@@ -6,41 +6,41 @@ On November 19, 2026, the PEAKS sandbox admin reached all five Team assets lists
 
 The first run already included the new asset colors. To measure their effect, we ran the same admin pilot on the commit immediately before the merge, `c4b1c664`, and on the fetched `master` revision, `f1b8a40f`. Both runs reached the same five lists and two dialog states. The merge reduced axe contrast violations from 114 to 61 element instances. [AA colors, PR #1419](https://github.com/ucdavis/Peaks/pull/1419)
 
-| Page or state | Before merge | After merge | Elements cleared |
-| --- | ---: | ---: | --- |
-| People | 11 | 11 | 0 |
-| Equipment | 30 | 9 | Active Equipment tab and 20 Details links |
-| Access | 22 | 9 | Active Access tab and 12 Details links |
-| Keys | 23 | 10 | Active Keys tab and 12 Details links |
-| Spaces | 10 | 10 | 0 |
-| Assign Equipment | 9 | 6 | Person-creation link and the Loan pool and Shared badges |
-| Assign Equipment with expiration date | 9 | 6 | Same link and badges after choosing a person |
+| Page or state                         | Before merge | After merge | Elements cleared                                         |
+| ------------------------------------- | -----------: | ----------: | -------------------------------------------------------- |
+| People                                |           11 |          11 | 0                                                        |
+| Equipment                             |           30 |           9 | Active Equipment tab and 20 Details links                |
+| Access                                |           22 |           9 | Active Access tab and 12 Details links                   |
+| Keys                                  |           23 |          10 | Active Keys tab and 12 Details links                     |
+| Spaces                                |           10 |          10 | 0                                                        |
+| Assign Equipment                      |            9 |           6 | Person-creation link and the Loan pool and Shared badges |
+| Assign Equipment with expiration date |            9 |           6 | Same link and badges after choosing a person             |
 
-The current findings all involve gray text. The latest local run used pilot commit `644047b2` with application source identical to `master`. The crawl took 4.36 s, the assignment flow took 1.69 s, and the command took 49 s including setup and teardown.
+The findings after the merge all involved gray text. That comparison run used pilot commit `644047b2` with application source identical to `f1b8a40f`. The crawl took 4.36 s, the assignment flow took 1.69 s, and the command took 49 s including setup and teardown.
 
 ## Local baseline
 
 The pilot ran at `406478f123e94a01062a2e7870dc54010ab3036a`, based on PEAKS `f1b8a40`. It used the fictional `sandbox-admin` account, with system-admin and Sandbox Team departmental-admin permissions. The browser was Chromium 159.0.8154.6 in a 1440 × 900 desktop viewport on Apple Silicon. Axe 4.14.1 scanned WCAG 2.0 and 2.1 Level A and AA rules. Coverage includes the initial page of each list.
 
-| Page or dialog state | Evidence the state loaded | Axe time | Violation instances | Elements needing review |
-| --- | --- | ---: | ---: | ---: |
-| People | sandbox-person-01@example.test | 474 ms | 11 | 5 |
-| Equipment | SBX-EQ-0056 | 412 ms | 9 | 6 |
-| Access | Building card access | 341 ms | 9 | 7 |
-| Keys | SBX-K-02 | 336 ms | 10 | 5 |
-| Spaces | 100 North Research Hall | 320 ms | 10 | 4 |
-| Assign Equipment | Brio Webcam - 56 and empty Assign To | 327 ms | 6 | 3 |
-| Assign Equipment with expiration date | Maya Chen and Month, Day, Year, Toggle calendar | 258 ms | 6 | 4 |
+| Page or dialog state                  | Evidence the state loaded                       | Axe time | Violation instances | Elements needing review |
+| ------------------------------------- | ----------------------------------------------- | -------: | ------------------: | ----------------------: |
+| People                                | sandbox-person-01@example.test                  |   474 ms |                  11 |                       5 |
+| Equipment                             | SBX-EQ-0056                                     |   412 ms |                   9 |                       6 |
+| Access                                | Building card access                            |   341 ms |                   9 |                       7 |
+| Keys                                  | SBX-K-02                                        |   336 ms |                  10 |                       5 |
+| Spaces                                | 100 North Research Hall                         |   320 ms |                  10 |                       4 |
+| Assign Equipment                      | Brio Webcam - 56 and empty Assign To            |   327 ms |                   6 |                       3 |
+| Assign Equipment with expiration date | Maya Chen and Month, Day, Year, Toggle calendar |   258 ms |                   6 |                       4 |
 
 All violations came from the `color-contrast` rule. On every list, axe flagged the asset-filter instructions, the record count beneath the table, and the copyright line. The instructions and count measured 4.35:1. The footer and affected column headings measured 4.29:1. Axe expected at least 4.5:1 for this text.
 
-| List | Other flagged elements in its table header |
-| --- | --- |
-| People | Details, Name, Email, Supervisor, Keys, Equipment, Access, Workstations |
-| Equipment | Details, Serial Number, Name, Assigned To, Expiration, Actions |
-| Access | Details, Name, Number of Assignments, Assigned To, First Expiration, Actions |
-| Keys | Details, Key Name, Key Code, Serials, its In Use / Total caption, Spaces, Actions |
-| Spaces | Details, Room, Room Name, Keys, Equipment, Workstations, its In Use / Total caption |
+| List      | Other flagged elements in its table header                                          |
+| --------- | ----------------------------------------------------------------------------------- |
+| People    | Details, Name, Email, Supervisor, Keys, Equipment, Access, Workstations             |
+| Equipment | Details, Serial Number, Name, Assigned To, Expiration, Actions                      |
+| Access    | Details, Name, Number of Assignments, Assigned To, First Expiration, Actions        |
+| Keys      | Details, Key Name, Key Code, Serials, its In Use / Total caption, Spaces, Actions   |
+| Spaces    | Details, Room, Room Name, Keys, Equipment, Workstations, its In Use / Total caption |
 
 In both dialog states, axe measured 4.35:1 on Name, Type, Serial number / identifier, Make, Model, and Room. These six labels account for all 12 dialog instances. The elements marked for review in the table are separate contrast checks that axe could not resolve.
 
@@ -48,14 +48,14 @@ In both dialog states, axe measured 4.35:1 on Name, Type, Serial number / identi
 
 The crawl signed in through the local login form and read the links inside the **Team assets** navigation on `/sandbox/people`. It needed the landmark name, the five expected destinations, and one known cell per list. All five used the same navigation, wait, and full-page scan code.
 
-The dialog took one additional Playwright test, 65 lines including locators, assertions, and focus reporting. It tabbed from the webcam's Details link to Row actions, pressed Arrow Down to focus Assign, and pressed Enter. It scoped axe to the open dialog, searched for Maya in Assign To, selected the matching fictional person by keyboard, and waited for Month, Day, Year, and Toggle calendar before scanning again. Escape and the discard confirmation closed the dialog. The focus check targeted the original row's button because choosing Assign removes its menu item. The test ended without saving an assignment. [Playwright test](pilot.spec.mjs)
+In the repeat run at `a6a0e3f6`, the dialog took one additional Playwright test, 65 lines including locators, assertions, and focus reporting. It tabbed from the webcam's Details link to Row actions, pressed Arrow Down to focus Assign, and pressed Enter. It scoped axe to the open dialog, searched for Maya in Assign To, selected the matching fictional person by keyboard, and waited for Month, Day, Year, and Toggle calendar before scanning again. Escape and the discard confirmation closed the dialog. The focus check targeted the original row's button because choosing Assign removes its menu item. The test ended without saving an assignment. [Playwright test](pilot.spec.mjs)
 
 ## Run time
 
-| Local run | Dependencies and sandbox ready | Five-list crawl | Assignment flow | Total including teardown |
-| --- | ---: | ---: | ---: | ---: |
-| First end-to-end run, `406478f1` | 111 s | 4.52 s | 2.19 s | 130 s |
-| Repeat with cached Docker build, `a6a0e3f6` | 22 s | 4.41 s | 1.72 s | 40 s |
+| Local run                                   | Dependencies and sandbox ready | Five-list crawl | Assignment flow | Total including teardown |
+| ------------------------------------------- | -----------------------------: | --------------: | --------------: | -----------------------: |
+| First end-to-end run, `406478f1`            |                          111 s |          4.52 s |          2.19 s |                    130 s |
+| Repeat with cached Docker build, `a6a0e3f6` |                           22 s |          4.41 s |          1.72 s |                     40 s |
 
 Both runs created and seeded a fresh database. Each scenario includes a separate sign-in, navigation, checks, and scans. The crawl ran first and the assignment test used the warmed application. Both runs produced the same violation counts. Hosted Azure timing is unmeasured.
 
@@ -69,11 +69,15 @@ From the repository root, with Docker Compose and Node 22.12 or newer available,
 ./scripts/accessibility/run.sh
 ```
 
-The script installs the locked test dependencies and Chromium headless shell, starts a fresh Compose project on two Docker-assigned loopback ports, and removes that project's containers, volumes, and locally built images on exit. Chromium's system dependencies must already be present on Linux. The script prints a directory under `artifacts/accessibility` for each run. See the [sandbox requirements](../../docs/SANDBOX.md).
+The script installs the locked test dependencies and Chromium headless shell, starts a fresh Compose project on two Docker-assigned loopback ports, and attempts to remove that project's containers, volumes, and locally built images on exit. Chromium's system dependencies must already be present when running locally on Linux. Each scenario verifies that PEAKS reports both `Admin` and `DepartmentalAdmin` after sign-in. The browser blocks the Google Analytics tag before sign-in. See the [sandbox requirements](../../docs/SANDBOX.md).
+
+The script prints the report directory under `artifacts/accessibility` once it has created one. Earlier setup failures are reported in the terminal.
 
 - `crawl.json` records the discovered links, page URLs, coverage, axe timings, and findings with each element's selector, HTML, and failure summary.
-- `assignment.json` records both dialog scans and the focus result. Each report includes total scenario time with sign-in.
-- Both JSON reports and `run.txt` record the commit, the app's roles for each signed-in scenario, and whether Git reported tracked changes or unignored untracked files before the build.
-- `run.txt` records the environment, setup milestones, total time, and exit status. The build log and failure diagnostics are in the same directory.
+- `assignment.json` records both dialog scans and focus on opening and after discard. Each JSON report includes the scenario time with sign-in and identifies the run as local or Azure Pipelines.
+- Both JSON reports and `run.txt` record the commit and whether Git reported tracked changes or unignored untracked files before the build. Role values are recorded per scenario as it runs.
+- `run.txt` records setup milestones, total time, exit status, and any teardown failure. The build log and failure diagnostics are in the same directory.
 
-The Azure Pipelines configuration adds an Ubuntu job alongside the Windows build. The job provisions Chromium's system dependencies, runs the same command, and publishes the directory as `peaks-accessibility`. Axe findings and the measured focus result are informational. Failed setup, missing pages, unexpected login redirects, failed loads, or an unreached test state fail the job. A local failure check removed the Equipment link, redirected Access to login, and returned HTTP 503 for the Keys list. The crawl reported all three as incomplete, continued to Spaces, and exited with failure.
+The Azure Pipelines configuration adds an Ubuntu job alongside the Windows build. The job provisions Chromium's system dependencies, runs the same command, and publishes `peaks-accessibility`. If hosted setup fails before the runner writes `run.txt`, the job writes a fallback failure report.
+
+Axe findings and the measured focus results are informational. Setup failures, missing required pages, unexpected login redirects, detected load errors, and unreached states fail the run. The scanner tracks same-origin request failures and uncaught page errors. The assignment flow skips tracking the People list request because it uses that page to find the Equipment link. A local failure check removed the Equipment link, redirected Access to login, and returned HTTP 503 for the Keys list. The crawl reported all three as incomplete, continued to Spaces, and exited with failure.
