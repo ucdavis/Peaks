@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
-import { execFileSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
+import { expect } from '@playwright/test';
+import { appendFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
@@ -17,11 +17,12 @@ function findings(rules) {
 export async function measure(page, name, stateNames, run) {
   const started = performance.now();
   const report = {
-    commit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+    commit: process.env.PILOT_COMMIT,
+    checkout: process.env.PILOT_CHECKOUT,
     environment: process.env.TF_BUILD ? 'Azure Pipelines' : 'local',
     startedAt: new Date().toISOString(),
     browser: page.context().browser().version(),
-    role: 'sandbox-admin', tags,
+    role: null, tags,
     states: Object.fromEntries(stateNames.map(state => [state, { coverage: 'incomplete', reason: 'Not reached' }])),
     loadErrors: [],
     coverage: 'incomplete'
@@ -32,10 +33,14 @@ export async function measure(page, name, stateNames, run) {
   }
   save();
 
-  // Ignore external services. A failed app or data request can leave a partial list visible.
-  const origin = process.env.PILOT_URL;
+  const origin = new URL(process.env.PILOT_URL).origin;
   const appRequest = req => new URL(req.url()).origin === origin &&
     ['document', 'xhr', 'fetch', 'script', 'stylesheet'].includes(req.resourceType());
+  const pending = new Set();
+  page.on('request', req => {
+    if (appRequest(req)) pending.add(req);
+  });
+  page.on('requestfinished', req => pending.delete(req));
   page.on('response', res => {
     if (!appRequest(res.request())) return;
     if (res.status() >= 400) {
@@ -47,37 +52,56 @@ export async function measure(page, name, stateNames, run) {
     }
   });
   page.on('requestfailed', req => {
-    if (appRequest(req)) report.loadErrors.push(`${req.failure()?.errorText} ${req.url()}`);
+    if (pending.delete(req)) report.loadErrors.push(`${req.failure()?.errorText} ${req.url()}`);
   });
+
+  async function settleRequests() {
+    await expect.poll(() => [...pending].map(req => req.url()), {
+      message: 'Waiting for sandbox requests to finish',
+      timeout: 10_000
+    }).toEqual([]);
+  }
 
   async function scan(label, prepare, scope) {
     const entered = performance.now();
     const errorOffset = report.loadErrors.length;
     const state = report.states[label] = { coverage: 'incomplete' };
     try {
-      await prepare();
-      const scanUrl = page.url();
-      const builder = new AxeBuilder({ page }).withTags(tags);
-      if (scope) builder.include(scope);
-      const scanStart = performance.now();
-      const result = await builder.analyze();
-      state.axeMs = elapsed(scanStart);
-      report.axe = result.testEngine.version;
-      state.violations = findings(result.violations);
-      state.needsReview = findings(result.incomplete);
-      if (page.url() !== scanUrl) throw new Error(`Navigation during scan of ${scanUrl}`);
-      if (report.loadErrors.length > errorOffset) throw new Error(report.loadErrors.slice(errorOffset).join('\n'));
-      state.coverage = 'scanned';
-      delete state.reason;
+      try {
+        await prepare(settleRequests);
+      } finally {
+        await settleRequests();
+      }
+      if (report.loadErrors.length === errorOffset) {
+        const scanUrl = page.url();
+        const builder = new AxeBuilder({ page }).withTags(tags);
+        if (scope) builder.include(scope);
+        const scanStart = performance.now();
+        const result = await builder.analyze();
+        state.axeMs = elapsed(scanStart);
+        report.axe = result.testEngine.version;
+        state.violations = findings(result.violations);
+        state.needsReview = findings(result.incomplete);
+        await settleRequests();
+        if (page.url() !== scanUrl) throw new Error(`Navigation during scan of ${scanUrl}`);
+        state.coverage = 'scanned';
+      }
     } catch (error) {
       state.reason = error.message;
     } finally {
+      const loadErrors = report.loadErrors.slice(errorOffset);
+      if (loadErrors.length) {
+        state.coverage = 'incomplete';
+        state.reason = [...loadErrors, state.reason].filter(Boolean).join('\n');
+      }
       state.url = page.url();
       state.elapsedMs = elapsed(entered);
       save();
       const count = state.violations?.reduce((n, rule) => n + rule.elements.length, 0);
       console.log(`${label}: ${state.coverage}, ${count ?? 'unknown'} violation instances, ${state.elapsedMs} ms`);
     }
+    if (pending.size) throw new Error(state.reason);
+    return state.coverage === 'scanned';
   }
 
   try {
@@ -92,6 +116,7 @@ export async function measure(page, name, stateNames, run) {
     throw error;
   } finally {
     save();
+    appendFileSync(join(process.env.PILOT_OUTPUT, 'run.txt'), `${name} roles: ${JSON.stringify(report.role)}\n`);
     console.log(`${name}: ${report.coverage}, ${report.elapsedMs} ms`);
   }
 }

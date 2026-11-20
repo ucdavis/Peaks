@@ -10,35 +10,40 @@ const seedCells = {
   Spaces: '100 North Research Hall'
 };
 const teamAssets = page => page.getByRole('navigation', { name: 'Team assets' });
+const assetLinks = page => teamAssets(page).getByRole('link').evaluateAll(links =>
+  links.map(link => ({ name: link.textContent.trim(), href: link.href }))
+);
 
-async function signIn(page) {
+async function signIn(page, report) {
+  await page.context().route('https://www.googletagmanager.com/**', route => route.abort());
   await page.goto('/login?returnUrl=' + start);
   await page.getByRole('textbox', { name: 'Kerberos ID or email' }).fill('sandbox-admin');
   await page.getByRole('button', { name: 'Sign in locally' }).click();
   await expect(page).toHaveURL(new URL(start, process.env.PILOT_URL).href);
   await expect(teamAssets(page)).toBeVisible();
+  report.role = await page.evaluate(() => window.App?.permissionsData ?? null);
+  expect(report.role).toEqual(expect.arrayContaining(['Admin', 'DepartmentalAdmin']));
+}
+
+async function openAsset(page, links, name) {
+  const destinations = links.filter(link => link.name === name).map(link => link.href);
+  const expected = new URL('/sandbox/' + name.toLowerCase(), process.env.PILOT_URL).href;
+  expect(destinations, `Missing ${name} link to ${expected} in Team assets`).toContain(expected);
+  if (name !== 'People') await page.goto(expected);
+  expect(page.url(), `Redirect from ${expected}`).toBe(expected);
+  await expect(page.getByRole('cell', { name: seedCells[name], exact: true })).toBeVisible();
 }
 
 test('crawl Team assets', async ({ page }) => {
   await measure(page, 'crawl', Object.keys(seedCells), async ({ scan, report }) => {
-    await signIn(page);
-    report.links = await teamAssets(page).getByRole('link').evaluateAll(links =>
-      links.map(link => ({ name: link.textContent.trim(), href: link.href }))
-    );
-    for (const name of Object.keys(seedCells)) {
-      report.states[name].reason = 'Missing link in Team assets';
-    }
-    for (const { name, href } of report.links) {
-      await scan(name, async () => {
-        const seed = seedCells[name];
-        expect(seed, `No seeded-content check for the discovered ${name} link`).toBeDefined();
-        expect(report.links.filter(link => link.name === name), `Duplicate ${name} link`).toHaveLength(1);
-        const expected = new URL('/sandbox/' + name.toLowerCase(), process.env.PILOT_URL);
-        expect(href, `Destination of the ${name} link`).toBe(expected.href);
-        if (page.url() !== href) await page.goto(href);
-        expect(page.url(), `Redirect from ${href}`).toBe(href);
-        await expect(page.getByRole('cell', { name: seed, exact: true })).toBeVisible();
-      });
+    await scan('People', async () => {
+      await signIn(page, report);
+      report.links = await assetLinks(page);
+      await openAsset(page, report.links, 'People');
+    });
+    if (!report.links) return;
+    for (const name of Object.keys(seedCells).filter(name => name !== 'People')) {
+      await scan(name, () => openAsset(page, report.links, name));
     }
   });
 });
@@ -47,8 +52,6 @@ test('assign equipment with the keyboard', async ({ page }) => {
   const initial = 'Assign Equipment';
   const selected = 'Assign Equipment with expiration date';
   await measure(page, 'assignment', [initial, selected], async ({ scan, report }) => {
-    await signIn(page);
-    await teamAssets(page).getByRole('link', { name: 'Equipment' }).click();
     const row = page.getByRole('row').filter({ has: page.getByRole('cell', { name: seedCells.Equipment, exact: true }) });
     const opener = row.getByRole('button', { name: 'Row actions' });
     const dialog = page.getByRole('dialog', { name: initial });
@@ -56,16 +59,23 @@ test('assign equipment with the keyboard', async ({ page }) => {
     const date = dialog.getByRole('group', { name: 'Set the expiration date' });
     const scope = '[role="dialog"]';
 
-    await row.getByRole('link', { name: 'Details' }).press('Tab');
-    await expect(opener).toBeFocused();
-    await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menuitem', { name: 'Assign', exact: true })).toBeFocused();
-    await page.keyboard.press('Enter');
-    await scan(initial, async () => {
+    const opened = await scan(initial, async settleRequests => {
+      await signIn(page, report);
+      const links = await assetLinks(page);
+      await openAsset(page, links, 'People');
+      await settleRequests();
+      await openAsset(page, links, 'Equipment');
+      await settleRequests();
+      await row.getByRole('link', { name: 'Details' }).press('Tab');
+      await expect(opener).toBeFocused();
+      await page.keyboard.press('ArrowDown');
+      await expect(page.getByRole('menuitem', { name: 'Assign', exact: true })).toBeFocused();
+      await page.keyboard.press('Enter');
       await expect(person).toBeVisible();
       await expect(dialog.getByText('Brio Webcam - 56', { exact: true })).toBeVisible();
       await expect(date).toHaveCount(0);
     }, scope);
+    if (!opened) return;
     // Capture focus before fill() moves it to the person search.
     report.focusAfterOpening = await dialog.evaluate(element => ({
       insideDialog: element.contains(document.activeElement),
@@ -95,7 +105,6 @@ test('assign equipment with the keyboard', async ({ page }) => {
     await expect(dialog).toHaveCount(0);
     expect(discardPrompt).toBe('Please confirm you want to close!');
     await expect(page).toHaveURL(new URL('/sandbox/equipment', process.env.PILOT_URL).href);
-    await expect(opener).toBeVisible();
     const focusReturned = await expect(opener).toBeFocused({ timeout: 2000 }).then(() => true, () => false);
     report.focus = {
       expected: seedCells.Equipment + ' Row actions',

@@ -16,7 +16,6 @@ export default defineConfig({
     baseURL: PILOT_URL,
     actionTimeout: 10_000,
     navigationTimeout: 20_000,
-    viewport: { width: 1440, height: 900 },
-    reducedMotion: 'reduce'
+    viewport: { width: 1440, height: 900 }
   }
 });

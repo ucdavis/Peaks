@@ -19,7 +19,15 @@ finish() {
       "${compose[@]}" ps -a > "$PILOT_OUTPUT/containers.txt"
       "${compose[@]}" logs --no-color --tail=100 > "$PILOT_OUTPUT/sandbox.log"
     fi
-    "${compose[@]}" down -v --rmi local || { status=1; phase=teardown; }
+    "${compose[@]}" down -v --rmi local
+    teardown_status=$?
+    if [[ $teardown_status != 0 ]]; then
+      echo "Sandbox teardown failed with exit $teardown_status" | tee -a "$PILOT_OUTPUT/run.txt"
+      if [[ $status == 0 ]]; then
+        status=$teardown_status
+        phase=teardown
+      fi
+    fi
   fi
   if [[ $status != 0 && $phase != teardown ]]; then
     echo "Pilot incomplete during $phase" | tee -a "$PILOT_OUTPUT/run.txt"
@@ -32,13 +40,16 @@ trap finish EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-echo "Commit $(git rev-parse HEAD), role sandbox-admin, environment ${AGENT_OS:-local}, project $SANDBOX_PROJECT" | tee "$PILOT_OUTPUT/run.txt"
-npm ci --no-audit --no-fund
-if [[ $(uname -s) == Linux ]]; then
-  npx playwright install --with-deps --only-shell chromium
-else
-  npx playwright install --only-shell chromium
+export PILOT_COMMIT PILOT_CHECKOUT
+PILOT_COMMIT=$(git rev-parse HEAD)
+changes=$(git --no-optional-locks status --porcelain --untracked-files=normal)
+PILOT_CHECKOUT=clean
+if [[ -n $changes ]]; then
+  PILOT_CHECKOUT=dirty
 fi
+echo "Commit $PILOT_COMMIT, checkout $PILOT_CHECKOUT, environment ${AGENT_OS:-local}, project $SANDBOX_PROJECT" | tee "$PILOT_OUTPUT/run.txt"
+npm ci --no-audit --no-fund
+npx playwright install --only-shell chromium
 echo "Dependencies ready at ${SECONDS}s" | tee -a "$PILOT_OUTPUT/run.txt"
 
 phase=sandbox

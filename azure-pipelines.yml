@@ -86,6 +86,14 @@ stages:
           - task: NodeTool@0
             inputs:
               versionSpec: "22.x"
+          - bash: |
+              if ! (npm ci --no-audit --no-fund && npx playwright install-deps chromium); then
+                mkdir -p ../../artifacts/accessibility
+                echo "Pilot incomplete during Chromium system dependency setup" | tee ../../artifacts/accessibility/run.txt
+                exit 1
+              fi
+            workingDirectory: ./scripts/accessibility
+            displayName: "Provision Chromium system dependencies"
           - bash: ./scripts/accessibility/run.sh
             displayName: "Scan the seeded PEAKS sandbox"
           - publish: $(System.DefaultWorkingDirectory)/artifacts/accessibility

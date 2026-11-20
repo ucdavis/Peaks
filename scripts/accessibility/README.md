@@ -69,10 +69,11 @@ From the repository root, with Docker Compose and Node 22.12 or newer available,
 ./scripts/accessibility/run.sh
 ```
 
-The script installs the locked test dependencies and Chromium headless shell, starts a fresh Compose project on two Docker-assigned loopback ports, and removes that project's containers, volumes, and locally built images on exit. Linux also installs the browser's system dependencies. The script prints a directory under `artifacts/accessibility` for each run. See the [sandbox requirements](../../docs/SANDBOX.md).
+The script installs the locked test dependencies and Chromium headless shell, starts a fresh Compose project on two Docker-assigned loopback ports, and removes that project's containers, volumes, and locally built images on exit. Chromium's system dependencies must already be present on Linux. The script prints a directory under `artifacts/accessibility` for each run. See the [sandbox requirements](../../docs/SANDBOX.md).
 
 - `crawl.json` records the discovered links, page URLs, coverage, axe timings, and findings with each element's selector, HTML, and failure summary.
 - `assignment.json` records both dialog scans and the focus result. Each report includes total scenario time with sign-in.
-- `run.txt` records the commit, environment, setup milestones, total time, and exit status. The build log and failure diagnostics are in the same directory.
+- Both JSON reports and `run.txt` record the commit, the app's roles for each signed-in scenario, and whether Git reported tracked changes or unignored untracked files before the build.
+- `run.txt` records the environment, setup milestones, total time, and exit status. The build log and failure diagnostics are in the same directory.
 
-The Azure Pipelines configuration adds an Ubuntu job alongside the Windows build. The job runs the same command and publishes the directory as `peaks-accessibility`. Axe findings and the measured focus result are informational. Failed setup, missing pages, unexpected login redirects, failed loads, or an unreached test state fail the job. A local failure check removed the Equipment link, redirected Access to login, and returned HTTP 503 for the Keys list. The crawl reported all three as incomplete, continued to Spaces, and exited with failure.
+The Azure Pipelines configuration adds an Ubuntu job alongside the Windows build. The job provisions Chromium's system dependencies, runs the same command, and publishes the directory as `peaks-accessibility`. Axe findings and the measured focus result are informational. Failed setup, missing pages, unexpected login redirects, failed loads, or an unreached test state fail the job. A local failure check removed the Equipment link, redirected Access to login, and returned HTTP 503 for the Keys list. The crawl reported all three as incomplete, continued to Spaces, and exited with failure.
