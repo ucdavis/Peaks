@@ -2,6 +2,22 @@
 
 On November 19, 2026, the PEAKS sandbox admin reached all five Team assets lists and both states of Assign Equipment. Axe flagged text contrast on 49 list elements and on six equipment labels in each dialog scan. The date controls introduced no additional axe violations. Closing the dialog returned focus to the spare webcam's Row actions button. A repeat run also checked focus on opening and found it was still on Row actions behind the dialog.
 
+## Effect of the asset color change
+
+The first run already included the new asset colors. To measure their effect, we ran the same admin pilot on the commit immediately before the merge, `c4b1c664`, and on the fetched `master` revision, `f1b8a40f`. Both runs reached the same five lists and two dialog states. The merge reduced axe contrast violations from 114 to 61 element instances. [AA colors, PR #1419](https://github.com/ucdavis/Peaks/pull/1419)
+
+| Page or state | Before merge | After merge | Elements cleared |
+| --- | ---: | ---: | --- |
+| People | 11 | 11 | 0 |
+| Equipment | 30 | 9 | Active Equipment tab and 20 Details links |
+| Access | 22 | 9 | Active Access tab and 12 Details links |
+| Keys | 23 | 10 | Active Keys tab and 12 Details links |
+| Spaces | 10 | 10 | 0 |
+| Assign Equipment | 9 | 6 | Person-creation link and the Loan pool and Shared badges |
+| Assign Equipment with expiration date | 9 | 6 | Same link and badges after choosing a person |
+
+The current findings all involve gray text. The latest local run used pilot commit `644047b2` with application source identical to `master`. The crawl took 4.36 s, the assignment flow took 1.69 s, and the command took 49 s including setup and teardown.
+
 ## Local baseline
 
 The pilot ran at `406478f123e94a01062a2e7870dc54010ab3036a`, based on PEAKS `f1b8a40`. It used the fictional `sandbox-admin` account, with system-admin and Sandbox Team departmental-admin permissions. The browser was Chromium 159.0.8154.6 in a 1440 × 900 desktop viewport on Apple Silicon. Axe 4.14.1 scanned WCAG 2.0 and 2.1 Level A and AA rules. Coverage includes the initial page of each list.
