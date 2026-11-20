@@ -62,7 +62,6 @@ test('assign equipment with the keyboard', async ({ page }) => {
     const opened = await scan(initial, async settleRequests => {
       await signIn(page, report);
       const links = await assetLinks(page);
-      await openAsset(page, links, 'People');
       await settleRequests();
       await openAsset(page, links, 'Equipment');
       await settleRequests();

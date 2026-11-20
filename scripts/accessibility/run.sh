@@ -1,19 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd "$(dirname "$0")"
-root=$(git rev-parse --show-toplevel)
-mkdir -p "$root/artifacts/accessibility"
-export PILOT_OUTPUT
-PILOT_OUTPUT=$(mktemp -d "$root/artifacts/accessibility/run-XXXXXXXX")
-export SANDBOX_PROJECT="peaks-a11y-$(basename "$PILOT_OUTPUT" | tr '[:upper:]' '[:lower:]')-$$"
-export SANDBOX_PORT=0 SANDBOX_SQL_PORT=0
-compose=(docker compose -p "$SANDBOX_PROJECT" -f "$root/.devcontainer/docker-compose.sandbox.yml")
-phase=dependencies
+phase=setup
+export PILOT_OUTPUT=
 started_sandbox=false
 
 finish() {
   status=$?
   set +e
+  if [[ -z $PILOT_OUTPUT ]]; then
+    echo "Pilot incomplete during $phase" >&2
+    exit "$status"
+  fi
   if "$started_sandbox"; then
     if [[ $status != 0 ]]; then
       "${compose[@]}" ps -a > "$PILOT_OUTPUT/containers.txt"
@@ -40,6 +37,14 @@ trap finish EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
+cd "$(dirname "$0")"
+root=$(git rev-parse --show-toplevel)
+mkdir -p "$root/artifacts/accessibility"
+PILOT_OUTPUT=$(mktemp -d "$root/artifacts/accessibility/run-XXXXXXXX")
+project_suffix=$(basename "$PILOT_OUTPUT" | tr '[:upper:]' '[:lower:]')
+export SANDBOX_PROJECT="peaks-a11y-$project_suffix-$$"
+export SANDBOX_PORT=0 SANDBOX_SQL_PORT=0
+compose=(docker compose -p "$SANDBOX_PROJECT" -f "$root/.devcontainer/docker-compose.sandbox.yml")
 export PILOT_COMMIT PILOT_CHECKOUT
 PILOT_COMMIT=$(git rev-parse HEAD)
 changes=$(git --no-optional-locks status --porcelain --untracked-files=normal)
@@ -48,7 +53,13 @@ if [[ -n $changes ]]; then
   PILOT_CHECKOUT=dirty
 fi
 echo "Commit $PILOT_COMMIT, checkout $PILOT_CHECKOUT, environment ${AGENT_OS:-local}, project $SANDBOX_PROJECT" | tee "$PILOT_OUTPUT/run.txt"
+phase=dependencies
 npm ci --no-audit --no-fund
+if [[ ${PILOT_INSTALL_SYSTEM_DEPS:-0} == 1 ]]; then
+  phase="Chromium system dependency setup"
+  npx playwright install-deps chromium
+  phase=dependencies
+fi
 npx playwright install --only-shell chromium
 echo "Dependencies ready at ${SECONDS}s" | tee -a "$PILOT_OUTPUT/run.txt"
 

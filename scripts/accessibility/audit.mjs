@@ -34,15 +34,13 @@ export async function measure(page, name, stateNames, run) {
   save();
 
   const origin = new URL(process.env.PILOT_URL).origin;
-  const appRequest = req => new URL(req.url()).origin === origin &&
-    ['document', 'xhr', 'fetch', 'script', 'stylesheet'].includes(req.resourceType());
   const pending = new Set();
   page.on('request', req => {
-    if (appRequest(req)) pending.add(req);
+    if (new URL(req.url()).origin === origin) pending.add(req);
   });
   page.on('requestfinished', req => pending.delete(req));
   page.on('response', res => {
-    if (!appRequest(res.request())) return;
+    if (!pending.has(res.request())) return;
     if (res.status() >= 400) {
       report.loadErrors.push(`HTTP ${res.status()} ${res.url()}`);
     }
@@ -53,6 +51,9 @@ export async function measure(page, name, stateNames, run) {
   });
   page.on('requestfailed', req => {
     if (pending.delete(req)) report.loadErrors.push(`${req.failure()?.errorText} ${req.url()}`);
+  });
+  page.on('pageerror', error => {
+    report.loadErrors.push(`Application error at ${page.url()}: ${error.message}`);
   });
 
   async function settleRequests() {
