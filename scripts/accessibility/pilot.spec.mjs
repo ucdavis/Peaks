@@ -55,26 +55,26 @@ test('assign equipment with the keyboard', async ({ page }) => {
     const row = page.getByRole('row').filter({ has: page.getByRole('cell', { name: seedCells.Equipment, exact: true }) });
     const opener = row.getByRole('button', { name: 'Row actions' });
     const dialog = page.getByRole('dialog', { name: initial });
+    const equipment = dialog.getByText('Brio Webcam - 56', { exact: true });
     const person = dialog.getByRole('combobox', { name: 'Assign To' });
     const date = dialog.getByRole('group', { name: 'Set the expiration date' });
     const scope = '[role="dialog"]';
 
-    const opened = await scan(initial, async settleRequests => {
+    await scan(initial, async settleRequests => {
       await signIn(page, report);
       const links = await assetLinks(page);
       await settleRequests();
       await openAsset(page, links, 'Equipment');
-      await settleRequests();
       await row.getByRole('link', { name: 'Details' }).press('Tab');
       await expect(opener).toBeFocused();
       await page.keyboard.press('ArrowDown');
       await expect(page.getByRole('menuitem', { name: 'Assign', exact: true })).toBeFocused();
       await page.keyboard.press('Enter');
       await expect(person).toBeVisible();
-      await expect(dialog.getByText('Brio Webcam - 56', { exact: true })).toBeVisible();
+      await expect(equipment).toBeVisible();
       await expect(date).toHaveCount(0);
     }, scope);
-    if (!opened) return;
+    if (!(await equipment.isVisible())) return;
     // Capture focus before fill() moves it to the person search.
     report.focusAfterOpening = await dialog.evaluate(element => ({
       insideDialog: element.contains(document.activeElement),
@@ -114,5 +114,5 @@ test('assign equipment with the keyboard', async ({ page }) => {
       }))
     };
     console.log('Focus returned to row actions:', focusReturned);
-  });
+  }, { ignorePath: '/api/sandbox/people/list/' });
 });

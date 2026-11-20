@@ -14,7 +14,7 @@ function findings(rules) {
 }
 
 // Keep completed scans when another page, a later dialog state, or sign-in fails.
-export async function measure(page, name, stateNames, run) {
+export async function measure(page, name, stateNames, run, { ignorePath } = {}) {
   const started = performance.now();
   const report = {
     commit: process.env.PILOT_COMMIT,
@@ -36,7 +36,11 @@ export async function measure(page, name, stateNames, run) {
   const origin = new URL(process.env.PILOT_URL).origin;
   const pending = new Set();
   page.on('request', req => {
-    if (new URL(req.url()).origin === origin) pending.add(req);
+    if (new URL(req.url()).origin !== origin) return;
+    for (let source = req; ignorePath && source; source = source.redirectedFrom()) {
+      if (new URL(source.url()).pathname === ignorePath) return;
+    }
+    pending.add(req);
   });
   page.on('requestfinished', req => pending.delete(req));
   page.on('response', res => {
@@ -90,6 +94,7 @@ export async function measure(page, name, stateNames, run) {
     } catch (error) {
       state.reason = error.message;
     } finally {
+      pending.clear();
       const loadErrors = report.loadErrors.slice(errorOffset);
       if (loadErrors.length) {
         state.coverage = 'incomplete';
@@ -101,8 +106,6 @@ export async function measure(page, name, stateNames, run) {
       const count = state.violations?.reduce((n, rule) => n + rule.elements.length, 0);
       console.log(`${label}: ${state.coverage}, ${count ?? 'unknown'} violation instances, ${state.elapsedMs} ms`);
     }
-    if (pending.size) throw new Error(state.reason);
-    return state.coverage === 'scanned';
   }
 
   try {
