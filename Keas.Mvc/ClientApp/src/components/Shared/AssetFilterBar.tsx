@@ -141,7 +141,7 @@ export const AssetFilterBar = ({
               className='dropdown-scroll absolute start-0 top-full z-30 mt-2 max-h-80 w-full max-w-[calc(100vw-2rem)] overflow-y-auto rounded-box border border-main-border bg-base-100 p-2 shadow-lg'
             >
               {suggestions.length === 0 && (
-                <p className='m-0 px-3 py-4 text-sm text-base-content/60'>
+                <p className='m-0 px-3 py-4 text-sm text-base-content/70'>
                   No matching filters.
                 </p>
               )}
@@ -158,7 +158,7 @@ export const AssetFilterBar = ({
                   >
                     <div
                       id={`${id}-${category.id}`}
-                      className='px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-base-content/60'
+                      className='px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-base-content/70'
                     >
                       {category.label}
                     </div>
@@ -203,7 +203,7 @@ export const AssetFilterBar = ({
           </button>
         )}
       </div>
-      <p id={`${id}-help`} className='m-0 text-xs text-base-content/60'>
+      <p id={`${id}-help`} className='m-0 text-xs text-base-content/70'>
         Choose a categorized suggestion to add a filter. Combine filters to
         narrow your results.
       </p>

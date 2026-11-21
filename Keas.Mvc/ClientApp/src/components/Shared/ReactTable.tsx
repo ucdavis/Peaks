@@ -56,7 +56,7 @@ export const ReactTable = <T extends object>({
     <div className='asset-table'>
       <div className='overflow-x-auto rounded-t-[calc(var(--radius-box)-1px)]'>
         <table className={`table ${tableClassName}`}>
-          <thead>
+          <thead className='text-base-content/70'>
             {headerGroups.map(headerGroup => (
               <tr className='table-row' key={headerGroup.id}>
                 {headerGroup.headers.map(header => {
@@ -130,7 +130,7 @@ export const ReactTable = <T extends object>({
               <tr>
                 <td
                   colSpan={table.getAllLeafColumns().length}
-                  className='py-12 text-center text-base-content/60'
+                  className='py-12 text-center text-base-content/70'
                 >
                   No matching records found. Try adjusting your filters.
                 </td>
@@ -156,7 +156,7 @@ export const ReactTable = <T extends object>({
         </table>
       </div>
       <div className='pagination flex flex-wrap items-center justify-between gap-4 border-t border-main-border px-4 py-4'>
-        <p className='m-0 text-sm text-base-content/60' aria-live='polite'>
+        <p className='m-0 text-sm text-base-content/70' aria-live='polite'>
           {filteredCount ? pageIndex * pageSize + 1 : 0}–
           {Math.min((pageIndex + 1) * pageSize, filteredCount)} of{' '}
           {filteredCount} records
